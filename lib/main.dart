@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:sidam_worker/view/home.dart';
+import 'package:sidam_worker/view/cost.dart';
+import 'package:sidam_worker/view/chatting.dart';
+import 'package:sidam_worker/view/time_table.dart';
+
+import 'package:sidam_worker/model/appColor.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,56 +38,88 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
-  String userName = "이름";
-  String storeName = "가게이름";
+  final AppColor color = AppColor();
 
-  void _incrementCounter() {
+  int _currentIndex = 0;
+  final List<Widget> _children = [Home(), TimeTable(), Cost(), Chatting()];
+
+  void _onTap(int index) {
     setState(() {
-      _counter++;
+      _currentIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(storeName),
-        centerTitle: true,
-        leading: Center(
-            child: Text(userName)
-        ),
-        actions: <Widget>[
-          IconButton(
-              onPressed: (){},
-              icon: const Icon(Icons.add_alert),
+      body: _children[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        selectedItemColor: color.mainColor,
+        type: BottomNavigationBarType.fixed,
+        onTap: _onTap,
+        currentIndex: _currentIndex,
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.home, color: Colors.black),
+            label: "Home",
+            activeIcon: Column(
+              children: <Widget>[
+                Icon(Icons.home, color: color.mainColor),
+                Container(
+                  height: 4,
+                  width: 24,
+                  color: color.mainColor,
+                )
+              ],
+            ),
           ),
-          IconButton(
-              onPressed: (){},
-              icon: const Icon(Icons.settings),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset('asset/icons/table_icon.svg'),
+            label: "Time Table",
+            activeIcon: Column(
+              children: <Widget>[
+                SvgPicture.asset('asset/icons/table_icon.svg', color: color.mainColor),
+                Container(
+                  height: 4,
+                  width: 24,
+                  color: color.mainColor,
+                )
+              ],
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset('asset/icons/dollar_sign_icon.svg'),
+            label: "Cost",
+            activeIcon: Column(
+              children: <Widget>[
+                SvgPicture.asset('asset/icons/dollar_sign_icon.svg', color: color.mainColor),
+                Container(
+                  height: 4,
+                  width: 24,
+                  color: color.mainColor,
+                )
+              ],
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset('asset/icons/message_square_icon.svg'),
+            label: "Chatting",
+            activeIcon: Column(
+              children: <Widget>[
+                SvgPicture.asset('asset/icons/message_square_icon.svg', color: color.mainColor),
+                Container(
+                  height: 4,
+                  width: 24,
+                  color: color.mainColor,
+                )
+              ],
+            ),
           )
         ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      )
     );
   }
 }
