@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sidam_employee/view/chatting.dart';
 import 'package:sidam_employee/view/cost.dart';
 import 'package:sidam_employee/view/cost_page.dart';
 import 'package:sidam_employee/view/home.dart';
-import 'package:sidam_employee/view/schedule.dart';
+import 'package:sidam_employee/view/time_table.dart';
+
+import 'data/model/appColor.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,85 +19,109 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Sidam Worker App',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blueGrey,
+        colorSchemeSeed: const Color(0xFFFF89B3),
+        useMaterial3: true,
       ),
-      home: const MyStatefulWidget(),
-
+      home: const MyHomePage(title: 'Sidam Worker App'),
     );
   }
 }
 
 
-class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({super.key});
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
+
+  final String title;
 
   @override
-  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(),
-    ScheduleScreen(),
-    CostPage(),
-    ChattingScreen(),
-  ];
+class _MyHomePageState extends State<MyHomePage> {
 
-  void _onItemTapped(int index) {
+  final AppColor color = AppColor();
+
+  int _currentIndex = 0;
+  final List<Widget> _children = [HomeScreen(), TimeTableScreen(),CostPage(), ChattingScreen()];
+
+  void _onTap(int index) {
     setState(() {
-      _selectedIndex = index;
+      _currentIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    const color = Colors.transparent;
     return Scaffold(
-
-      body: SafeArea(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-            backgroundColor: color,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.table_chart),
-            label: 'Schedule',
-            backgroundColor: color,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.money),
-            label: 'Cost',
-            backgroundColor: color,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chatting',
-            backgroundColor: color,
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
+        body: _children[_currentIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          selectedItemColor: color.mainColor,
+          type: BottomNavigationBarType.fixed,
+          onTap: _onTap,
+          currentIndex: _currentIndex,
+          items: [
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.home, color: Colors.black),
+              label: "Home",
+              activeIcon: Column(
+                children: <Widget>[
+                  Icon(Icons.home, color: color.mainColor),
+                  Container(
+                    height: 4,
+                    width: 24,
+                    color: color.mainColor,
+                  )
+                ],
+              ),
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset('asset/icons/table_icon.svg'),
+              label: "Time Table",
+              activeIcon: Column(
+                children: <Widget>[
+                  SvgPicture.asset('asset/icons/table_icon.svg', color: color.mainColor),
+                  Container(
+                    height: 4,
+                    width: 24,
+                    color: color.mainColor,
+                  )
+                ],
+              ),
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset('asset/icons/dollar_sign_icon.svg'),
+              label: "Cost",
+              activeIcon: Column(
+                children: <Widget>[
+                  SvgPicture.asset('asset/icons/dollar_sign_icon.svg', color: color.mainColor),
+                  Container(
+                    height: 4,
+                    width: 24,
+                    color: color.mainColor,
+                  )
+                ],
+              ),
+            ),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset('asset/icons/message_square_icon.svg'),
+              label: "Chatting",
+              activeIcon: Column(
+                children: <Widget>[
+                  SvgPicture.asset('asset/icons/message_square_icon.svg', color: color.mainColor),
+                  Container(
+                    height: 4,
+                    width: 24,
+                    color: color.mainColor,
+                  )
+                ],
+              ),
+            )
+          ],
+        )
     );
   }
 }
