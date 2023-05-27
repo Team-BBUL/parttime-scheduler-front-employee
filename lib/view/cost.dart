@@ -12,10 +12,13 @@ class CostScreen extends StatefulWidget{
 class _CostScreenState extends State<CostScreen> with SingleTickerProviderStateMixin{
   late AnimationController _animationController;
   late Animation<double> _animation;
+  late String selectedText;
+
   bool _isExpanded = false;
 
   @override
   void initState() {
+    selectedText = '2023년 3월';
     //viewmodel을 이 위치에서 init할 시 viewmodel에 의존성이 생기는 문제가 있음 => 이를 해결하기 위해 cost_page(ChangeNotifierProvider)를 사용
     _animationController = AnimationController(
       vsync: this,
@@ -61,21 +64,7 @@ class _CostScreenState extends State<CostScreen> with SingleTickerProviderStateM
                 children: [
                   Container(
                       margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-                      child: Row(
-                        children: const [
-                          Expanded(
-                              child: Icon(Icons.arrow_circle_left)
-                          ),
-                          Expanded(
-                            child: Center(
-                              child: Text("2023년 3월"),
-                            ),
-                          ),
-                          Expanded(
-                              child: Icon(Icons.arrow_circle_right)
-                          )
-                        ],
-                      )
+                      child: selectDateWidget(),
                   ),
                   Container(
                       padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
@@ -83,7 +72,7 @@ class _CostScreenState extends State<CostScreen> with SingleTickerProviderStateM
                         children: const [
                           Expanded(
                               child:
-                              Text("이번 달 총 인건비")
+                              Text("이번 달 예상 급여")
                           ),
                           Expanded(
                             child: Text(""),
@@ -158,14 +147,13 @@ class _CostScreenState extends State<CostScreen> with SingleTickerProviderStateM
                   ),
                   AnimatedContainer(
                     margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                    duration: Duration(milliseconds: 500),
+                    duration: Duration(milliseconds: 200),
                     height: _isExpanded ? (viewModel.schedule.length)*75.0 : 0.0,
                     curve: Curves.easeInOut,
                     child: Column(
                       children: viewModel.schedule
-                          .map((schedule) => Container(
-                        margin: const EdgeInsets.symmetric(vertical: 0,horizontal: 5),
-                        child: Column(
+                          .map((schedule) => Expanded(
+                          child: Column(
                             children : [
                               Container(
                                 margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 0),
@@ -215,7 +203,6 @@ class _CostScreenState extends State<CostScreen> with SingleTickerProviderStateM
                                   ],
                                 ),
                               ),
-
                             ]
                         ),
                       )).toList(),
@@ -227,6 +214,67 @@ class _CostScreenState extends State<CostScreen> with SingleTickerProviderStateM
 
           }
         )
+    );
+  }
+
+  Widget selectDateWidget() {
+    return Row(
+      children: [
+        Expanded(
+            child: Icon(Icons.arrow_circle_left)
+        ),
+        Expanded(
+          child: GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Select Text'),
+                      content: SingleChildScrollView(
+                        child: ListBody(
+                          children: <Widget>[
+                            GestureDetector(
+                              child: const Text('2023년 2월'),
+                              onTap: () {
+                                setState(() {
+                                  selectedText = '2023년 2월';
+                                });
+                                Navigator.pop(context);
+                              },
+                            ),
+                            const Padding(padding: EdgeInsets.all(8.0)),
+                            GestureDetector(
+                              child: const Text('2023년 3월'),
+                              onTap: () {
+                                setState(() {
+                                  selectedText = '2023년 3월';
+                                });
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+              child: Center(
+                child: Text(
+                  selectedText,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              )
+          ),
+        ),
+        Expanded(
+            child: Icon(Icons.arrow_circle_right)
+        )
+      ],
     );
   }
 
