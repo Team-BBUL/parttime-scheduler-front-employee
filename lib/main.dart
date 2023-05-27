@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sidam_employee/view/chatting.dart';
-import 'package:sidam_employee/view/cost.dart';
+import 'package:sidam_employee/view/chatting_page.dart';
 import 'package:sidam_employee/view/cost_page.dart';
 import 'package:sidam_employee/view/home.dart';
 import 'package:sidam_employee/view/time_table.dart';
@@ -44,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final AppColor color = AppColor();
 
   int _currentIndex = 0;
-  final List<Widget> _children = [HomeScreen(), TimeTableScreen(),CostPage(), ChattingScreen()];
+  final List<Widget> _children = [HomeScreen(), TimeTableScreen(),CostPage(), ChattingPage()];
 
   void _onTap(int index) {
     setState(() {
