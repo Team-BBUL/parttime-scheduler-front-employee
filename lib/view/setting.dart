@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sidam_employee/view/notify.dart';
+import 'package:sidam_employee/view/notify_page.dart';
 
 class SettingScreen extends StatelessWidget{
   const SettingScreen({super.key});
@@ -30,7 +31,7 @@ class SettingScreen extends StatelessWidget{
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const NotifyScreen(),
+                              builder: (context) => const NotifyPage(),
                             ),
                           );
                         },
