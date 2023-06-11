@@ -11,7 +11,7 @@ import '../data/repository/impossible_schedule_repository.dart';
   1. 점주는 근무 불가능 시간 등록 마감일을 지정한다.
   2. 사용자는 마감일 전까지 다음 주의 근무 불가능 시간을 선택한다.
  */
-// TODO 1. 근무표 날짜 변경 deadline 로직 세우기 => UpcomingWeek의 start 지정
+// Finished 1. 근무표 날짜 변경 deadline 로직 세우기 => UpcomingWeek의 start 지정
 // TODO 2. deadline 로직에 따른 UI 변경
 // TODO 3. deadline 로직에 따른 DB(JSON) 변경
 // TODO 4. Store의 opening, closed 시간 로직 세우기
@@ -30,13 +30,13 @@ class SelectScheduleViewModel extends ChangeNotifier {
   int closed = 23;
   int? openingHours;
   bool dragType = false;
-
+  int deadLine = DateTime.sunday;
   SelectScheduleViewModel(this._impossibleScheduleRepository){
     loadData();
   }
 
   void loadData() async {
-    upcomingWeek = UpcomingWeek();
+    upcomingWeek = UpcomingWeek.deadLine(deadLine);
     openingHours = closed - opening ;
     grid = List.generate(7, (row) {
       return List.generate(openingHours!, (col) {
@@ -49,7 +49,7 @@ class SelectScheduleViewModel extends ChangeNotifier {
   }
 
   saveData(){
-    convertGridToTimes();
+    convertGridToTime();
     _impossibleScheduleRepository.saveJson(impossibleTime!)
         .then((_) {
       // 저장 완료 후의 처리 로직
@@ -152,7 +152,32 @@ class SelectScheduleViewModel extends ChangeNotifier {
     selectedColumnIndex = -1;
 
   }
-
+  convertGridToTime(){
+    List<Data> data = [];
+    int dayIndex = 0;
+    for (var o in grid) {
+      String yearMonthDay = upcomingWeek!.dates[dayIndex].year.toString()+"-"+upcomingWeek!.dates[dayIndex].month.toString()+"-" + upcomingWeek!.dates[dayIndex].day.toString();
+      data.add(Data(date: yearMonthDay, time: o.map((element) => element.isSelected).toList()));
+      dayIndex++;
+    }
+    impossibleTime = ImpossibleTime(data: data);
+  }
+  convertTimeToGrid() async {
+    impossibleTime = await _impossibleScheduleRepository.loadJson();
+    int dayIndex = 0;
+    for (var o in impossibleTime!.data!) {
+      int timeIndex = 0;
+      for (var cell in o.time!) {
+        if (cell) {
+          getCell(dayIndex, timeIndex).isSelected = true;
+        }
+        timeIndex++;
+      }
+      dayIndex++;
+    }
+    notifyListeners();
+  }
+/*
   void convertGridToTimes() {
     int dayIndex = 0;
     String yearMonthDay;
@@ -207,5 +232,5 @@ class SelectScheduleViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-
+*/
 }

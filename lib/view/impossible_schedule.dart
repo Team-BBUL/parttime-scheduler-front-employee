@@ -104,7 +104,7 @@ class SelectScheduleScreen extends StatelessWidget {
                                         color: cell.isSelected ? AppColor().redColor : AppColor().lightGreyColor,
                                       ),
                                       child: Center(
-                                          child: cell.isSelectedColumn ? Text('${col+viewModel.opening}:00') :Text('$row-$col')
+                                          child: cell.isSelectedColumn ? Text('${col+viewModel.opening}:00') : col ==0 || col==6 || col== 12 ? Text('${col+viewModel.opening}h'): Text('')
                                       ),
                                     ),
                                   );
