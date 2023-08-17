@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:sidam_employee/view/notify.dart';
 import 'package:sidam_employee/view/notify_page.dart';
 
+import '../main.dart';
+import '../util/sp_helper.dart';
+import 'account_withdrawal.dart';
+import 'check_login.dart';
+
 class SettingScreen extends StatelessWidget{
-  const SettingScreen({super.key});
+  SettingScreen({super.key});
+  final SPHelper helper = SPHelper();
 
   @override
   Widget build(BuildContext context) {
@@ -96,11 +102,52 @@ class SettingScreen extends StatelessWidget{
                       bottom : BorderSide(width: 1, color: Colors.grey)
                   ),
                 ),
-                child: const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                        child: Text("회원 탈퇴", style: TextStyle(fontSize: 16, color: Colors.red)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: TextButton(
+                          onPressed: () => _showMyDialog(context),
+                          child: Text('로그아웃', style: TextStyle(fontSize: 16, color: Colors.red)),),
+                      ),
                     ),
+                    Container(
+                      child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: TextButton(
+                          onPressed: () => Navigator.push(context,
+                              MaterialPageRoute(
+                                  builder: (context) => AccountWithdrawalScreen()
+                              )),
+                          child: Text('회원 탈퇴', style: TextStyle(fontSize: 16, color: Colors.red)),),
+                      ),
+                    )
+                  ],
+                )
+            ),
+            Container(
+                margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                decoration: const BoxDecoration(
+                  border: Border(
+                      bottom : BorderSide(width: 1, color: Colors.grey)
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Container(
+                        child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: ElevatedButton(
+                            onPressed: () async {await helper.init(); helper.clear(); },
+                            child: Text('shared_preferences 초기화 버튼(개발용)', style: TextStyle(fontSize: 18, color: Colors.red)),),
+                        ),
+                      ),
+                    ),
+                  ],
                 )
             ),
           ]
@@ -108,5 +155,31 @@ class SettingScreen extends StatelessWidget{
     );
   }
 
+  Future<void> _showMyDialog(context) async {
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('로그아웃 하시겠습니까?'),
+        content: const Text('확인버튼을 누르시면 로그인 페이지로 이동합니다.'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Cancel'),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              helper.remove('jwt');
+              helper.remove('isLoggedIn');
+              Navigator.pushAndRemoveUntil(context,
+                  MaterialPageRoute(
+                      builder: (context) => CheckLoginScreen()
+                  ), (route) => false);
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 
 }
