@@ -1,281 +1,264 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sidam_employee/view_model/cost_view_model.dart';
 
-class CostScreen extends StatefulWidget{
+import 'custom_cupertino_picker.dart';
+
+class CostScreen extends StatelessWidget{
   const CostScreen({super.key});
 
-  @override
-  _CostScreenState createState() => _CostScreenState();
-}
-
-class _CostScreenState extends State<CostScreen> with SingleTickerProviderStateMixin{
-  late AnimationController _animationController;
-  late Animation<double> _animation;
-  late String selectedText;
-
-  bool _isExpanded = false;
-
-  @override
-  void initState() {
-    selectedText = '2023년 3월';
-    //viewmodel을 이 위치에서 init할 시 viewmodel에 의존성이 생기는 문제가 있음 => 이를 해결하기 위해 cost_page(ChangeNotifierProvider)를 사용
-    _animationController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 500),
-    );
-
-    _animation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    );
-
-    super.initState();
-  }
-
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  void _toggleExpansion() {
-    setState(() {
-      _isExpanded = !_isExpanded;
-      if (_isExpanded) {
-        _animationController.forward();
-      } else {
-        _animationController.reverse();
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Cost Screen'),
-        ),
-        body: Consumer<CostViewModel>(
-          builder:(context, viewModel,child){
-            return SingleChildScrollView(
-              child : Column(
-                children: [
-                  Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-                      child: selectDateWidget(),
-                  ),
-                  Container(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
-                      child: Row(
-                        children: const [
-                          Expanded(
-                              child:
-                              Text("이번 달 예상 급여")
-                          ),
-                          Expanded(
-                            child: Text(""),
-                          ),
-                          Expanded(
-                            child: Text(""),
-                          ),
-                        ],
-                      )
-                  ),
-                  Container(
-                      child: Row(
-                        children: const [
-                          Expanded(
-                            child: Center(
-                              child: Text('10,000,000원', style: TextStyle(fontSize: 32,fontWeight: FontWeight.bold)),
-                            ),
-                          ),
-                        ],
-                      )
-                  ),
-                  Container(
-                      child: Row(
-                        children: const [
-                          Expanded(
-                            child: Center(
-                                child: Text("")
-                            ),
-                          ),
-                          Expanded(
-                            child: Text("2월 달 보다 20,000원 증가"),
+        body: SafeArea(
+            child : Consumer<CostViewModel>(
+                builder:(context, viewModel,child){
+                  return Column(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                        child: selectDateWidget(viewModel, context),
+                      ),
+                      Container(
+                          padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
+                          child: Row(
+                            children:  [
+                              Expanded(
+                                  child:
+                                  viewModel.dateIndex == viewModel.dateList.length -1 ?
+                                  Text("이번 달 예상 급여 (급여일 기준 : ${viewModel.costDay}일 )")
+                                      :
+                                  Text("지급 급여 (급여일 기준 : ${viewModel.costDay}일 )")
+                              ),
+                            ],
                           )
-                        ],
-                      )
-                  ),
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
-                    child: Row(
-                        children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Text("급여계산방식확인"),
-                                IconButton(
-                                  icon:Icon(Icons.arrow_drop_down),
-                                  onPressed: _toggleExpansion,
+                      ),
+                      Container(
+                          child: Row(
+                            children:  [
+                              Expanded(
+                                child: Center(
+                                  child: Text('${viewModel.totalPay}원', style: TextStyle(fontSize: 32,fontWeight: FontWeight.bold)),
                                 ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(""),
-                          ),
-                        ]
-                    ),
-                  ),
-                  Container(
-                      child : Row(
-                        children: const [
-                          Expanded(
-                              child: Center(
-                                child: Text("총 근무 57시간", style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold)),
+                              ),
+                            ],
+                          )
+                      ),
+                      Container(
+                          child: Row(
+                            children: const [
+                              Expanded(
+                                child: Center(
+                                    child: Text("")
+                                ),
+                              ),
+                              Expanded(
+                                child: Text("2월 달 보다 20,000원 증가"),
                               )
-                          ),
-                          Expanded(
-                              child: Center(
-                                child: Text("시급 11,000원", style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold)),
-                              )
-                          ),
-                        ],
-                      )
-                  ),
-                  AnimatedContainer(
-                    margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                    duration: Duration(milliseconds: 200),
-                    height: _isExpanded ? (viewModel.schedule.length)*75.0 : 0.0,
-                    curve: Curves.easeInOut,
-                    child: Column(
-                      children: viewModel.schedule
-                          .map((schedule) => Expanded(
-                          child: Column(
-                            children : [
-                              Container(
-                                margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 0),
+                            ],
+                          )
+                      ),
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
+                        child: Row(
+                            children: [
+                              Expanded(
                                 child: Row(
-                                  children : [
-                                    Expanded(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(10),
-                                              border: Border.all(width: 1, color: Colors.grey),
-                                              color: Colors.grey
-                                          ),
-                                          child: Center(
-                                            child: Text(schedule.date),
-                                          ),
-                                        )
-                                    ),
-                                    const Expanded(
-                                        child:Text("")
-                                    ),
-                                    const Expanded(
-                                        child:Text("")
-                                    ),
+                                  children: [
+                                    Text("급여계산방식확인"),
+                                    GestureDetector(
+                                      onTap: () {
+                                        viewModel.toggleClicked();
+                                      },
+                                      child: Icon(Icons.arrow_drop_down),
+                                    )
                                   ],
                                 ),
                               ),
-
-                              Container(
-                                margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 0),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Center(
-                                        child: Text("일반 근무 ${schedule.day}시간"),
-                                      )
-                                    ),
-                                    Expanded(
-                                        child: Center(
-                                          child: Text("야간 근무 ${schedule.night}시간"),
-                                        )
-                                    ),
-                                    Expanded(
-                                        child: Center(
-                                          child: Text("급여 ${schedule.cost}원"),
-                                        )
-                                    ),
-                                  ],
-                                ),
+                              const Expanded(
+                                child: Text(""),
                               ),
                             ]
                         ),
-                      )).toList(),
-                    ),
-                  ),
-                ],
-              )
-            );
-
-          }
+                      ),
+                      Container(
+                          child : Row(
+                            children:  [
+                              Expanded(
+                                  child: Center(
+                                    child: Text("총 근무 ${viewModel.totalWorkTime}시간", style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold)),
+                                  )
+                              ),
+                              Expanded(
+                                  child: Center(
+                                    child: Text("시급 ${viewModel.pay}원", style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold)),
+                                  )
+                              ),
+                            ],
+                          )
+                      ),
+                      Flexible(
+                        child:                 AnimatedContainer(
+                            margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                            duration: Duration(milliseconds: 200),
+                            height: viewModel.isExpanded ? (viewModel.monthCost.length)*75.0 : 0.0,
+                            curve: Curves.easeInOut,
+                            child: ListView.builder(
+                                scrollDirection: Axis.vertical,
+                                physics: AlwaysScrollableScrollPhysics(),
+                                padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 0),
+                                itemCount: viewModel.monthCost.length,
+                                itemBuilder: (BuildContext context, int index){
+                                  return Column(
+                                      children : [
+                                        Container(
+                                          margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 0),
+                                          child: Row(
+                                            children : [
+                                              Expanded(
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        border: Border.all(width: 1, color: Colors.grey),
+                                                        color: Colors.grey
+                                                    ),
+                                                    child: Center(
+                                                      child: Text(viewModel.monthCost[index].date),
+                                                    ),
+                                                  )
+                                              ),
+                                              const Expanded(
+                                                  child:Text("")
+                                              ),
+                                              const Expanded(
+                                                  child:Text("")
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 0),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                  child: Center(
+                                                    child: Text("일반 근무 ${viewModel.monthCost[index].dayHour}시간"),
+                                                  )
+                                              ),
+                                              Expanded(
+                                                  child: Center(
+                                                    child: Text("야간 근무 ${viewModel.monthCost[index].nighHour}시간"),
+                                                  )
+                                              ),
+                                              Expanded(
+                                                  child: Center(
+                                                    child: Text("급여 ${viewModel.monthCost[index].dayCost}원"),
+                                                  )
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ]
+                                  );
+                                }
+                            )
+                        ),
+                      )
+                    ],
+                  );
+                }
+            )
         )
     );
   }
-
-  Widget selectDateWidget() {
+  Widget selectDateWidget(CostViewModel viewModel, BuildContext context){
     return Row(
       children: [
         Expanded(
-            child: Icon(Icons.arrow_circle_left)
+            child: IconButton(
+                onPressed: () {
+                  int index = viewModel.dateIndex;
+                  if(index > 0 ) {
+                    viewModel.setDate(index-1);
+                    viewModel.getCost(viewModel.dateList[index-1]);
+                  }
+                },
+              icon: Icon(Icons.arrow_circle_left)),
         ),
         Expanded(
-          child: GestureDetector(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Select Text'),
-                      content: SingleChildScrollView(
-                        child: ListBody(
-                          children: <Widget>[
-                            GestureDetector(
-                              child: const Text('2023년 2월'),
-                              onTap: () {
-                                setState(() {
-                                  selectedText = '2023년 2월';
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-                            const Padding(padding: EdgeInsets.all(8.0)),
-                            GestureDetector(
-                              child: const Text('2023년 3월'),
-                              onTap: () {
-                                setState(() {
-                                  selectedText = '2023년 3월';
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-              child: Center(
-                child: Text(
-                  selectedText,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal,
+            child: TextButton(
+              child: Text('${viewModel.selectedDate}', style: TextStyle(color: Colors.black)),
+              onPressed: () => showDialog(
+                  CupertinoPicker(
+                    backgroundColor: Colors.white,
+                    magnification: 1.22,
+                    squeeze: 1.2,
+                    useMagnifier: true,
+                    itemExtent: 32.0,
+                    looping: false,
+                    // This sets the initial item.
+                    scrollController: FixedExtentScrollController(
+                      initialItem:  viewModel.dateList.length - viewModel.dateIndex - 1
+                    ),
+                    // This is called when selected item is changed.
+                    onSelectedItemChanged: (int selectedItemIndex) {
+                      viewModel.dateIndex = viewModel.dateList.length - selectedItemIndex - 1;
+                    },
+                    children:
+                    List<Widget>.generate(viewModel.dateList.length, (int index) {
+                      int reversedIndex = viewModel.dateList.length - index - 1;
+                      return Center(
+                          child: Text('${viewModel.dateList[reversedIndex]}'));
+                    }),
                   ),
-                ),
-              )
-          ),
+
+                  context,
+                  viewModel
+              ),
+            ),
         ),
         Expanded(
-            child: Icon(Icons.arrow_circle_right)
-        )
+          child: IconButton(
+              onPressed: () {
+                int index = viewModel.dateIndex;
+                if(index < viewModel.dateList.length-1) {
+                  viewModel.setDate(index+1);
+                  viewModel.getCost(viewModel.dateList[index+1]);
+                }
+              },
+
+              icon: Icon(Icons.arrow_circle_right)),
+        ),
       ],
     );
   }
 
+  showDialog(Widget child, BuildContext context, CostViewModel viewModel) async {
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => Container(
+        height: 300,
+        padding: const EdgeInsets.only(top: 3.0),
+        // The bottom margin is provided to align the popup above the system
+        // navigation bar.
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        // Provide a background color for the popup.
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        // Use a SafeArea widget to avoid system overlaps.
+        child: SafeArea(
+          top: true,
+          child: child,
+        ),
+      ),
+    );
+    viewModel.setDate(viewModel.dateIndex);
+    viewModel.getCost(viewModel.selectedDate);
+  }
 }
+
+
+
