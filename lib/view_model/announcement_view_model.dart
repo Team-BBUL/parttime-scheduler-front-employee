@@ -1,41 +1,73 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_layout_grid/flutter_layout_grid.dart';
-import 'package:sidam_employee/data/model/announcement.dart';
 
 import '../data/repository/announcement_repository.dart';
+import '../model/announcement.dart';
+import '../view/enum/announcement_mode.dart';
 
 class AnnouncementViewModel extends ChangeNotifier {
-  AnnouncementRepository announcementRepository;
-  List<String> imagePaths = [];
-  bool isEditMode = false;
-  bool isCreateMode = false;
-  Announcement announcement = Announcement(id: '', subject: '', body: '', photo: '', timestamp: '');
-  List<Announcement> announcementList =[];
+  final AnnouncementRepository _announcementRepository;
+  Announcement? _announcement;
+  Announcement? _newAnnouncement;
+  AnnouncementMode? _mode;
+  List<Announcement>? _announcementList;
+  ScrollController? _scrollController;
+  List<dynamic>? _images;
+  List<dynamic>? _newImages;
 
-  AnnouncementViewModel(this.announcementRepository){
-    fetchAnnouncementList();
-  }
-  AnnouncementViewModel.withArguments(this.announcementRepository,Map<String,dynamic> arguments) {
-    fetchAnnouncement(arguments['id']);
+  AnnouncementMode? get mode => _mode;
+  List<Announcement>? get announcementList => _announcementList;
+  get scrollController => _scrollController;
+  get images => _images;
+  get newImages => _newImages;
+  Announcement? get announcement => _announcement;
+  Announcement? get newAnnouncement => _newAnnouncement;
+
+  AnnouncementViewModel(this._announcementRepository){
+    int page = 1;
+    _scrollController = ScrollController();
+    _scrollController!.addListener(() {
+      if (_scrollController!.offset >=
+          _scrollController!.position.maxScrollExtent &&
+          !_scrollController!.position.outOfRange) {
+        print('botton');
+        // getAnnouncementList();
+      }
+      page++;
+    });
   }
 
-  Future<void> fetchAnnouncement(String announcementId) async {
+  Future<void> getAnnouncement(int announcementId) async {
+    _announcement = null;
     try {
-      final result = await announcementRepository.getAnnouncement(announcementId);
-      announcement = Announcement.fromJson(result);
-      notifyListeners();
+      _announcement = await _announcementRepository.fetchAnnouncement(announcementId);
+      await _urlToImage();
     } catch (e) {
-      // 에러 처리 로직
+      log("Error ${e}");
     }
   }
-  Future<void> fetchAnnouncementList() async {
-    try {
-      final result = await announcementRepository.getAnnouncementList();
-      announcementList = result.map((json) => Announcement.fromJson(json)).toList();
-      notifyListeners();
-    } catch (e) {
-      // 에러 처리 로직
-      print(e);
+
+  Future _urlToImage() async{
+    if(_announcement!.getPhoto != null){
+      _images = [];
+      int length = _announcement!.getPhoto!.length;
+      for(int i = 0; i < length; i++ ){
+        images!.add( await _announcementRepository.fetchImage(
+            _announcement!.getPhoto![i].downloadUrl ?? '',
+            _announcement!.getPhoto![i].fileName ?? ''));
+      }
     }
   }
+
+  Future<void> getAnnouncementList(int page) async {
+    try {
+      _announcementList = await _announcementRepository.fetchAnnouncementList(page);
+      notifyListeners();
+    } catch (e) {
+      log("Error ${e}");
+    }
+  }
+
 }
