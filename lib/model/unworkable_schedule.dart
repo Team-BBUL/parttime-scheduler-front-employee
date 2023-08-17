@@ -1,34 +1,34 @@
 
-class ImpossibleTime {
-  List<Data>? data;
+class UnWorkableSchedule {
+  List<Unworkable>? unWorkable;
 
-  ImpossibleTime({this.data});
+  UnWorkableSchedule({this.unWorkable});
 
-  ImpossibleTime.fromJson(Map<String, dynamic> json) {
+  UnWorkableSchedule.fromJson(Map<String, dynamic> json) {
     if (json['data'] != null) {
-      data = <Data>[];
+      unWorkable = <Unworkable>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        unWorkable!.add(new Unworkable.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
+    if (this.unWorkable != null) {
+      data['data'] = this.unWorkable!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
-class Data {
+class Unworkable {
   String? date;
   List<bool>? time;
 
-  Data({this.date, this.time});
+  Unworkable({this.date, this.time});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  Unworkable.fromJson(Map<String, dynamic> json) {
     date = json['date'];
     time = json['time'].cast<bool>();
   }
