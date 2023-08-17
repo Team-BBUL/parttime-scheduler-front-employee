@@ -10,10 +10,8 @@ class _CostState extends State<Cost> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: const Text("cost"),
-      )
-    );
+    final ScrollController scrollController = ScrollController();
+
+    return const Center(child: Text("cost"));
   }
 }

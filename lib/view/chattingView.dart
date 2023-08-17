@@ -12,7 +12,7 @@ class _ChattingState extends State<Chatting> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
-          child: const Text("chatting"),
+          child: const Text("공사중"),
         )
     );
   }

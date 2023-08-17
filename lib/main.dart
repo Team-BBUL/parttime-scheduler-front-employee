@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:sidam_worker/provider/userProvider.dart';
+
+import 'package:sidam_worker/view/alarmView.dart';
 
 import 'package:sidam_worker/view/home.dart';
-import 'package:sidam_worker/view/cost.dart';
-import 'package:sidam_worker/view/chatting.dart';
-import 'package:sidam_worker/view/time_table.dart';
+import 'package:sidam_worker/view/costView.dart';
+import 'package:sidam_worker/view/time_table_view.dart';
 
 import 'package:sidam_worker/model/appColor.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => UserProvider(),
+      child: const MyApp()
+    )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -42,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final AppColor color = AppColor();
 
   int _currentIndex = 0;
-  final List<Widget> _children = [Home(), TimeTable(), Cost(), Chatting()];
+  final List<Widget> _children = [Home(), TimeTable(), Cost(), AlarmView()];
 
   void _onTap(int index) {
     setState(() {
@@ -77,11 +85,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset('asset/icons/table_icon.svg'),
+            icon: SvgPicture.asset('assets/icons/table_icon.svg'),
             label: "Time Table",
             activeIcon: Column(
               children: <Widget>[
-                SvgPicture.asset('asset/icons/table_icon.svg', color: color.mainColor),
+                SvgPicture.asset('assets/icons/table_icon.svg', color: color.mainColor),
                 Container(
                   height: 4,
                   width: 24,
@@ -91,11 +99,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset('asset/icons/dollar_sign_icon.svg'),
+            icon: SvgPicture.asset('assets/icons/dollar_sign_icon.svg'),
             label: "Cost",
             activeIcon: Column(
               children: <Widget>[
-                SvgPicture.asset('asset/icons/dollar_sign_icon.svg', color: color.mainColor),
+                SvgPicture.asset('assets/icons/dollar_sign_icon.svg', color: color.mainColor),
                 Container(
                   height: 4,
                   width: 24,
@@ -105,11 +113,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset('asset/icons/message_square_icon.svg'),
-            label: "Chatting",
+            icon: SvgPicture.asset('assets/icons/bell_icon.svg'),
+            label: "Alarm",
             activeIcon: Column(
               children: <Widget>[
-                SvgPicture.asset('asset/icons/message_square_icon.svg', color: color.mainColor),
+                SvgPicture.asset('assets/icons/bell_icon.svg', color: color.mainColor),
                 Container(
                   height: 4,
                   width: 24,

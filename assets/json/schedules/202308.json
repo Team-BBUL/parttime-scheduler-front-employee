@@ -1,0 +1,702 @@
+{
+  "date": [
+    {
+      "id": 1,
+      "day": "2023-08-14",
+      "schedule": [
+        {
+          "id": 1,
+          "time": [false, false, false, false, true, true, true, true, false, false, false, false, false],
+          "workers": [
+            {
+              "id": 2,
+              "alias": "KTH",
+              "color": "0xFF000000",
+              "cost": 9700
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "time": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false
+          ],
+          "workers": [
+            {
+              "id": 3,
+              "alias": "KJW",
+              "color": "0xFF001111",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "time": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            false
+          ],
+          "workers": [
+            {
+              "id": 4,
+              "alias": "JHW",
+              "color": "0xFF110011",
+              "cost": 0
+            }
+          ]
+        }
+      ]
+    },
+
+
+    {
+      "id": 2,
+      "day": "2023-08-15",
+      "schedule": [
+        {
+          "id": 4,
+          "time": [
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "workers": [
+            {
+              "id": 4,
+              "alias": "JHW",
+              "color": "0xFF110011",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "time": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false
+          ],
+          "workers": [
+            {
+              "id": 5,
+              "alias": "DHW",
+              "color": "0xFF110000",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "time": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          "workers": [
+            {
+              "id": 6,
+              "alias": "JHG",
+              "color": "0xFF111111",
+              "cost": 0
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": 1,
+      "day": "2023-08-16",
+      "schedule": [
+        {
+          "id": 7,
+          "time": [
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "workers": [
+            {
+              "id": 4,
+              "alias": "JHW",
+              "color": "0xFF110011",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "time": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            false
+          ],
+          "workers": [
+            {
+              "id": 3,
+              "alias": "KJW",
+              "color": "0xFF001111",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "time": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          "workers": [
+            {
+              "id": 7,
+              "alias": "LHS",
+              "color": "0xFF111100",
+              "cost": 0
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": 1,
+      "day": "2023-08-17",
+      "schedule": [
+        {
+          "id": 10,
+          "time": [
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "workers": [
+            {
+              "id": 5,
+              "alias": "DHW",
+              "color": "0xFF110000",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 11,
+          "time": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false
+          ],
+          "workers": [
+            {
+              "id": 3,
+              "alias": "KJW",
+              "color": "0xFF001111",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "time": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            false
+          ],
+          "workers": [
+            {
+              "id": 9,
+              "alias": "BYH",
+              "color": "0xFF008800",
+              "cost": 0
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": 1,
+      "day": "2023-08-18",
+      "schedule": [
+        {
+          "id": 13,
+          "time": [
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "workers": [
+            {
+              "id": 7,
+              "alias": "LHS",
+              "color": "0xFF111100",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "time": [
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "workers": [
+            {
+              "id": 10,
+              "alias": "BDM",
+              "color": "0xFF220011",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "time": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            false
+          ],
+          "workers": [
+            {
+              "id": 8,
+              "alias": "LSU",
+              "color": "0xFF001100",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 16,
+          "time": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          "workers": [
+            {
+              "id": 6,
+              "alias": "JHG",
+              "color": "0xFF111111",
+              "cost": 0
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": 1,
+      "day": "2023-08-19",
+      "schedule": [
+        {
+          "id": 17,
+          "time": [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "workers": [
+            {
+              "id": 6,
+              "alias": "JHG",
+              "color": "0xFF111111",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 18,
+          "time": [
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "workers": [
+            {
+              "id": 9,
+              "alias": "BYH",
+              "color": "0xFF008800",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "time": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false
+          ],
+          "workers": [
+            {
+              "id": 7,
+              "alias": "LHS",
+              "color": "0xFF111100",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "time": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false
+          ],
+          "workers": [
+            {
+              "id": 10,
+              "alias": "BDM",
+              "color": "0xFF220011",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 21,
+          "time": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true
+          ],
+          "workers": [
+            {
+              "id": 2,
+              "alias": "KTH",
+              "color": "0xFF000000",
+              "cost": 9700
+            },
+            {
+              "id": 8,
+              "alias": "LSU",
+              "color": "0xFF001100",
+              "cost": 0
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": 1,
+      "day": "2023-08-20",
+      "schedule": [
+        {
+          "id": 22,
+          "time": [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "workers": [
+            {
+              "id": 9,
+              "alias": "BYH",
+              "color": "0xFF008800",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "time": [
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "workers": [
+            {
+              "id": 10,
+              "alias": "BDM",
+              "color": "0xFF220011",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 24,
+          "time": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false
+          ],
+          "workers": [
+            {
+              "id": 7,
+              "alias": "LHS",
+              "color": "0xFF111100",
+              "cost": 0
+            }
+          ]
+        },
+        {
+          "id": 25,
+          "time": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false
+          ],
+          "workers": [
+            {
+              "id": 2,
+              "alias": "KTH",
+              "color": "0xFF000000",
+              "cost": 9700
+            },
+            {
+              "id": 8,
+              "alias": "LSU",
+              "color": "0xFF001100",
+              "cost": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
