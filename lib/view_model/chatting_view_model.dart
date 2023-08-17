@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sidam_employee/data/repository/user_repository.dart';
-import '../data/model/user_role.dart';
+
+import '../model/user_role.dart';
 
 class ChattingViewModel extends ChangeNotifier{
   UserRepository userRepository;
