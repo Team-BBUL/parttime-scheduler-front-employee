@@ -1,14 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sidam_employee/util/appColor.dart';
+import 'package:sidam_employee/view/check_login.dart';
+import 'package:sidam_employee/view/login.dart';
 import 'package:sidam_employee/view/chatting_page.dart';
 import 'package:sidam_employee/view/cost_page.dart';
 import 'package:sidam_employee/view/home.dart';
 import 'package:sidam_employee/view/time_table.dart';
+import 'package:sidam_employee/view_model/announcement_view_model.dart';
 
-import 'data/model/appColor.dart';
+import 'data/repository/announcement_repository.dart';
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+      MultiProvider(providers: [
+        ChangeNotifierProvider(
+          create: (_) => AnnouncementViewModel(AnnouncementRepositoryImpl()),
+        ),
+      ],
+          child: MyApp()
+
+      )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -23,7 +39,7 @@ class MyApp extends StatelessWidget {
         colorSchemeSeed: const Color(0xFFFF89B3),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Sidam Worker App'),
+      home: CheckLoginScreen(),
     );
   }
 }
