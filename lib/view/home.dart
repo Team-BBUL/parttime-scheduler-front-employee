@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:sidam_employee/view/announcement_page.dart';
-import 'package:sidam_employee/view/impossible_schedule_page.dart';
+import 'package:sidam_employee/view/store_list.dart';
+import 'package:sidam_employee/view/store_list_page.dart';
+import 'package:sidam_employee/view/unworkable_schedule_page.dart';
 import 'package:sidam_employee/view/setting.dart';
 
-import '../data/model/appColor.dart';
+import '../util/appColor.dart';
+import '../util/sp_helper.dart';
+
 
 class HomeScreen extends StatefulWidget{
   const HomeScreen({super.key});
@@ -15,6 +19,7 @@ class HomeScreen extends StatefulWidget{
 }
 
 class _HomeScreenState extends State<HomeScreen>{
+  final SPHelper helper = SPHelper();
 
   late final String _userName; // 접속 중인 사용자의 이름 UserRole:alias
   late final String _storeName; // store:name
@@ -44,10 +49,28 @@ class _HomeScreenState extends State<HomeScreen>{
 
   @override
   Widget build(BuildContext context) {
+    int? id = helper.getStoreId();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Screen'),
-        actions: <Widget>[
+        centerTitle: true,
+        leading:  TextButton(
+          onPressed: (){
+            Navigator.push(context, MaterialPageRoute<void>(
+              builder: (BuildContext context) => SettingScreen(),
+            ));
+          },
+          child: Text('${helper.getAlias()}', style: TextStyle(color: Colors.black, fontSize: 16)),
+        ),
+        title: TextButton(
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute<void>(
+                builder: (BuildContext context) => StoreListPage(),
+              ));
+            },
+            child: Text("${helper.getStoreName()}", style: TextStyle(color: Colors.black, fontSize: 16))
+        ),
+
+        actions: [
           IconButton(
             icon: const Icon(Icons.settings),
             tooltip: 'Go to the next page',
@@ -79,6 +102,7 @@ class _HomeScreenState extends State<HomeScreen>{
             },
           ),
         ],
+
       ),
       body: Stack(
         children: [
@@ -91,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen>{
                       icon: const Icon(Icons.add),
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute<void>(
-                            builder: (BuildContext context) => const SelectSchedulePage()
+                            builder: (BuildContext context) => const UnworkableSchedulePage()
                         ));
                       },
                     )
