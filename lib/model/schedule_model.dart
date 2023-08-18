@@ -1,5 +1,5 @@
 
-import 'package:sidam_worker/model/userModel.dart';
+import 'package:sidam_worker/model/user_model.dart';
 
 class Schedule {
 

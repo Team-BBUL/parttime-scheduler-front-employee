@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sidam_worker/model/noticeModel.dart';
+import 'package:sidam_worker/model/notice_model.dart';
 
 class NoticeView extends StatefulWidget{
 
@@ -24,7 +24,6 @@ class _NoticeState extends State<NoticeView> {
   Widget build(BuildContext context) {
     final deviceWidth = MediaQuery.of(context).size.width;
     final deviceHeight = MediaQuery.of(context).size.height;
-    final screenRate = deviceWidth / _designWidth;
 
     // 크기 관련 변수 설정
     final fontSize = deviceWidth * 17 / _designWidth;

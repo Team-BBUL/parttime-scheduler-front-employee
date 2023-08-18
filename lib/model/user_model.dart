@@ -1,15 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:sidam_worker/api/Session.dart';
+import 'package:sidam_worker/api/remote_data_source.dart';
 
 class User {
-
-  User._privateConstructor({
-    required this.name,
-    required this.id,
-    required this.salary,
-  });
 
   User({
     required this.name,

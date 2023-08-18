@@ -1,4 +1,4 @@
-import 'package:sidam_worker/model/ChangeRequestModel.dart';
+import 'package:sidam_worker/model/change_request_model.dart';
 
 class Alarm {
   final int id;

@@ -3,11 +3,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
-import 'package:sidam_worker/api/alarmHttpProvider.dart';
+import 'package:sidam_worker/api/alarm_http_provider.dart';
 import 'package:sidam_worker/model/AlarmModel.dart';
 import 'package:provider/provider.dart';
 import 'package:sidam_worker/model/appColor.dart';
-import 'package:sidam_worker/viewModel/alarmViewModel.dart';
+import 'package:sidam_worker/viewModel/alarm_view_model.dart';
 
 class AlarmView extends StatefulWidget{
 
@@ -36,7 +36,6 @@ class _AlarmState extends State<AlarmView> {
 
     final deviceWidth = MediaQuery.of(context).size.width;
     final deviceHeight = MediaQuery.of(context).size.height;
-    final screenRate = deviceWidth / _designWidth;
 
     // 크기 관련 변수 설정
     final fontSize = deviceWidth * 16 / _designWidth;

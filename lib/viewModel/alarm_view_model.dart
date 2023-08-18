@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:logger/logger.dart';
 
-import 'package:sidam_worker/api/Session.dart';
+import 'package:sidam_worker/api/remote_data_source.dart';
 
 class AlarmViewModel {
 

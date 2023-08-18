@@ -1,21 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_worker/provider/userProvider.dart';
+import 'package:sidam_worker/viewModel/notice_view_model.dart';
+import 'package:sidam_worker/viewModel/schedule_view_model.dart';
+import 'package:sidam_worker/viewModel/user_view_model.dart';
+import 'package:sidam_worker/utility/sp_helper.dart';
 
-import 'package:sidam_worker/view/alarmView.dart';
-
+import 'package:sidam_worker/view/alarm_view.dart';
 import 'package:sidam_worker/view/home.dart';
-import 'package:sidam_worker/view/costView.dart';
+import 'package:sidam_worker/view/cost_view.dart';
 import 'package:sidam_worker/view/time_table_view.dart';
 
 import 'package:sidam_worker/model/appColor.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => UserProvider(),
-      child: const MyApp()
+    MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+              create: (context) => UserProvider(),
+          ),
+          ChangeNotifierProvider(
+              create: (context) => ScheduleViewModel()
+          ),
+          ChangeNotifierProvider(
+              create: (context) => NoticeViewModel()
+          ),
+        ],
+        child: const MyApp()
     )
   );
 }
@@ -48,9 +60,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   final AppColor color = AppColor();
+  final SPHelper helper = SPHelper();
 
   int _currentIndex = 0;
   final List<Widget> _children = [Home(), TimeTable(), Cost(), AlarmView()];
+
+  init() {
+    helper.init();
+  }
 
   void _onTap(int index) {
     setState(() {

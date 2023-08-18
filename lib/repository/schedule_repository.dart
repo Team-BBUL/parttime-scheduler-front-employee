@@ -1,31 +1,13 @@
-import 'dart:convert';
+import 'package:sidam_worker/api/local_data_source.dart';
+import 'package:sidam_worker/model/schedule_model.dart';
+import 'package:sidam_worker/model/user_model.dart';
 
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
-
-import 'package:sidam_worker/api/Session.dart';
-import 'package:sidam_worker/model/scheduleModel.dart';
-
-import '../model/userModel.dart';
-
-class ScheduleViewModel {
-  var logger = Logger();
-
-  Session session = Session();
+class ScheduleRepository {
+  final LocalDataSource _dataSource = LocalDataSource();
 
   Future<List<Schedule>> loadMySchedule(DateTime now) async {
 
-    var fileName = DateFormat('yyyyMM').format(now);
-
-    String json = await rootBundle.loadString('assets/json/schedules/$fileName.json')
-      .catchError((error) {
-        // 요청해오기...?
-        logger.e('error: $error');
-        return "json 읽기 오류";
-    });
-
-    var data = jsonDecode(json);
+    Map<String, dynamic> data = await _dataSource.getWeeklySchedule(now);
     List<Schedule> result = [];
     bool insert;
 
@@ -59,10 +41,6 @@ class ScheduleViewModel {
     }
 
     result.sort((a, b) => a.day.compareTo(b.day));
-
-    for (int i = 0; i < 7; i++) {
-      logger.i('${result[i].day} 일자');
-    }
 
     return result;
   }

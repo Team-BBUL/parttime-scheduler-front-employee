@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:sidam_worker/api/Session.dart';
 
 class Store {
 
@@ -39,8 +38,6 @@ class Store {
   }
 
   static Future<Store> loadStore() async {
-    
-    Session session = Session();
 
     String json = await rootBundle.loadString('assets/json/store.json')
         .catchError((error) {

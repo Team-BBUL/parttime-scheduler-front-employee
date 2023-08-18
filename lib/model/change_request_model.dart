@@ -1,4 +1,4 @@
-import 'package:sidam_worker/model/AccountRole.dart';
+import 'package:sidam_worker/model/account_role_model.dart';
 
 class ChangeRequest{
   late final int id;
