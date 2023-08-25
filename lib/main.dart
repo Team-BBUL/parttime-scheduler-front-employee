@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:sidam_worker/utility/sp_helper.dart';
+import 'package:sidam_worker/viewModel/cost_view_model.dart';
 import 'package:sidam_worker/viewModel/notice_view_model.dart';
 import 'package:sidam_worker/viewModel/schedule_view_model.dart';
+import 'package:sidam_worker/viewModel/store_view_model.dart';
 import 'package:sidam_worker/viewModel/user_view_model.dart';
-import 'package:sidam_worker/utility/sp_helper.dart';
 
 import 'package:sidam_worker/view/alarm_view.dart';
 import 'package:sidam_worker/view/home.dart';
@@ -25,6 +28,12 @@ void main() {
           ),
           ChangeNotifierProvider(
               create: (context) => NoticeViewModel()
+          ),
+          ChangeNotifierProvider(
+              create: (context) => StoreViewModel()
+          ),
+          ChangeNotifierProvider(
+              create: (context) => CostViewModel()
           ),
         ],
         child: const MyApp()
@@ -61,13 +70,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final AppColor color = AppColor();
   final SPHelper helper = SPHelper();
+  final Logger _logger = Logger();
 
   int _currentIndex = 0;
   final List<Widget> _children = [Home(), TimeTable(), Cost(), AlarmView()];
-
-  init() {
-    helper.init();
-  }
 
   void _onTap(int index) {
     setState(() {
@@ -75,8 +81,20 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  // 디버깅용 토큰 setter
+  void setToken() async {
+    await helper.init();
+    /*
+    await helper.writeJWT('eyJhbGciOiJIUzUxMiJ9.'
+        'eyJzdWIiOiIxIiwiaWF0IjoxNjkyNDI3MjAyLCJleHAiOjE2OTI1MTM2MDJ9.'
+        'X7ArWoFk6XohSnSk8UBD-MnvDk2kqvPXz0IqEeRI_rWarrKOl9VPurbduWHJJATfaND7x3Agh4MdVmxHvVva5Q');*/
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    setToken();
+
     return Scaffold(
       body: _children[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(

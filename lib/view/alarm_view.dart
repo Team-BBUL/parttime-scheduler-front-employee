@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
-import 'package:sidam_worker/api/alarm_http_provider.dart';
+import 'package:sidam_worker/viewModel/alarm_http_provider.dart';
 import 'package:sidam_worker/model/AlarmModel.dart';
 import 'package:provider/provider.dart';
 import 'package:sidam_worker/model/appColor.dart';

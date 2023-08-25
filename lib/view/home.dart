@@ -5,8 +5,10 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import 'package:sidam_worker/model/appColor.dart';
-import 'package:sidam_worker/model/store_model.dart';
+import 'package:sidam_worker/utility/sp_helper.dart';
 import 'package:sidam_worker/view/impossible_time_select_view.dart';
+import 'package:sidam_worker/view/widget/main_cost.dart';
+import 'package:sidam_worker/viewModel/store_view_model.dart';
 import 'package:sidam_worker/viewModel/user_view_model.dart';
 import 'package:sidam_worker/view/notice_view.dart';
 import 'package:sidam_worker/viewModel/notice_view_model.dart';
@@ -22,18 +24,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   // models
-  late String _storeName; // store:name
-
-  Store store = Store(
-      id: 0,
-      name: '',
-      open: 0,
-      close: 0,
-      deadline: 1,
-      location: '',
-      phone: '',
-      week: 1
-  );
+  //late Store store;
+  String _storeName = '';
 
   // design constant
   final _designWidth = 411;
@@ -45,25 +37,20 @@ class _HomeState extends State<Home> {
 
   // etc
   Logger logger = Logger();
+  final SPHelper helper = SPHelper();
 
   var noticeVM = NoticeViewModel();
+
+  void loadStoreName() async {
+    await helper.init();
+    setState(() {
+      _storeName = helper.getStoreName() ?? '매장';
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    // 여기서 데이터 가져와야?
-
-    _storeName = ""; // storeName 가져오기 (json)
-
-    Store.loadStore().then((value) {
-      store = value;
-      setState(() {
-        _storeName = value.name;
-      });
-    })
-    .catchError((error) {
-      logger.e(error);
-    });
   }
 
   @override
@@ -78,6 +65,8 @@ class _HomeState extends State<Home> {
     final nameFontSize = deviceWidth * 13 / _designWidth;
 
     DateTime now = DateTime.now();
+
+    loadStoreName();
 
     return Scaffold(
       appBar: AppBar(
@@ -104,15 +93,18 @@ class _HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget> [
             announceWidget(),
-            IconButton(onPressed: (){
-
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ImpossibleTime()
-                  )
-              );
-            }, icon: SvgPicture.asset('assets/icons/calendar.svg')),
+            const MonthlyCost(),
+            IconButton(
+                onPressed: (){
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ImpossibleTime()
+                      )
+                  );
+                  },
+                icon: SvgPicture.asset('assets/icons/calendar.svg')
+            ),
             timetableWidget(deviceWidth, deviceHeight, now),
           ],
         ),
@@ -169,10 +161,9 @@ class _HomeState extends State<Home> {
     // 맨좌우 여백 10, 각 시간 블록 사이 여백 5씩
     double dayWidth = (deviceWidth - timeWidth - 10 - 20) / 8;
     double scheduleHeight = 270 * deviceHeight / _designHeight;
-    var cnt = store.close - store.open;
 
-    return Consumer<ScheduleViewModel>(
-      builder: (context, prov, child) {
+    return Consumer<StoreViewModel>(
+      builder: (context, storeProv, child) {
         return Container(
           width: deviceWidth,
           height: scheduleHeight + 70,
@@ -184,7 +175,7 @@ class _HomeState extends State<Home> {
                   color: color.mainColor,
                   spreadRadius: 0,
                   blurRadius: 5.0,
-                  offset: const Offset(0, -10),
+                  offset: const Offset(0, -5),
                 )
               ]
           ),
@@ -207,7 +198,7 @@ class _HomeState extends State<Home> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text('\n', style: TextStyle(fontSize: 11),),
-                              for(int i = store.open; i < store.close; i++)
+                              for(int i = storeProv.store.open ?? 0; i < (storeProv.store.close ?? 0); i++)
                                 Text('$i:00',
                                   style: TextStyle(fontSize: 12 * deviceHeight / _designHeight),
                                 )
@@ -215,48 +206,53 @@ class _HomeState extends State<Home> {
                           ),
                         ),
 
+
                         // 각 날짜의 스케줄 박스를 띄우는 부분
                         for (int i = 0; i < 7; i++) ...[
                           SizedBox(
                               height: scheduleHeight,
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    RichText(
-                                      text: TextSpan(
-                                        text: '${prov.scheduleList.isNotEmpty
-                                            ? prov.scheduleList[i].day.day : 0}'
-                                            '일\n${week[i + 1]}',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: // 오늘에 포인트 주기
-                                          DateFormat.yMd().format(DateTime.now())
-                                              == DateFormat.yMd().format(prov.scheduleList.isNotEmpty
-                                              ? prov.scheduleList[i].day : DateTime.parse('2023-01-01'))
-                                              ? Colors.red : Colors.black,
-                                          fontWeight:
-                                          DateFormat.yMd().format(DateTime.now()) ==
-                                              DateFormat.yMd().format(prov.scheduleList.isNotEmpty
-                                                  ? prov.scheduleList[i].day : DateTime.parse('2023-01-01'))
-                                              ? FontWeight.bold : FontWeight.normal,
-                                        ),
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    for (int j = 0; j < (store.close - store.open); j++) ...[
-                                      Container(
-                                        color: prov.scheduleList.isNotEmpty
-                                            && prov.scheduleList[i].time.isNotEmpty
-                                            && prov.scheduleList[i].time[j]
-                                            ? color.mainColor : Colors.black12,
-                                        height: 15 * deviceHeight / _designHeight,
-                                        width: dayWidth,
-                                        margin: const EdgeInsets.symmetric(horizontal: 3),
-                                      )
-                                    ]
-                                  ]
+                              child: Consumer<ScheduleViewModel>(
+                                  builder: (context, prov, child) {
+                                    return Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          RichText(
+                                            text: TextSpan(
+                                              text: '${prov.scheduleList.isNotEmpty
+                                                  ? prov.scheduleList[i].day.day
+                                                  : now.day - (now.weekday - (storeProv.store.weekStartDay ?? 1)) + i}'
+                                                  '일\n${week[storeProv.store.weekStartDay ?? 1 + i]}',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: // 오늘에 포인트 주기
+                                                DateFormat.yMd().format(DateTime.now())
+                                                    == DateFormat.yMd().format(prov.scheduleList.isNotEmpty
+                                                    ? prov.scheduleList[i].day : DateTime.parse('2023-01-01'))
+                                                    ? Colors.red : Colors.black,
+                                                fontWeight:
+                                                DateFormat.yMd().format(DateTime.now()) ==
+                                                    DateFormat.yMd().format(prov.scheduleList.isNotEmpty
+                                                        ? prov.scheduleList[i].day : DateTime.parse('2023-01-01'))
+                                                    ? FontWeight.bold : FontWeight.normal,
+                                              ),
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          for (int j = 0; j < ((storeProv.store.close ?? 0) - (storeProv.store.open ?? 0)); j++) ...[
+                                            Container(
+                                              color: prov.scheduleList.isNotEmpty
+                                                  && prov.scheduleList[i].time.isNotEmpty
+                                                  && prov.scheduleList[i].time[j]
+                                                  ? color.mainColor : Colors.black12,
+                                              height: 30 * deviceHeight / _designHeight - ((storeProv.store.close ?? 0) - (storeProv.store.open ?? 0)),
+                                              width: dayWidth,
+                                              margin: const EdgeInsets.symmetric(horizontal: 3),
+                                            )
+                                          ]
+                                        ]
+                                    );
+                                  },
                               )
                           )
                         ]

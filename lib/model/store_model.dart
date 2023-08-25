@@ -1,50 +1,76 @@
-import 'dart:convert';
+import 'package:logger/logger.dart';
 
-import 'package:flutter/services.dart';
+class StoreList {
+
+  List<Store>? data;
+
+  StoreList({this.data});
+
+  final _logger = Logger();
+
+  StoreList.fromJson(Map<String, dynamic> json) {
+    if (json['data'] != null) {
+      data = <Store>[];
+      json['data'].forEach((v) {
+        data!.add(Store.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (this.data != null) {
+      data['data'] = this.data!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+
+  StoreList filterStores(String keyword){
+    _logger.i("keyword $keyword");
+    List filteredList = data!.where((store) => store.name!.contains(keyword)).toList();
+    StoreList filteredStoreList = StoreList(data: filteredList as List<Store>);
+    _logger.i(filteredStoreList.data!.length);
+    return filteredStoreList;
+  }
+}
 
 class Store {
+  int? id;
+  String? name;
+  String? location;
+  String? phone;
+  int? open;
+  int? close;
+  int? costPolicy;
+  int? payday;
+  int? weekStartDay;
+  int? unworkableDaySelectDeadline;
+  List<dynamic>? errors;
 
-  final int id;
-  final String name;
-  final int open;
-  final int close;
-  final String location;
-  final String phone;
-  final int deadline;
-  final int week;
+  Store({this.id, this.name, this.location, this.phone});
+  Store.setTime({this.id, this.name, this.location, this.phone, this.open, this.close});
+  Store.all({this.id, this.name, this.location, this.phone, this.open, this.close, this.costPolicy, this.payday, this.weekStartDay});
 
-  Store({
-    required this.id,
-    required this.name,
-    required this.open,
-    required this.close,
-    required this.deadline,
-    required this.location,
-    required this.phone,
-    required this.week
-  });
-
-  factory Store.fromJson(Map<String, dynamic> json) {
-    return Store(
-        id: json['id'],
-        name: json['name'],
-        open: json['open'],
-        close: json['close'],
-        deadline: json['deadline'],
-        location: json['location'],
-        phone: json['phone'],
-        week: json['week']
-    );
+  Store.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    location = json['location'];
+    phone = json['phone'];
+    open = json['open'];
+    close = json['close'];
+    payday = json['payday'];
+    weekStartDay = json['weekStartDay'];
   }
 
-  static Future<Store> loadStore() async {
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'location': location,
+    'phone': phone,
+    'open': open,
+    'close': close,
+    'payday': payday,
+    'weekStartDay': weekStartDay,
+  };
 
-    String json = await rootBundle.loadString('assets/json/store.json')
-        .catchError((error) {
-          // api로 매장 정보 호출?
-          print("error: $error");
-        });
-    Store store = Store.fromJson(jsonDecode(json));
-    return store;
-  }
 }

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
-import 'package:sidam_worker/api/remote_data_source.dart';
+import 'package:sidam_worker/data/remote_data_source.dart';
 
 import 'package:sidam_worker/model/AlarmModel.dart';
 
@@ -19,6 +19,7 @@ class AlarmHttpProvider extends ChangeNotifier {
 
   // 초기에 알림 데이터를 가지고 오는 메소드
   Future<void> started() async {
+    session.init();
     await _getAlarm();
   }
 
@@ -94,7 +95,7 @@ class AlarmHttpProvider extends ChangeNotifier {
         return result;
 
       } else {
-        logger.e(response.body);
+        logger.w(response.body);
         return [];
       }
 

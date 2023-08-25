@@ -10,8 +10,6 @@ class _CostState extends State<Cost> {
 
   @override
   Widget build(BuildContext context) {
-    final ScrollController scrollController = ScrollController();
-
     return const Center(child: Text("cost"));
   }
 }

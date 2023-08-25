@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:logger/logger.dart';
 
-import 'package:sidam_worker/api/remote_data_source.dart';
+import 'package:sidam_worker/data/remote_data_source.dart';
 
 class AlarmViewModel {
 
@@ -29,6 +29,7 @@ class AlarmViewModel {
   Future<bool> deleteAlarm(int id) async {
 
     Session session = Session();
+    session.init();
 
     var res = await session.delete('api/alarm/list/${session.roleId}?id=$id');
     // 알림 삭제 api 전송
