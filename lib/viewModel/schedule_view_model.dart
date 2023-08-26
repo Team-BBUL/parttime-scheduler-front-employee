@@ -23,13 +23,21 @@ class ScheduleViewModel extends ChangeNotifier {
     _getScheduleList();
   }
 
+  // 새로고침을 누르면 스케줄을 새로 가지고 올 메소드
+  Future<void> renew() async {
+    _weeklySchedule = [];
+    await _getScheduleList();
+  }
+
+  // 화면에 그릴 스케줄을 가지고 오는 메소드
   Future<void> _getScheduleList() async {
-    await _scheduleRepository.getThisWeekSchedule(DateTime.now());
+    await _scheduleRepository.getWeeklySchedule(DateTime.now());
     List<Schedule> weeklySchedule = await _scheduleRepository.loadMySchedule(DateTime.now());
     _findThisWeekSchedule(weeklySchedule);
     notifyListeners();
   }
 
+  // 가져온 데이터에서 이번주차를 찾아내는 메소드
   Future<void> _findThisWeekSchedule(List<Schedule> data) async {
 
     Store store = await _storeRepository.getStoreData();

@@ -35,6 +35,12 @@ class CostViewModel extends ChangeNotifier {
     return time;
   }
 
+  // 새로고침
+  Future<void> renew() async {
+    _sumCost = 0;
+    await _getMonthlyPay(DateTime.now());
+  }
+
   Future<void> _getMonthlyPay(DateTime now) async {
 
     List<Schedule> weeklySchedule = await _scheduleRepository.loadMySchedule(now);

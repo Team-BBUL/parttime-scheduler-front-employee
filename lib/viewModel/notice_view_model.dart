@@ -10,7 +10,7 @@ import 'package:sidam_worker/repository/store_repository.dart';
 
 class NoticeViewModel extends ChangeNotifier {
   
-  var logger = Logger();
+  var _logger = Logger();
 
   late final _storeRepository;
   late Store _store;
@@ -34,12 +34,14 @@ class NoticeViewModel extends ChangeNotifier {
     _store = await _storeRepository.getStoreData();
 
     var res = await _session.get("/api/notice/${_store.id}/view/list?last=0&cnt=1&role=${_session.roleId}");
+
     var data = jsonDecode(res.body);
 
-    if (res.statusCode == 200) {
+    if (res.statusCode == 200 && data['data'].isNotEmpty) {
       return Notice.fromJson(data['data'][0]);
     } else {
-      return Future.error('반환 오류: ${data['message']}');
+      _logger.e('공지사항 불러오기 오류: ${data['message'] ?? '데이터가 없습니다.'}');
+      return Notice(title: '공지사항이 없습니다', timeStamp: '2023-01-01', id: 0, read: true);
     }
   }
 }

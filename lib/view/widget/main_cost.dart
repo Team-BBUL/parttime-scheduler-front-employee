@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sidam_worker/viewModel/cost_view_model.dart';
@@ -26,14 +26,24 @@ class _MonthlyCostState extends State<MonthlyCost> {
       width: deviceWidth,
       child: Consumer<CostViewModel>(
              builder: (context, prov, child) {
-               return Column(
-                 children: [
-                   Text('${DateTime.now().month}월 예상 급여'),
-                   Text('${moneyFormat.format(prov.monthlyPay)}원',
-                     style: TextStyle(fontSize: 30 * deviceHeight / _designHeight),
-                   ),
-                 ],
-               );
+               return TextButton(
+                     onPressed: () {
+                       prov.renew();
+                     },
+                     style: TextButton.styleFrom(
+                       textStyle: TextStyle(fontSize: (30 * deviceHeight / _designHeight)),
+                       padding: const EdgeInsets.all(0),
+                       primary: Colors.white,
+                     ),
+                     child: Column(children: [
+                       Text('${DateTime.now().month}월 예상 급여',
+                           style: TextStyle(color: Colors.black,
+                               fontSize: (15 * deviceHeight / _designHeight)),
+                       ),
+                       Text('${moneyFormat.format(prov.monthlyPay)}원',
+                         style: const TextStyle(color: Colors.black),),
+                     ])
+                   );
              }),
     );
   }

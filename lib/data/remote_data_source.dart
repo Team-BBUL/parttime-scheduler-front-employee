@@ -13,7 +13,7 @@ class Session {
   void init() async {
     await helper.init();
 
-    int? role = 1;//helper.getRoleId();
+    int? role = 7;//helper.getRoleId();
     _accountRoleId = role ?? 0;
     //headers['Authorization'] = 'Bearer ${helper.getJWT()}';
   }
@@ -21,8 +21,8 @@ class Session {
   var logger = Logger();
   SPHelper helper = SPHelper();
 
-  final String _server = "http://192.168.219.101:8088"; // 서버의 주소
-  int _accountRoleId = 0; // 현재 클라이언트의 사용자 ID
+  final String _server = "http://192.168.219.104:8088"; // 서버의 주소
+  int _accountRoleId = 7; // 현재 클라이언트의 사용자 ID
 
   set setRoleId(int id) { _accountRoleId = id; }
   get roleId { return _accountRoleId; }

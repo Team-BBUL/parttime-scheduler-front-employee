@@ -41,6 +41,7 @@ class LocalDataSource {
     try {
       File jsonFile = File('${await _localPath}/data/$fileName.json');
       jsonString = await jsonFile.readAsString();
+      _logger.i('${jsonFile.path} 파일 읽어오기 성공');
     } catch (e) {
       _logger.e('[$fileName.json 파일 읽어오기 오류] $e');
       jsonString = '{ "message": "[read fail] $e" }';
@@ -66,6 +67,7 @@ class LocalDataSource {
       }
 
       file.writeAsString(jsonString);
+      _logger.i('${file.path} 저장 성공');
 
     } catch (e) {
       _logger.e('[$fileName 파일 저장하기 오류] $e');
