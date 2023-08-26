@@ -217,7 +217,7 @@ class ScheduleRepository {
     return ScheduleList(id: idx, day: base, schedule: schedules);
   }
 
-  // 이번달, 저번달/다음달 스케줄 전부 읽어오기
+  // 이번달, 저번달/다음달 내 스케줄 전부 읽어오기
   Future<List<Schedule>> loadMySchedule(DateTime now) async {
 
     Map<String, dynamic> thisTime = await _dataSource.getSchedule(now);
@@ -232,12 +232,8 @@ class ScheduleRepository {
     List<Schedule> result = [];
 
     result.addAll(fromJsonSchedule(thisTime, true));
-
-    _logger.i('${result.length}개의 이번달 스케줄 추가');
-
     result.addAll(fromJsonSchedule(pass, true));
 
-    _logger.i('$thisTime\n\n\n$pass\n\n총 ${result.length}개의 스케줄 불러오기 성공');
 
     return result;
   }
@@ -285,8 +281,6 @@ class ScheduleRepository {
         result.add(Schedule(id: 0, day: thisDay, time: [], workers: []));
       }
     }
-
-    print('${result.length}개의 데이터');
 
     result.sort((a, b) => a.day.compareTo(b.day));
 
