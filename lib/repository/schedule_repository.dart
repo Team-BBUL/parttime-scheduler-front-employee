@@ -33,10 +33,6 @@ class ScheduleRepository {
 
     _logger.i('${getDate.month}월 ${getDate.day}일 데이터 요청');
 
-    //디버깅용 store id 및 user role id 하드코딩
-    _helper.writeRoleId(1);
-    _helper.writeStoreId(1);
-
     // 서버에 요청
     var url = '/api/schedule/${_helper.getStoreId()}'
         '?id=${_helper.getRoleId()}&version=${DateFormat("yyyy-MM-ddThh:mm:ss").format(DateTime(2023, 01, 01))}'
@@ -89,7 +85,6 @@ class ScheduleRepository {
 
     // 이번달 데이터 저장 - json -> ScheduleList로 변환해서 전달하기
     if (thisMonthSchedule.isNotEmpty) {
-      _logger.i('이번달 데이터 저장: ${thisMonthSchedule.length}개');
       _combineAndSaveSchedule(
           _localToScheduleList(
               await _dataSource.getSchedule(thisDate)),
@@ -100,7 +95,6 @@ class ScheduleRepository {
 
     // 지난달 데이터 저장
     if(lastMonthSchedule.isNotEmpty) {
-      _logger.i('지난달 데이터 저장: ${lastMonthSchedule.length}개');
       _combineAndSaveSchedule(
           _localToScheduleList(await _dataSource.getSchedule(lastDate)),
           lastMonthSchedule,
@@ -110,10 +104,9 @@ class ScheduleRepository {
 
     // 다음달 데이터 저장
     if(nextMonthSchedule.isNotEmpty) {
-      _logger.i('다음달 데이터 저장: ${nextMonthSchedule.length}개');
       _combineAndSaveSchedule(
           _localToScheduleList(await _dataSource.getSchedule(nextDate)),
-          lastMonthSchedule,
+          nextMonthSchedule,
           nameFormat.format(nextDate)
       );
     }
@@ -217,7 +210,7 @@ class ScheduleRepository {
     return ScheduleList(id: idx, day: base, schedule: schedules);
   }
 
-  // 이번달, 저번달/다음달 내 스케줄 전부 읽어오기
+  // now를 기준으로 이번달, 저번달/다음달 내 스케줄 전부 읽어오기
   Future<List<Schedule>> loadMySchedule(DateTime now) async {
 
     Map<String, dynamic> thisTime = await _dataSource.getSchedule(now);
@@ -225,24 +218,73 @@ class ScheduleRepository {
     if (now.day < 6) { // 이전달의 데이터가 포함되는 경우
        pass = await _dataSource
           .getSchedule(DateTime(now.year, now.month - 1, 1));
+    } else if (now.day > 22) { // 다음달의 데이터가 포함되는 경우
+      pass = await _dataSource
+          .getSchedule(DateTime(now.year, now.month + 1, 1));
+    }
+    List<Schedule> result = [];
+
+    result.addAll(fromJsonSchedule(thisTime, true, false));
+    if (pass.isNotEmpty){
+      result.addAll(fromJsonSchedule(pass, true, false));
+    }
+    return result;
+  }
+
+  // now를 기준으로 이번달, 저번달/다음달 다른 근무자 스케줄 전부 읽어오기
+  Future<List<Schedule>> loadOtherSchedule(DateTime now) async {
+
+    Map<String, dynamic> thisTime = await _dataSource.getSchedule(now);
+    Map<String, dynamic> pass = {};
+    if (now.day < 6) { // 이전달의 데이터가 포함되는 경우
+      pass = await _dataSource
+          .getSchedule(DateTime(now.year, now.month - 1, 1));
     } else if (now.day > 20) { // 다음달의 데이터가 포함되는 경우
       pass = await _dataSource
           .getSchedule(DateTime(now.year, now.month + 1, 1));
     }
     List<Schedule> result = [];
 
-    result.addAll(fromJsonSchedule(thisTime, true));
-    result.addAll(fromJsonSchedule(pass, true));
-
+    await _helper.init();
+    result.addAll(fromJsonSchedule(thisTime, false, true));
+    if (pass.isNotEmpty) {
+      result.addAll(fromJsonSchedule(pass, false, true));
+    }
 
     return result;
   }
 
-  // 읽어온 data 에서 (my = true 나만 있는 / my = false 모두) 스케줄 변환
-  List<Schedule> fromJsonSchedule(Map<String, dynamic> data, bool my) {
+  // now를 기준으로 이번달, 저번달/다음달 모든 근무자의 스케줄 읽어오기
+  Future<List<Schedule>> loadAllSchedule(DateTime now) async {
+
+    Map<String, dynamic> thisTime = await _dataSource.getSchedule(now);
+    Map<String, dynamic> pass = {};
+    if (now.day < 6) { // 이전달의 데이터가 포함되는 경우
+      pass = await _dataSource
+          .getSchedule(DateTime(now.year, now.month - 1, 1));
+    } else if (now.day > 20) { // 다음달의 데이터가 포함되는 경우
+      pass = await _dataSource
+          .getSchedule(DateTime(now.year, now.month + 1, 1));
+    }
+    List<Schedule> result = [];
+
+    await _helper.init();
+    result.addAll(toSchedule(thisTime));
+    if (pass.isNotEmpty) {
+      result.addAll(toSchedule(pass));
+    }
+
+    return result;
+  }
+
+  // 읽어온 data 에서 (my = 나 포함 여부 / other = 내가 아닌 다른 근무자 포함 여부) 스케줄 변환
+  List<Schedule> fromJsonSchedule(Map<String, dynamic> data, bool my, bool other) {
+
+    if (!my && !other) { return []; }
 
     List<Schedule> result = [];
     bool insert;
+    int myId = _helper.getRoleId() ?? 0;
 
     // json이 없을 경우 처리
     if (data['date'] == null || data['date'] == 'NON') {
@@ -250,14 +292,13 @@ class ScheduleRepository {
       return [];
     }
 
-    // 이번달 내 스케줄 찾기
     for (var day in data['date']) {
 
       List<String> days = day['day'].split('-');
       DateTime thisDay = DateTime(int.parse(days[0]), int.parse(days[1]), int.parse(days[2]));
 
       insert = false;
-      // 스케줄이 없는 날짜면 스킵
+      // 스케줄이 없는 날짜면 더미 추가하고 스킵
       if (day == null) {
         result.add(Schedule(id: 0, day: thisDay, time: [], workers: []));
         continue;
@@ -269,11 +310,53 @@ class ScheduleRepository {
 
         // 근무자 목록 중에서 사용자를 찾음
         for (User u in schedule.workers) {
-          if (!my || u.id == 7) { //_helper.getRoleId()) {
+          if (!result.contains(schedule) &&
+              ((other && u.id != myId) || (my && u.id == myId))) {
             result.add(schedule);
             insert = true;
           }
         }
+      }
+
+      // add가 안 일어났으면 (= 내 스케줄이 없는 날이었으면) 날짜 더미 추가
+      if (!insert) {
+        result.add(Schedule(id: 0, day: thisDay, time: [], workers: []));
+      }
+    }
+
+    result.sort((a, b) => a.day.compareTo(b.day));
+
+    return result;
+  }
+
+  List<Schedule> toSchedule(Map<String, dynamic> data) {
+
+    List<Schedule> result = [];
+    bool insert;
+
+    // json이 없을 경우 처리
+    if (data['date'] == null || data['date'] == 'NON') {
+      _logger.w('데이터가 존재하지 않음');
+      return [];
+    }
+
+    for (var day in data['date']) {
+
+      List<String> days = day['day'].split('-');
+      DateTime thisDay = DateTime(int.parse(days[0]), int.parse(days[1]), int.parse(days[2]));
+
+      insert = false;
+      // 스케줄이 없는 날짜면 더미 추가하고 스킵
+      if (day == null) {
+        result.add(Schedule(id: 0, day: thisDay, time: [], workers: []));
+        continue;
+      }
+
+      for (var daily in day['schedule']) {
+
+        Schedule schedule = Schedule.fromJson(daily, thisDay);
+        result.add(schedule);
+        insert = true;
       }
 
       // add가 안 일어났으면 (= 내 스케줄이 없는 날이었으면) 날짜 더미 추가

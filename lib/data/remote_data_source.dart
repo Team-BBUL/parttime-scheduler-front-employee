@@ -21,7 +21,7 @@ class Session {
   var logger = Logger();
   SPHelper helper = SPHelper();
 
-  final String _server = "http://192.168.219.104:8088"; // 서버의 주소
+  final String _server = "http://192.168.219.103:8088"; // 서버의 주소
   int _accountRoleId = 7; // 현재 클라이언트의 사용자 ID
 
   set setRoleId(int id) { _accountRoleId = id; }

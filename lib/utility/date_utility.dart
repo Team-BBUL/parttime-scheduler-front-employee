@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
 class DateUtility {
@@ -6,8 +7,10 @@ class DateUtility {
   // 이번 주차 시작일 찾기
   DateTime findStartDay(DateTime base, int weekday) {
 
+    if (base.weekday == weekday) { return base; }
+
     return DateTime(base.year, base.month, base.day).subtract(
-        Duration(days: (base.weekday - weekday))
+        Duration(days: 7 - (weekday - base.weekday))
     );
   }
 }

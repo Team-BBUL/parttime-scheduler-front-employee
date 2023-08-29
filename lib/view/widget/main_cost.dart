@@ -31,14 +31,14 @@ class _MonthlyCostState extends State<MonthlyCost> {
                        prov.renew();
                      },
                      style: TextButton.styleFrom(
-                       textStyle: TextStyle(fontSize: (30 * deviceHeight / _designHeight)),
+                       textStyle: TextStyle(fontSize: (27 * deviceHeight / _designHeight)),
                        padding: const EdgeInsets.all(0),
                        primary: Colors.white,
                      ),
                      child: Column(children: [
-                       Text('${DateTime.now().month}월 예상 급여',
+                       Text('${DateTime.now().month}월 누적 급여',
                            style: TextStyle(color: Colors.black,
-                               fontSize: (15 * deviceHeight / _designHeight)),
+                               fontSize: (14 * deviceHeight / _designHeight)),
                        ),
                        Text('${moneyFormat.format(prov.monthlyPay)}원',
                          style: const TextStyle(color: Colors.black),),

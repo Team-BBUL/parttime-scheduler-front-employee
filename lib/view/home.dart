@@ -1,15 +1,13 @@
 import "package:flutter/material.dart";
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import 'package:sidam_worker/model/appColor.dart';
-import 'package:sidam_worker/utility/sp_helper.dart';
+import 'package:sidam_worker/utility/shared_preference_provider.dart';
 import 'package:sidam_worker/view/impossible_time_select_view.dart';
 import 'package:sidam_worker/view/widget/main_cost.dart';
-import 'package:sidam_worker/viewModel/store_view_model.dart';
-import 'package:sidam_worker/viewModel/user_view_model.dart';
+import 'package:sidam_worker/view/widget/my_schedule_viewer.dart';
 import 'package:sidam_worker/view/notice_view.dart';
 import 'package:sidam_worker/viewModel/notice_view_model.dart';
 import 'package:sidam_worker/viewModel/schedule_view_model.dart';
@@ -23,8 +21,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   // models
-  //late Store store;
   String _storeName = '';
+  String _userAlias = '';
 
   // design constant
   final _designWidth = 411;
@@ -36,14 +34,17 @@ class _HomeState extends State<Home> {
 
   // etc
   Logger logger = Logger();
-  final SPHelper helper = SPHelper();
 
-  var noticeVM = NoticeViewModel();
+  void loadSPProvider() async {
 
-  void loadStoreName() async {
-    await helper.init();
+    final provider = Provider.of<SharedPreferencesProvider>(context);
+
+    String storeName = await provider.getStoreName();
+    String userAlias = await provider.getAlias();
+
     setState(() {
-      _storeName = helper.getStoreName() ?? '매장';
+      _storeName = storeName;
+      _userAlias = userAlias;
     });
   }
 
@@ -54,6 +55,8 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    loadSPProvider();
+
     final deviceWidth = MediaQuery.of(context).size.width;
     final deviceHeight = MediaQuery.of(context).size.height;
 
@@ -65,8 +68,6 @@ class _HomeState extends State<Home> {
 
     DateTime now = DateTime.now();
 
-    loadStoreName();
-
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -74,14 +75,10 @@ class _HomeState extends State<Home> {
             style: TextStyle(fontSize: storeFontSize),
           ),
           centerTitle: true,
-          leading: Center(child: Consumer<UserProvider>(
-            builder: (context, userProvider, child) {
-              final user = userProvider.user;
-              return Text(
-                user != null ? user.name : "사용자",
-                style: TextStyle(fontSize: nameFontSize),
-              );
-            },
+          leading: Center(
+              child: Text(
+                _userAlias,
+            style: TextStyle(fontSize: nameFontSize),
           )),
           actions: <Widget>[
             IconButton(
@@ -96,16 +93,30 @@ class _HomeState extends State<Home> {
             children: <Widget>[
               announceWidget(),
               const MonthlyCost(),
-              IconButton(
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                ElevatedButton(
                   onPressed: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ImpossibleTime()
-                        )
-                    );
+                            builder: (context) => ImpossibleTime()));
                   },
-                  icon: SvgPicture.asset('assets/icons/calendar.svg')),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size.zero,
+                    foregroundColor: color.mainColor,
+                    backgroundColor: color.moreWhiterColor,
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, top: 5, bottom: 5),
+                  ),
+                  child: const Text(
+                    '개인 일정 저장하기',
+                    style: TextStyle(color: Colors.black87, fontSize: 13),
+                  ),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+              ]),
               timetableWidget(deviceWidth, deviceHeight, now),
             ],
           ),
@@ -162,145 +173,56 @@ class _HomeState extends State<Home> {
     double dayWidth = (deviceWidth - timeWidth - 10 - 20) / 8;
     double scheduleHeight = 270 * deviceHeight / _designHeight;
 
-    return Consumer<StoreViewModel>(builder: (context, storeProv, child) {
-      return Container(
-          width: deviceWidth,
-          height: scheduleHeight + 70,
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(40),
-              boxShadow: [
-                BoxShadow(
-                  color: color.mainColor,
-                  spreadRadius: 0,
-                  blurRadius: 5.0,
-                  offset: const Offset(0, -5),
-                )
-              ]),
-          child: Consumer<ScheduleViewModel>(builder: (context, prov, child) {
-            return Column(
-              children: [
-                const SizedBox(height: 3),
-                SizedBox(
-                    width: deviceWidth,
-                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                      const SizedBox(width: 50, height: 5,),
-                      Column(children: [
-                        const Text(
-                          "이번주 근무",
-                          style: TextStyle(fontSize: 15),
+    return Container(
+        width: deviceWidth,
+        height: scheduleHeight + 90,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(40),
+            boxShadow: [
+              BoxShadow(
+                color: color.mainColor,
+                spreadRadius: 0,
+                blurRadius: 5.0,
+                offset: const Offset(0, -5),
+              )
+            ]),
+        child: Consumer<ScheduleViewModel>(builder: (context, prov, child) {
+          return Column(
+            children: [
+              const SizedBox(height: 3),
+              SizedBox(
+                  width: deviceWidth,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const SizedBox(
+                          width: 50,
+                          height: 2,
                         ),
-                        Text(
-                          "${now.month}월 ${now.day}일 ${week[now.weekday]}요일",
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                      ]),
-                      IconButton(
-                          onPressed: () {
-                            prov.renew();
-                          },
-                          icon: const Icon(Icons.autorenew,
-                              color: Colors.black38, size: 30,)
-                      )
-                    ])
-                ),
-                Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                    child: Row(children: [
-                      // 시간을 띄우는 부분
-                      SizedBox(
-                        width: timeWidth,
-                        height: scheduleHeight,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              '\n',
-                              style: TextStyle(fontSize: 11),
-                            ),
-                            for (int i = storeProv.store.open ?? 0;
-                                i < (storeProv.store.close ?? 0);
-                                i++)
-                              Text(
-                                '$i:00',
-                                style: TextStyle(
-                                    fontSize:
-                                        12 * deviceHeight / _designHeight),
-                              )
-                          ],
-                        ),
-                      ),
-
-                      // 각 날짜의 스케줄 박스를 띄우는 부분
-                      for (int i = 0; i < 7; i++) ...[
-                        SizedBox(
-                            height: scheduleHeight,
-                            child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  RichText(
-                                    text: TextSpan(
-                                      text:
-                                          '${prov.scheduleList.isNotEmpty ? prov.scheduleList[i].day.day : now.day - (now.weekday - (storeProv.store.weekStartDay ?? 1)) + i}'
-                                          '일\n${week[storeProv.store.weekStartDay ?? 1 + i]}',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: // 오늘에 포인트 주기
-                                            DateFormat.yMd().format(
-                                                        DateTime.now()) ==
-                                                    DateFormat.yMd().format(prov
-                                                            .scheduleList
-                                                            .isNotEmpty
-                                                        ? prov
-                                                            .scheduleList[i].day
-                                                        : DateTime.parse(
-                                                            '2023-01-01'))
-                                                ? Colors.red
-                                                : Colors.black,
-                                        fontWeight: DateFormat.yMd()
-                                                    .format(DateTime.now()) ==
-                                                DateFormat.yMd().format(prov
-                                                        .scheduleList.isNotEmpty
-                                                    ? prov.scheduleList[i].day
-                                                    : DateTime.parse(
-                                                        '2023-01-01'))
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                      ),
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  for (int j = 0;
-                                      j <
-                                          ((storeProv.store.close ?? 0) -
-                                              (storeProv.store.open ?? 0));
-                                      j++) ...[
-                                    Container(
-                                      color: prov.scheduleList.isNotEmpty &&
-                                              prov.scheduleList[i].time
-                                                  .isNotEmpty &&
-                                              prov.scheduleList[i].time[j]
-                                          ? color.mainColor
-                                          : Colors.black12,
-                                      height:
-                                          30 * deviceHeight / _designHeight -
-                                              ((storeProv.store.close ?? 0) -
-                                                  (storeProv.store.open ?? 0)),
-                                      width: dayWidth,
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 3),
-                                    )
-                                  ]
-                                ]))
-                      ]
-                    ])),
-              ],
-            );
-          }));
-    });
+                        Column(children: [
+                          const Text(
+                            "이번주 근무",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          Text(
+                            "${now.month}월 ${now.day}일 ${week[now.weekday]}요일",
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        ]),
+                        IconButton(
+                            onPressed: () {
+                              prov.renew();
+                            },
+                            icon: const Icon(
+                              Icons.autorenew,
+                              color: Colors.black38,
+                              size: 30,
+                            ))
+                      ])),
+              ScheduleViewer(),
+            ],
+          );
+        }));
   }
 }

@@ -44,6 +44,10 @@ class SPHelper{
     prefs.setInt('roleId', roleId);
   }
 
+  Future writeWeekStartDay(int week) async {
+    prefs.setInt('weekStartDay', week);
+  }
+
   String getJWT(){
     return prefs.getString('jwt') ?? '';
   }
@@ -70,5 +74,9 @@ class SPHelper{
 
   int? getRoleId(){
     return prefs.getInt('roleId');
+  }
+
+  int? getWeekStartDay() {
+    return prefs.getInt('weekStartDay');
   }
 }

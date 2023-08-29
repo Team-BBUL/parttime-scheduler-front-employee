@@ -1,26 +1,41 @@
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 import 'package:logger/logger.dart';
 
 import 'package:sidam_worker/repository/schedule_repository.dart';
 import 'package:sidam_worker/model/schedule_model.dart';
-import 'package:sidam_worker/model/store_model.dart';
-import 'package:sidam_worker/repository/store_repository.dart';
 import 'package:sidam_worker/utility/date_utility.dart';
+import 'package:sidam_worker/utility/sp_helper.dart';
 
 class ScheduleViewModel extends ChangeNotifier {
   final _logger = Logger();
 
   late final ScheduleRepository _scheduleRepository;
-  late final StoreRepository _storeRepository;
+  late final SPHelper _helper;
+  late final DateUtility _dateUtility;
 
   List<Schedule> _weeklySchedule = []; // 날짜순으로 지난달-이번달 내가 포함된 스케줄
   List<Schedule> get scheduleList => _weeklySchedule;
 
+  DateTime _week = DateTime.now();
+  DateTime get week => _week;
+
+  bool _monthly = false;
+
   ScheduleViewModel() {
     _scheduleRepository = ScheduleRepository();
-    _storeRepository = StoreRepository();
+    _dateUtility = DateUtility();
+    _helper = SPHelper();
+    _helper.init();
+
+    init();
     _getScheduleList();
+  }
+
+  void init() async {
+    await _helper.init();
+    _week = _dateUtility.findStartDay(DateTime.now(), _helper.getWeekStartDay() ?? 1);
   }
 
   // 새로고침을 누르면 스케줄을 새로 가지고 올 메소드
@@ -31,31 +46,76 @@ class ScheduleViewModel extends ChangeNotifier {
 
   // 화면에 그릴 스케줄을 가지고 오는 메소드
   Future<void> _getScheduleList() async {
-    await _scheduleRepository.getWeeklySchedule(DateTime.now());
+
     List<Schedule> weeklySchedule = await _scheduleRepository.loadMySchedule(DateTime.now());
     _findThisWeekSchedule(weeklySchedule);
+
+    if(!_monthly) {
+      await _getMonthSchedule();
+    }
+    _scheduleRepository.getWeeklySchedule(DateTime.now()); // 서버에서 데이터 가져옴
+
+    _logger.i('로컬에서 가져온 스케줄 ${weeklySchedule.length}개');
+    _logger.i('띄울 스케줄 ${_weeklySchedule.length}개');
     notifyListeners();
   }
 
   // 가져온 데이터에서 이번주차를 찾아내는 메소드
   Future<void> _findThisWeekSchedule(List<Schedule> data) async {
-
-    Store store = await _storeRepository.getStoreData();
-    DateUtility dateUtility = DateUtility();
-
     // 이번 주차 시작일 찾기
-    DateTime now = DateTime.now();
-    DateTime beforeDay = dateUtility.findStartDay(DateTime(now.year, now.month, now.day), store.weekStartDay ?? 1);
+    DateTime startDay = _dateUtility.findStartDay(
+        DateTime.now(), _helper.getWeekStartDay() ?? 1);
 
+    _weeklySchedule = [];
     // 스케줄을 하나씩 확인해서, 이번 주차인 걸 찾아야됨
-    for(Schedule schedule in data) {
-
-      if (schedule.day.isAfter(beforeDay)
-          || schedule.day.isBefore(beforeDay.add(const Duration(days: 8)))) {
+    for (Schedule schedule in data) {
+      if (schedule.day.isAfter(startDay.subtract(const Duration(days: 1)))
+          && schedule.day.isBefore(startDay.add(const Duration(days: 7)))) {
         _weeklySchedule.add(schedule);
       }
     }
 
+    _setScheduleDummy(startDay);
     _weeklySchedule.sort((a, b) => a.day.compareTo(b.day));
+
+    for (var s in _weeklySchedule) {
+      print('${s.day} : ${s.id}');
+    }
+  }
+
+  // 이번 주로부터 4주차 이전까지의 데이터를 가지고 오는 메소드
+  Future<void> _getMonthSchedule() async {
+    _logger.i('4주 치 데이터 요청');
+
+    DateUtility dateUtility = DateUtility();
+
+    DateTime now = DateTime.now();
+    DateTime start = dateUtility.findStartDay(now, _helper.getWeekStartDay() ?? 1);
+    DateTime thisWeek = start;
+
+    for (int i = 1; i <= 4; i++) {
+      thisWeek = thisWeek.subtract(const Duration(days: 7));
+      await _scheduleRepository.getWeeklySchedule(thisWeek);
+    }
+    _monthly = true;
+  }
+
+  // 없는 날짜에 더미 추가
+  void _setScheduleDummy(DateTime start) {
+
+    bool check;
+    for (DateTime i = start; i.isBefore(start.add(const Duration(days: 7))); i.add(const Duration(days: 1))){
+
+      check = false;
+      for (var schedule in _weeklySchedule) {
+        if (schedule.day == i) {
+          check = true;
+        }
+      }
+
+      if (!check) {
+        _weeklySchedule.add(Schedule(id: 0, day: i, time: [], workers: []));
+      }
+    }
   }
 }
