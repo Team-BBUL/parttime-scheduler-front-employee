@@ -29,8 +29,6 @@ class _ScheduleViewerState extends State<ScheduleViewer> {
     double dayWidth = (deviceWidth - timeWidth - 10 - 20) / 8;
     double scheduleHeight = 280 * deviceHeight / _designHeight;
 
-    DateTime now = DateTime.now();
-
     return Consumer<StoreViewModel>(builder: (context, storeProv, child) {
       return Consumer<ScheduleViewModel>(builder: (context, prov, child) {
         return Padding(
@@ -55,8 +53,8 @@ class _ScheduleViewerState extends State<ScheduleViewer> {
                                 fontSize: 12,
                                 color: // 오늘에 포인트 주기
                                     DateFormat.yMd().format(DateTime.now()) ==
-                                            DateFormat.yMd().format(prov
-                                                    .scheduleList.isNotEmpty
+                                            DateFormat.yMd().format(
+                                                prov.scheduleList.isNotEmpty
                                                 ? prov.scheduleList[i].day
                                                 : DateTime.parse('2023-01-01'))
                                         ? Colors.red

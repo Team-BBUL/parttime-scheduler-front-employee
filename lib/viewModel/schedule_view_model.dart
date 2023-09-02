@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
 
 import 'package:logger/logger.dart';
 
@@ -51,12 +50,10 @@ class ScheduleViewModel extends ChangeNotifier {
     _findThisWeekSchedule(weeklySchedule);
 
     if(!_monthly) {
-      await _getMonthSchedule();
+      _getMonthSchedule();
     }
     _scheduleRepository.getWeeklySchedule(DateTime.now()); // 서버에서 데이터 가져옴
 
-    _logger.i('로컬에서 가져온 스케줄 ${weeklySchedule.length}개');
-    _logger.i('띄울 스케줄 ${_weeklySchedule.length}개');
     notifyListeners();
   }
 
@@ -66,7 +63,6 @@ class ScheduleViewModel extends ChangeNotifier {
     DateTime startDay = _dateUtility.findStartDay(
         DateTime.now(), _helper.getWeekStartDay() ?? 1);
 
-    _weeklySchedule = [];
     // 스케줄을 하나씩 확인해서, 이번 주차인 걸 찾아야됨
     for (Schedule schedule in data) {
       if (schedule.day.isAfter(startDay.subtract(const Duration(days: 1)))
@@ -77,10 +73,6 @@ class ScheduleViewModel extends ChangeNotifier {
 
     _setScheduleDummy(startDay);
     _weeklySchedule.sort((a, b) => a.day.compareTo(b.day));
-
-    for (var s in _weeklySchedule) {
-      print('${s.day} : ${s.id}');
-    }
   }
 
   // 이번 주로부터 4주차 이전까지의 데이터를 가지고 오는 메소드
@@ -104,17 +96,17 @@ class ScheduleViewModel extends ChangeNotifier {
   void _setScheduleDummy(DateTime start) {
 
     bool check;
-    for (DateTime i = start; i.isBefore(start.add(const Duration(days: 7))); i.add(const Duration(days: 1))){
+    for (int i = 0; i < 7; i++){
 
       check = false;
       for (var schedule in _weeklySchedule) {
-        if (schedule.day == i) {
+        if (schedule.day == start.add(Duration(days: i))) {
           check = true;
         }
       }
 
       if (!check) {
-        _weeklySchedule.add(Schedule(id: 0, day: i, time: [], workers: []));
+        _weeklySchedule.add(Schedule(id: 0, day: start.add(Duration(days: i)), time: [], workers: []));
       }
     }
   }

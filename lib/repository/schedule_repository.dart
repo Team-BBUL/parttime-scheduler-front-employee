@@ -5,10 +5,13 @@ import 'package:logger/logger.dart';
 
 import 'package:sidam_worker/data/local_data_source.dart';
 import 'package:sidam_worker/data/remote_data_source.dart';
+
 import 'package:sidam_worker/model/schedule_model.dart';
 import 'package:sidam_worker/model/user_model.dart';
 import 'package:sidam_worker/model/store_model.dart';
+
 import 'package:sidam_worker/repository/store_repository.dart';
+
 import 'package:sidam_worker/utility/date_utility.dart';
 import 'package:sidam_worker/utility/sp_helper.dart';
 
@@ -224,13 +227,35 @@ class ScheduleRepository {
     }
     List<Schedule> result = [];
 
-    result.addAll(fromJsonSchedule(thisTime, true, false));
+    result.addAll(fromJsonSchedule(thisTime, _helper.getRoleId() ?? 0));
     if (pass.isNotEmpty){
-      result.addAll(fromJsonSchedule(pass, true, false));
+      result.addAll(fromJsonSchedule(pass, _helper.getRoleId() ?? 0));
     }
     return result;
   }
 
+  // now를 기준으로 이번달, 저번달/다음달 다른 근무자의 스케줄 전부 읽어오기
+  Future<List<Schedule>> loadOtherSchedule(DateTime now, int id) async {
+
+    Map<String, dynamic> thisTime = await _dataSource.getSchedule(now);
+    Map<String, dynamic> pass = {};
+    if (now.day < 6) { // 이전달의 데이터가 포함되는 경우
+      pass = await _dataSource
+          .getSchedule(DateTime(now.year, now.month - 1, 1));
+    } else if (now.day > 22) { // 다음달의 데이터가 포함되는 경우
+      pass = await _dataSource
+          .getSchedule(DateTime(now.year, now.month + 1, 1));
+    }
+    List<Schedule> result = [];
+
+    result.addAll(fromJsonSchedule(thisTime, id));
+    if (pass.isNotEmpty){
+      result.addAll(fromJsonSchedule(pass, id));
+    }
+    return result;
+  }
+
+  /*
   // now를 기준으로 이번달, 저번달/다음달 다른 근무자 스케줄 전부 읽어오기
   Future<List<Schedule>> loadOtherSchedule(DateTime now) async {
 
@@ -252,7 +277,7 @@ class ScheduleRepository {
     }
 
     return result;
-  }
+  }*/
 
   // now를 기준으로 이번달, 저번달/다음달 모든 근무자의 스케줄 읽어오기
   Future<List<Schedule>> loadAllSchedule(DateTime now) async {
@@ -277,14 +302,11 @@ class ScheduleRepository {
     return result;
   }
 
-  // 읽어온 data 에서 (my = 나 포함 여부 / other = 내가 아닌 다른 근무자 포함 여부) 스케줄 변환
-  List<Schedule> fromJsonSchedule(Map<String, dynamic> data, bool my, bool other) {
-
-    if (!my && !other) { return []; }
+  // 읽어온 data 에서 (my = true 나 / false 다른 사용자) 스케줄 변환
+  List<Schedule> fromJsonSchedule(Map<String, dynamic> data, int id) {
 
     List<Schedule> result = [];
     bool insert;
-    int myId = _helper.getRoleId() ?? 0;
 
     // json이 없을 경우 처리
     if (data['date'] == null || data['date'] == 'NON') {
@@ -310,8 +332,7 @@ class ScheduleRepository {
 
         // 근무자 목록 중에서 사용자를 찾음
         for (User u in schedule.workers) {
-          if (!result.contains(schedule) &&
-              ((other && u.id != myId) || (my && u.id == myId))) {
+          if (!result.contains(schedule) && (u.id == id)) {
             result.add(schedule);
             insert = true;
           }

@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 
 import 'package:sidam_worker/model/appColor.dart';
 import 'package:sidam_worker/model/schedule_model.dart';
-import 'package:sidam_worker/model/user_model.dart';
 
 import 'package:sidam_worker/viewModel/store_view_model.dart';
 import 'package:sidam_worker/viewModel/work_swap_view_model.dart';
@@ -25,7 +24,7 @@ class _ViewerState extends State<SwapViewer> {
 
   // model
   bool _myView = true; // 내 근무를 그릴지 다른 근무자의 근무를 그릴지 구분
-  int roleId = 0;
+  int roleId = 0; // 선택된 교환 근무자의 id
 
   void loadSPProvider() async {
     final provider = Provider.of<SharedPreferencesProvider>(context);
@@ -34,10 +33,61 @@ class _ViewerState extends State<SwapViewer> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _myView ? viewMySchedule() : viewOtherSchedule(),
-      ],
+    return Column(children: [
+      _myView ? viewMySchedule() : viewOtherSchedule(),
+    ],);
+  }
+
+  // 다른 근무자를 선택하는 위젯
+  Widget selectOtherWorker() {
+    final deviceWidth = MediaQuery.of(context).size.width;
+    final deviceHeight = MediaQuery.of(context).size.height;
+
+    return SizedBox(
+      width: deviceWidth,
+      height: 30,
+      child: Consumer<WorkSwapViewModel>(builder: (context, prov, child) {
+        return ListView.builder(
+            physics: const ClampingScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            itemCount: prov.workers.length,
+            itemBuilder: (context, idx) {
+              return Row(
+                children: [
+                  const SizedBox(width: 5,),
+                  TextButton(
+                    style: ButtonStyle(
+                      minimumSize: MaterialStateProperty.all(Size.zero),
+                      foregroundColor: MaterialStateProperty.all(Colors.white),
+                      backgroundColor:
+                      MaterialStateProperty.resolveWith((states) {
+                        // 선택하거나 선택한 근무자가 현재 띄우고 있는 객체일 경우 빨갛게 강조표시
+                        if (states.contains(MaterialState.pressed) || prov.otherId == prov.workers[idx].id) {
+                          return Colors.red;
+                        } else {
+                          return Color(int.parse(prov.workers[idx].color));
+                        }
+                      }),
+                      padding: MaterialStateProperty.all(const EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5)),
+                    ),
+                    child: Text(prov.workers[idx].name,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        prov.otherId = prov.workers[idx].id;
+                        prov.name = prov.workers[idx].name;
+                        prov.getOtherWorkerSchedule();
+                      });
+                      print('${prov.workers[idx].id} 근무자가 선택됨');
+                    },
+                  ),
+                  const SizedBox(width: 5,)
+                ],
+              );
+            });
+      }),
     );
   }
 
@@ -58,7 +108,7 @@ class _ViewerState extends State<SwapViewer> {
         height: 20,
       ),
       const Text(
-        '변경하실 근무를 선택해주세요!',
+        '변경 요청하실 근무를 선택해주세요!',
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
       ),
       const SizedBox(
@@ -68,80 +118,118 @@ class _ViewerState extends State<SwapViewer> {
         return Consumer<WorkSwapViewModel>(builder: (context, prov, child) {
           return Padding(
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-              child: Row(children: [
-                // 시간을 띄우는 부분
+              child: Column(children: [
                 SizedBox(
-                  width: timeWidth,
-                  height: scheduleHeight,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const Text(
-                        '\n',
-                        style: TextStyle(fontSize: 8),
-                      ),
-                      for (int i = storeProv.store.open ?? 0;
-                          i < (storeProv.store.close ?? 0);
-                          i++)
-                        Text(
-                          '$i:00',
-                          style: TextStyle(
-                              fontSize: 12 * deviceHeight / _designHeight),
-                        ),
-                    ],
-                  ),
-                ),
-
-                // 각 날짜의 스케줄 박스를 띄우는 부분
-                for (int i = 0; i < 7; i++) ...[
-                  SizedBox(
-                      height: scheduleHeight,
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              // 날짜를 구하기 위해 provider에 저장된 주 첫날 + i를 그 달의 마지막 날로 모듈러 연산해서, 0일을 1일로 만들기 위해 마지막 날로 나눈 몫을 합
-                              '${(prov.week.day + i) % (DateTime(prov.week.year, prov.week.month + 1, 1).subtract(const Duration(days: 1)).day + 1) + ((prov.week.day + i) / (DateTime(prov.week.year, prov.week.month + 1, 1).subtract(const Duration(days: 1)).day + 1)).floor()}'
-                              '일\n${week[storeProv.store.weekStartDay ?? 1 + i]}',
-                              style: const TextStyle(
-                                fontSize: 12,
+                    width: deviceWidth,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const SizedBox(
+                            width: 50,
+                          ),
+                          // 날짜 띄우는 부분
+                          for (int i = 0; i < 7; i++) ...[
+                            RichText(
+                              text: TextSpan(
+                                text: '${prov.week.add(Duration(days: i)).day}'
+                                    '일\n${week[((prov.week.weekday + i) > 7 ? (prov.week.weekday + i) % 8 + 1 : prov.week.weekday + i)]}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: // 오늘에 포인트 주기
+                                      DateFormat.yMd().format(DateTime.now()) ==
+                                              DateFormat.yMd().format(
+                                                  prov.mySchedules.isNotEmpty
+                                                      ? prov.mySchedules[i].day
+                                                      : DateTime.parse('2023-01-01'))
+                                          ? Colors.red
+                                          : Colors.black,
+                                  fontWeight: DateFormat.yMd().format(DateTime.now()) ==
+                                          DateFormat.yMd().format(prov.mySchedules.isNotEmpty
+                                              ? prov.mySchedules[i].day
+                                              : DateTime.parse('2023-01-01'))
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
                               ),
                               textAlign: TextAlign.center,
                             ),
-                            for (int j = 0;
-                                j <
-                                    ((storeProv.store.close ?? 0) -
-                                        (storeProv.store.open ?? 0));
-                                j++) ...[
-                              GestureDetector(
-                                child: Container(
-                                  color: prov.mySchedules.isNotEmpty &&
-                                          prov.mySchedules.length > i &&
-                                          prov.mySchedules[i].time.isNotEmpty &&
-                                          prov.mySchedules[i].time[j]
-                                      ? color.mainColor
-                                      : Colors.black12,
-                                  height: 42 * deviceHeight / _designHeight -
-                                      ((storeProv.store.close ?? 0) -
-                                          (storeProv.store.open ?? 0)),
-                                  width: dayWidth,
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 3),
+                            const SizedBox(
+                              width: 20,
+                            )
+                          ]
+                        ])),
+                const SizedBox(
+                  height: 7,
+                ),
+
+                // 시간과 블록을 띄우는 부분
+                SizedBox(
+                    width: deviceWidth,
+                    height: scheduleHeight - 24,
+                    child: ListView.builder(
+                        physics: const ClampingScrollPhysics(),
+                        itemCount: (storeProv.store.close ?? 0) -
+                            (storeProv.store.open ?? 0),
+                        itemBuilder: (context, idx) {
+                          return Column(children: [
+                            Row(children: [
+                              SizedBox(
+                                width: timeWidth,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      '${idx + (storeProv.store.open ?? 0)}:00',
+                                      style: TextStyle(
+                                          fontSize: 12 * deviceHeight / _designHeight),
+                                    )
+                                  ],
                                 ),
-                                onTap: () {
-                                  // 스케줄이 더미가 아니고 시간이 있으면 통과,
-                                  if (prov.mySchedules[i].id != 0 &&
-                                      prov.mySchedules[i].time[j]) {
-                                    print('${prov.mySchedules[i].id} 스케줄 선택됨');
-                                    checkDialog(prov.mySchedules[i],
-                                        storeProv.store.open ?? 0);
-                                  }
-                                },
-                              )
-                            ]
-                          ])),
-                ]
+                              ),
+                              // 각 날짜의 스케줄 박스를 띄우는 부분
+                              Row(children: [
+                                for (int j = 0; j < 7; j++) ...[
+                                  Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          child: Container(
+                                            color: prov.mySchedules.isNotEmpty &&
+                                                    prov.mySchedules.length > j &&
+                                                    prov.mySchedules[j].time.isNotEmpty &&
+                                                    prov.mySchedules[j].time[idx]
+                                                ? color.mainColor
+                                                : Colors.black12,
+                                            height: 42 * deviceHeight
+                                                / _designHeight - ((storeProv.store.close ?? 0) - (storeProv.store.open ?? 0)),
+                                            width: dayWidth,
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 3),
+                                          ),
+                                          onTap: () {
+                                            // 스케줄이 더미가 아니고 시간이 있으면 통과,
+                                            if (prov.mySchedules[j].id != 0 && prov.mySchedules[j].time[idx]) {
+
+                                              print('${prov.mySchedules[j].id} 스케줄 선택됨');
+
+                                              checkDialog(prov.mySchedules[j], storeProv.store.open ?? 0);
+                                              prov.mySchedule = prov.mySchedules[j];
+                                            }
+                                          },
+                                        )
+                                      ])
+                                ]
+                              ])
+                            ]),
+                            const SizedBox(
+                              height: 1,
+                            )
+                          ]);
+                        })),
               ]));
         });
       })
@@ -155,21 +243,19 @@ class _ViewerState extends State<SwapViewer> {
     final deviceWidth = MediaQuery.of(context).size.width;
     final deviceHeight = MediaQuery.of(context).size.height;
 
-    double timeWidth = 40;
+    double timeWidth = 45;
     // 맨좌우 여백 10, 각 시간 블록 사이 여백 5씩
     double dayWidth = (deviceWidth - timeWidth - 10 - 20) / 8;
     double scheduleHeight = 430;
 
-    DateTime selectDate;
-    int selected = 0;
-
     return Column(children: [
-      /*const Text(
-        '변경하실 근무를 선택해주세요!',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-      ),*/
+
+      const SizedBox(height: 5,),
+
+      selectOtherWorker(),
+
       const SizedBox(
-        height: 10,
+        height: 5,
       ),
       Consumer<StoreViewModel>(builder: (context, storeProv, child) {
         return Consumer<WorkSwapViewModel>(builder: (context, prov, child) {
@@ -177,94 +263,260 @@ class _ViewerState extends State<SwapViewer> {
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
               child: Column(children: [
                 SizedBox(
-                    height: 55,
                     width: deviceWidth,
                     child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          // 각 날짜를 띄우는 부분
+                          const SizedBox(
+                            width: 50,
+                          ),
+                          // 날짜 띄우는 부분
                           for (int i = 0; i < 7; i++) ...[
-                            Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  InkWell(
-                                    child: Text(
-                                      '${prov.week.add(Duration(days: i)).day}'
-                                      '일\n${week[storeProv.store.weekStartDay ?? 1 + i]}',
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    onTap: () {
-                                      selectDate =
-                                          prov.week.add(Duration(days: i));
-                                      setState(() {
-                                        selected = i;
-                                      });
-                                      print(
-                                          '${selectDate.month}월 ${selectDate.day}일 선택됨');
-                                    },
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  selected == i
-                                      ? Container(
-                                          height: 5,
-                                          width: 40,
-                                          color: Colors.red,
-                                        )
-                                      : const SizedBox(),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                ]),
-                          ],
-                        ])),
-                SizedBox(
-                    height: scheduleHeight,
-                    width: deviceWidth,
-                    child: ListView.builder(
-                        itemCount: ((storeProv.store.close ?? 0) -
-                            (storeProv.store.open ?? 0)),
-                        itemBuilder: (context, idx) {
-                          return Row(children: [
-                                // 시각을 띄우는 부분
-                                SizedBox(
-                                  width: timeWidth,
-                                  height: 33,
-                                  child: Text(
-                                    '${idx + (storeProv.store.open ?? 0)}:00',
-                                    style: TextStyle(
-                                        fontSize:
-                                            12 * deviceHeight / _designHeight),
-                                  ),
+                            RichText(
+                              text: TextSpan(
+                                text: '${prov.week.add(Duration(days: i)).day}'
+                                    '일\n${week[((prov.week.weekday + i) > 7 ? (prov.week.weekday + i) % 8 + 1 : prov.week.weekday + i)]}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: // 오늘에 포인트 주기
+                                      DateFormat.yMd().format(DateTime.now()) ==
+                                              DateFormat.yMd().format(
+                                                  prov.mySchedules.isNotEmpty
+                                                      ? prov.mySchedules[i].day
+                                                      : DateTime.parse(
+                                                          '2023-01-01'))
+                                          ? Colors.red
+                                          : Colors.black,
+                                  fontWeight: DateFormat.yMd()
+                                              .format(DateTime.now()) ==
+                                          DateFormat.yMd().format(prov
+                                                  .mySchedules.isNotEmpty
+                                              ? prov.mySchedules[i].day
+                                              : DateTime.parse('2023-01-01'))
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
                                 ),
-                                // 스케줄 블록을 띄우는 부분
-                                SizedBox(
-                                    height: 30,
-                                    width: 50,
-                                    child: GestureDetector(
-                                      child: Container(
-                                        color: Colors.black12,
-                                        height: 42 *
-                                                deviceHeight /
-                                                _designHeight -
-                                            ((storeProv.store.close ?? 0) -
-                                                (storeProv.store.open ?? 0)),
-                                        width: dayWidth,
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 3),
-                                      ),
-                                      onTap: () {
-                                        // 스케줄이 더미가 아니고 시간이 있으면 통과,
-                                      },
-                                    ))
-                              ]);
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            )
+                          ]
+                        ])),
+                const SizedBox(
+                  height: 7,
+                ),
+
+                // 시간과 블록을 띄우는 부분
+                SizedBox(
+                    width: deviceWidth,
+                    height: scheduleHeight - 55,
+                    child: ListView.builder(
+                        physics: const ClampingScrollPhysics(),
+                        itemCount: (storeProv.store.close ?? 0) -
+                            (storeProv.store.open ?? 0),
+                        itemBuilder: (context, idx) {
+                          return Column(children: [
+                            Row(children: [
+                              SizedBox(
+                                width: timeWidth,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      '${idx + (storeProv.store.open ?? 0)}:00',
+                                      style: TextStyle(
+                                          fontSize: 12 * deviceHeight / _designHeight),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              // 각 날짜의 스케줄 박스를 띄우는 부분
+                              Row(children: [
+                                for (int j = 0; j < 7; j++) ...[
+                                  Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          child: Container(
+                                            color: prov.otherSchedules.isNotEmpty &&
+                                                    prov.otherSchedules.length > j &&
+                                                    prov.otherSchedules[j].time.isNotEmpty &&
+                                                    prov.otherSchedules[j].time[idx]
+                                                ? color.mainColor
+                                                : Colors.black12,
+                                            height: 40 * deviceHeight /
+                                                _designHeight - ((storeProv.store.close ?? 0) - (storeProv.store.open ?? 0)),
+                                            width: dayWidth,
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 3),
+                                          ),
+                                          onTap: () {
+                                            // 스케줄이 더미가 아니고 시간이 있으면 통과,
+                                            if (prov.otherSchedules[j].id != 0 && prov.otherSchedules[j].time[idx]) {
+
+                                              print('${prov.otherSchedules[j].id} 스케줄 선택됨');
+
+                                              checkDialog(prov.otherSchedules[j], storeProv.store.open ?? 0);
+                                              prov.target = prov.otherSchedules[j];
+                                            }
+                                          },
+                                        )
+                                      ])
+                                ]
+                              ])
+                            ]),
+                            const SizedBox(
+                              height: 1,
+                            )
+                          ]);
                         })),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      TextButton(
+                          style: TextButton.styleFrom(
+                            minimumSize: Size.zero,
+                            padding: const EdgeInsets.fromLTRB(15, 7, 15, 7),
+                            backgroundColor: color.blackColor,
+                          ),
+                          onPressed: (){
+                            print('대상 비지정 요청 선택됨');
+                            showDialog(context: context, builder: (builder) {
+                              return AlertDialog(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),),
+                                contentPadding: const EdgeInsets.all(25.0),
+                                content: RichText(
+                                  text: const TextSpan(
+                                      text: '이대로 전송하면 선택한 근무의 대체 근무는 ',
+                                    style: TextStyle(color: Colors.black),
+                                    children: <TextSpan>[
+                                      TextSpan(text: '점주님이 직접 선택',
+                                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                                      TextSpan(text: '해야 합니다.\n',
+                                          style: TextStyle(color: Colors.black)),
+                                      TextSpan(text: '점주님과 논의 후 전송하는 것을 추천드립니다.',
+                                          style: TextStyle(color: Colors.black87,)),
+                                      TextSpan(text: '\n\n정말 전송할까요?',
+                                          style: TextStyle(color: Colors.black)),
+                                    ]
+                                  ),),
+                                actionsAlignment: MainAxisAlignment.spaceAround,
+                                actions: [
+                                  IconButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      icon: SvgPicture.asset('assets/icons/x.svg')),
+                                  IconButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        // 데이터 전송 프로세스
+                                        prov.postChangeReq(false);
+                                      },
+                                      icon: SvgPicture.asset('assets/icons/check.svg')),
+                                ],
+                              );
+                            },
+                              barrierDismissible: false,
+                            );
+                          },
+                          child: const Text('사장님이 골라주세요!',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),)),
+
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          minimumSize: Size.zero,
+                          padding: const EdgeInsets.fromLTRB(15, 7, 15, 7),
+                          backgroundColor: Colors.green,
+                        ),
+                        onPressed: (){
+                          if (prov.mySchedule != null && prov.target != null) {
+                              showDialog(
+                                context: context,
+                                builder: (builder) {
+                                  return AlertDialog(
+                                    backgroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    contentPadding: const EdgeInsets.all(25.0),
+                                    content: RichText(
+                                      text: TextSpan(
+                                          text: '당신의 ',
+                                          style: const TextStyle(color: Colors.black),
+                                          children: <TextSpan>[
+                                            TextSpan(text: '${week[prov.mySchedule!.day.weekday]}요일'
+                                                '(${prov.mySchedule!.day.day}일) '
+                                                '${(storeProv.store.open ?? 0) + _findStartTime(prov.mySchedule!)}:00 - '
+                                                '${(storeProv.store.open ?? 0) + _findStartTime(prov.mySchedule!) + _calculateTime(prov.mySchedule!)}:00 근무',
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black)),
+
+                                            const TextSpan(text: '를\n',
+                                                style: TextStyle(
+                                                    color: Colors.black)),
+
+                                            TextSpan(text: '${prov.name}님의 ',
+                                                style: const TextStyle(
+                                                  color: Colors.black87,
+                                                )),
+
+                                            TextSpan(text: '${week[prov.target!.day.weekday]}요일'
+                                                '(${prov.target!.day.day}일) '
+                                                '${(storeProv.store.open ?? 0) + _findStartTime(prov.target!)}:00 - '
+                                                '${(storeProv.store.open ?? 0) + _findStartTime(prov.target!) + _calculateTime(prov.target!)}:00 근무',
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black)),
+
+                                            const TextSpan(text: '와 교환 요청할까요?\n한번 전송한 요청은 취소, 수정할 수 없습니다.',
+                                                style: TextStyle(
+                                                  color: Colors.black,)),
+                                          ]),
+                                    ),
+                                    actionsAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    actions: [
+                                      IconButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          icon: SvgPicture.asset(
+                                              'assets/icons/x.svg')),
+                                      IconButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            // 데이터 전송 프로세스
+                                            prov.postChangeReq(true);
+                                          },
+                                          icon: SvgPicture.asset(
+                                              'assets/icons/check.svg')),
+                                    ],
+                                  );
+                                },
+                                barrierDismissible: false,
+                              );
+                          }
+
+                          print('내 ${prov.mySchedule?.day.toIso8601String()}와'
+                              ' 상대의 ${prov.target?.day.toIso8601String()}를 교환 신청');
+                        },
+                        child: const Text('전송',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),)),
+                    ])
               ]));
         });
       })
@@ -272,7 +524,7 @@ class _ViewerState extends State<SwapViewer> {
   }
 
   // 스케줄의 시작 시각 찾기
-  int findStartTime(Schedule schedule) {
+  int _findStartTime(Schedule schedule) {
     for (int i = 0; i < schedule.time.length; i++) {
       if (schedule.time[i]) {
         return i;
@@ -294,7 +546,7 @@ class _ViewerState extends State<SwapViewer> {
   }
 
   // 선택 확인 팝업
-  bool checkDialog(Schedule schedule, int time) {
+  void checkDialog(Schedule schedule, int time) {
     List<String> weekday = [
       'non',
       '월요일',
@@ -306,10 +558,8 @@ class _ViewerState extends State<SwapViewer> {
       '일요일'
     ];
 
-    int startTime = findStartTime(schedule) + time;
+    int startTime = _findStartTime(schedule) + time;
     int endTime = startTime + _calculateTime(schedule);
-
-    bool result = true;
 
     showDialog(
         context: context,
@@ -328,16 +578,11 @@ class _ViewerState extends State<SwapViewer> {
               actions: [
                 IconButton(
                     onPressed: () {
-                      result = true;
-                      setState(() {
-                        _myView = true;
-                      });
                       Navigator.of(context).pop();
                     },
                     icon: SvgPicture.asset('assets/icons/x.svg')),
                 IconButton(
                     onPressed: () {
-                      result = false;
                       setState(() {
                         _myView = false;
                       });
@@ -348,7 +593,6 @@ class _ViewerState extends State<SwapViewer> {
             );
           });
         });
-    return result;
   }
 
   // 스케줄과 bool 변수를 받아 조건이 맞는지 반환하는 메소드

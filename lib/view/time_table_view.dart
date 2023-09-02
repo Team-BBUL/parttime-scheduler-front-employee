@@ -3,6 +3,8 @@ import 'package:sidam_worker/model/appColor.dart';
 import 'package:sidam_worker/view/work_swap_view.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import 'impossible_time_select_view.dart';
+
 class TimeTable extends StatefulWidget {
   @override
   _TimeTableState createState() => _TimeTableState();
@@ -21,6 +23,29 @@ class _TimeTableState extends State<TimeTable> {
           ),
           actions: [
             ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ImpossibleTime()));
+              },
+              style: ElevatedButton.styleFrom(
+                  minimumSize: Size.zero,
+                  foregroundColor: color.mainColor,
+                  backgroundColor: color.moreWhiterColor,
+                  padding: const EdgeInsets.only(
+                      left: 10, right: 10, top: 5, bottom: 5),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))
+              ),
+              child: const Text(
+                '스케줄 희망 편성',
+                style: TextStyle(color: Colors.black87, fontSize: 13),
+              ),
+            ),
+
+            const SizedBox(width: 10,),
+
+            ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     minimumSize: Size.zero,
                     backgroundColor: color.whiterColor,
@@ -37,10 +62,14 @@ class _TimeTableState extends State<TimeTable> {
                   '근무교환',
                   style: TextStyle(color: Colors.black, fontSize: 12),
                 )),
+
+            const SizedBox(width: 10,),
           ],
         ),
         body: Center(
-          child: Text('스케줄'),//scheduleView(),
+          child: Container(
+            color: Color(0xFFa0c0c0), // 0xffc1c1c1 부터 검은색
+            child: Text('스케줄', style: TextStyle(color: Colors.white),),)//Text('스케줄'),//scheduleView(),
         ));
   }
 

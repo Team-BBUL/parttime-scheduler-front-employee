@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -109,7 +108,7 @@ class _HomeState extends State<Home> {
                         left: 10, right: 10, top: 5, bottom: 5),
                   ),
                   child: const Text(
-                    '개인 일정 저장하기',
+                    '스케줄 희망 편성',
                     style: TextStyle(color: Colors.black87, fontSize: 13),
                   ),
                 ),
@@ -170,7 +169,6 @@ class _HomeState extends State<Home> {
 
     double timeWidth = 45;
     // 맨좌우 여백 10, 각 시간 블록 사이 여백 5씩
-    double dayWidth = (deviceWidth - timeWidth - 10 - 20) / 8;
     double scheduleHeight = 270 * deviceHeight / _designHeight;
 
     return Container(

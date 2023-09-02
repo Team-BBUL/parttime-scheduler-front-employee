@@ -1,4 +1,3 @@
-import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
 class DateUtility {
@@ -9,8 +8,13 @@ class DateUtility {
 
     if (base.weekday == weekday) { return base; }
 
-    return DateTime(base.year, base.month, base.day).subtract(
-        Duration(days: 7 - (weekday - base.weekday))
-    );
+    if (base.weekday < weekday){
+      return DateTime(base.year, base.month, base.day)
+          .subtract(Duration(days: 7 - (weekday - base.weekday)));
+    }
+    else {
+      return DateTime(base.year, base.month, base.day)
+          .subtract(Duration(days: (base.weekday - weekday)));
+    }
   }
 }
