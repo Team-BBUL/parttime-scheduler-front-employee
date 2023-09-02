@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import 'package:sidam_worker/model/appColor.dart';
+import 'package:sidam_worker/util/appColor.dart';
 import 'package:sidam_worker/view/work_swap_view.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 

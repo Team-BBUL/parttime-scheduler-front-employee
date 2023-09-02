@@ -6,7 +6,7 @@ import 'package:logger/logger.dart';
 import 'package:sidam_worker/viewModel/alarm_http_provider.dart';
 import 'package:sidam_worker/model/AlarmModel.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_worker/model/appColor.dart';
+import 'package:sidam_worker/util/appColor.dart';
 import 'package:sidam_worker/viewModel/alarm_view_model.dart';
 
 class AlarmView extends StatefulWidget{

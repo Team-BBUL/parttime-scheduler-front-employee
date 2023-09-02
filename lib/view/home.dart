@@ -2,14 +2,18 @@ import "package:flutter/material.dart";
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import 'package:sidam_worker/model/appColor.dart';
 import 'package:sidam_worker/utility/shared_preference_provider.dart';
-import 'package:sidam_worker/view/impossible_time_select_view.dart';
 import 'package:sidam_worker/view/widget/main_cost.dart';
 import 'package:sidam_worker/view/widget/my_schedule_viewer.dart';
-import 'package:sidam_worker/view/notice_view.dart';
 import 'package:sidam_worker/viewModel/notice_view_model.dart';
 import 'package:sidam_worker/viewModel/schedule_view_model.dart';
+
+import 'package:sidam_worker/view/announcement_page.dart';
+import 'package:sidam_worker/view/unworkable_schedule_page.dart';
+import 'package:sidam_worker/view/setting.dart';
+
+import '../util/appColor.dart';
+import '../util/sp_helper.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -28,6 +32,7 @@ class _HomeState extends State<Home> {
   final _designHeight = 683;
 
   AppColor color = AppColor();
+  SPHelper helper = SPHelper();
 
   late double _newPad;
 
@@ -81,7 +86,11 @@ class _HomeState extends State<Home> {
           )),
           actions: <Widget>[
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute<void>(
+                  builder: (BuildContext context) => SettingScreen(),
+                ));
+              },
               icon: const Icon(Icons.settings),
             )
           ],
@@ -95,10 +104,9 @@ class _HomeState extends State<Home> {
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ImpossibleTime()));
+                    Navigator.push(context, MaterialPageRoute<void>(
+                        builder: (BuildContext context) => const UnworkableSchedulePage()
+                    ));
                   },
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size.zero,
@@ -128,8 +136,9 @@ class _HomeState extends State<Home> {
         color: color.mainColor,
         child: InkWell(
           onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => NoticeView()));
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => AnnouncementPage(),),
+            );
           },
           child: Consumer<NoticeViewModel>(builder: (context, prov, child) {
             return Row(

@@ -2,21 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_worker/utility/shared_preference_provider.dart';
-import 'package:sidam_worker/utility/sp_helper.dart';
+
 import 'package:sidam_worker/viewModel/cost_view_model.dart';
 import 'package:sidam_worker/viewModel/notice_view_model.dart';
 import 'package:sidam_worker/viewModel/schedule_view_model.dart';
 import 'package:sidam_worker/viewModel/store_view_model.dart';
 import 'package:sidam_worker/viewModel/user_view_model.dart';
+import 'package:sidam_worker/viewModel/work_swap_view_model.dart';
+import 'package:sidam_worker/view_model/announcement_view_model.dart';
 
 import 'package:sidam_worker/view/alarm_view.dart';
 import 'package:sidam_worker/view/home.dart';
 import 'package:sidam_worker/view/cost_view.dart';
 import 'package:sidam_worker/view/time_table_view.dart';
+import 'package:sidam_worker/view/check_login.dart';
 
-import 'package:sidam_worker/model/appColor.dart';
-import 'package:sidam_worker/viewModel/work_swap_view_model.dart';
+import 'package:sidam_worker/utility/shared_preference_provider.dart';
+import 'package:sidam_worker/util/appColor.dart';
+
+import 'data/repository/announcement_repository.dart';
 
 void main() {
   runApp(
@@ -43,6 +47,9 @@ void main() {
           ChangeNotifierProvider(
               create: (context) => WorkSwapViewModel()
           ),
+          ChangeNotifierProvider(
+            create: (_) => AnnouncementViewModel(AnnouncementRepositoryImpl()),
+          ),
         ],
         child: const MyApp()
     )
@@ -60,7 +67,7 @@ class MyApp extends StatelessWidget {
         colorSchemeSeed: const Color(0xFFFF89B3),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Sidam Worker App'),
+      home: CheckLoginScreen(),
     );
   }
 }

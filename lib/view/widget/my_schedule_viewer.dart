@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_worker/model/appColor.dart';
+
+import 'package:sidam_worker/util/appColor.dart';
 
 import 'package:sidam_worker/viewModel/store_view_model.dart';
 import 'package:sidam_worker/viewModel/schedule_view_model.dart';

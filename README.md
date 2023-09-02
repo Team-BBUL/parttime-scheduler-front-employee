@@ -14,3 +14,6 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+# parttime-scheduler-front-employee
+한경대학교 2023 캡스톤디자인 "점주-근무자의 근무 스케줄러 앱"의 근무자 앱입니다.

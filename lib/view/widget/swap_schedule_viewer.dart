@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import 'package:sidam_worker/model/appColor.dart';
+import 'package:sidam_worker/util/appColor.dart';
 import 'package:sidam_worker/model/schedule_model.dart';
 
 import 'package:sidam_worker/viewModel/store_view_model.dart';
