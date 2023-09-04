@@ -60,6 +60,16 @@ class UnworkableScheduleViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleGrid(int row, int col) {
+    if(grid[row][col].isSelectedColumn) {
+      grid[row][col].isSelected = !grid[row][col].isSelected;
+      dragType = grid[row][col].isSelected;
+    }else{
+      clearCell();
+    }
+    notifyListeners();
+  }
+
   Cell getCell(int row, int col) {
     return grid[row][col];
   }

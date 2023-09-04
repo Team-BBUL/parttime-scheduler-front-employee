@@ -1,8 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_worker/view/home.dart';
-import 'package:sidam_worker/view/store_list_search.dart';
 import 'package:sidam_worker/view/store_list_search_page.dart';
 
 import '../main.dart';
@@ -46,10 +43,13 @@ class StoreListScreen extends StatelessWidget{
                           child: Row(
                             children: [
                               Flexible(flex: 2,
-                                  child: Center(
-                                    child: Text("등록매장목록"),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [Text("등록매장목록"), IconButton(onPressed: (){
+                                      viewModel.renew();
+                                    }, icon: Icon(Icons.cached))]
                                   )),
-                              Flexible(flex: 7, child: Container()),
+                              // Flexible(flex: 7, child: Container()),
                             ],
                           ),
                         ),
@@ -65,7 +65,7 @@ class StoreListScreen extends StatelessWidget{
                                       viewModel.setSelectedIndex(index);
                                     },
                                     child: Container(
-                                        height: 50,
+                                        height: 75,
                                         alignment: Alignment.centerLeft,
                                         decoration:  BoxDecoration(
                                           border: index == viewModel.selectedIndex

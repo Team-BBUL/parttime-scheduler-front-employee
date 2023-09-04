@@ -80,25 +80,21 @@ class MockStoreRepository implements StoreRepository{
 
   @override
   Future addStore(int storeId) {
-    // TODO: implement addStore
     throw UnimplementedError();
   }
 
   @override
   Future<List<Store>> fetchMyStoreList() {
-    // TODO: implement fetchMyStoreList
     throw UnimplementedError();
   }
 
   @override
   saveToSpCurrentStore(Store store) {
-    // TODO: implement saveToSpCurrentStore
     throw UnimplementedError();
   }
 
   @override
   Future enterStore(int storeId) {
-    // TODO: implement enterStore
     throw UnimplementedError();
   }
 

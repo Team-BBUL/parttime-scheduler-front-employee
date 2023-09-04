@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:logger/logger.dart';
 import 'package:http/http.dart' as http;
-import 'package:sidam_worker/utility/sp_helper.dart';
+import 'package:sidam_worker/util/sp_helper.dart';
 
 class Session {
 
@@ -13,16 +13,16 @@ class Session {
   void init() async {
     await helper.init();
 
-    int? role = 7;//helper.getRoleId();
-    _accountRoleId = role ?? 0;
-    //headers['Authorization'] = 'Bearer ${helper.getJWT()}';
+    _accountRoleId = helper.getRoleId() ?? 0;
+    headers['Authorization'] = 'Bearer ${helper.getJWT()}';
   }
 
   var logger = Logger();
   SPHelper helper = SPHelper();
 
-  final String _server = "http://192.168.219.106:8088"; // 서버의 주소
-  int _accountRoleId = 7; // 현재 클라이언트의 사용자 ID
+  // TODO: _server 변수 실제 서버의 주소로 변경하기
+  final String _server = "http://192.168.219.105:8088"; // 서버의 주소
+  int _accountRoleId = 0; // 현재 클라이언트의 사용자 ID
 
   set setRoleId(int id) { _accountRoleId = id; }
   get roleId { return _accountRoleId; }

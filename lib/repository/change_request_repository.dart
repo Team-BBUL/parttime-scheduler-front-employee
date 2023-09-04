@@ -1,9 +1,8 @@
 import 'package:logger/logger.dart';
 
-import 'package:sidam_worker/data/local_data_source.dart';
 import 'package:sidam_worker/data/remote_data_source.dart';
 
-import 'package:sidam_worker/utility/sp_helper.dart';
+import 'package:sidam_worker/util/sp_helper.dart';
 
 class ChangeRequestRepository {
   final Session _session = Session();
@@ -25,9 +24,6 @@ class ChangeRequestRepository {
 
     _logger.i('http post $url');
 
-    return false;
-
-    /*
     // 반환
     var res = await _session.post(url, null);
 
@@ -36,7 +32,6 @@ class ChangeRequestRepository {
       return false;
     }
     return true;
-     */
   }
 
   // 대상 지정 변경 요청 전송
@@ -49,8 +44,6 @@ class ChangeRequestRepository {
 
     _logger.i('http post $url');
 
-    return true;
-    /*
     // 반환
     var res = await _session.post(url, null);
 
@@ -59,7 +52,6 @@ class ChangeRequestRepository {
       return false;
     }
     return true;
-     */
   }
 
 }

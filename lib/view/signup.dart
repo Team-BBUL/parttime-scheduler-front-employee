@@ -23,7 +23,7 @@ class _SignupState extends State<SignupScreen>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('TextField'),
+        title: Text(''),
       ),
       body: CustomScrollView(
         scrollDirection: Axis.vertical,

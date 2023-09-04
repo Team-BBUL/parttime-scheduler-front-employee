@@ -6,7 +6,7 @@ import 'package:sidam_worker/model/user_model.dart';
 import 'package:sidam_worker/repository/schedule_repository.dart';
 import 'package:sidam_worker/repository/user_repository.dart';
 
-class CostViewModel extends ChangeNotifier {
+class MonthlyCostViewModel extends ChangeNotifier {
   final _logger = Logger();
 
   late final ScheduleRepository _scheduleRepository;

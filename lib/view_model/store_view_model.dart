@@ -3,7 +3,6 @@ import 'package:sidam_worker/data/repository/store_repository.dart';
 
 import '../model/store.dart';
 
-
 class StoreViewModel extends ChangeNotifier{
   String _searchText = '';
   late StoreRepository storeRepository;
@@ -26,6 +25,11 @@ class StoreViewModel extends ChangeNotifier{
     notifyListeners();
   }
 
+  void renew() async {
+    _stores = await storeRepository.fetchStores();
+    notifyListeners();
+  }
+
   void getStores() async{
     init();
     print(_searchText);
@@ -43,6 +47,7 @@ class StoreViewModel extends ChangeNotifier{
     }
     notifyListeners();
   }
+
   init(){
     _store = Store();
     _stores = null;
@@ -54,7 +59,6 @@ class StoreViewModel extends ChangeNotifier{
     _store = _stores![idx];
     notifyListeners();
   }
-
 
   Future joinStore() async{
     try {

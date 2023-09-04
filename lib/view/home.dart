@@ -2,11 +2,11 @@ import "package:flutter/material.dart";
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import 'package:sidam_worker/utility/shared_preference_provider.dart';
+import 'package:sidam_worker/util/shared_preference_provider.dart';
 import 'package:sidam_worker/view/widget/main_cost.dart';
 import 'package:sidam_worker/view/widget/my_schedule_viewer.dart';
-import 'package:sidam_worker/viewModel/notice_view_model.dart';
-import 'package:sidam_worker/viewModel/schedule_view_model.dart';
+import 'package:sidam_worker/view_model/notice_view_model.dart';
+import 'package:sidam_worker/view_model/schedule_view_model.dart';
 
 import 'package:sidam_worker/view/announcement_page.dart';
 import 'package:sidam_worker/view/unworkable_schedule_page.dart';
@@ -95,7 +95,7 @@ class _HomeState extends State<Home> {
             )
           ],
         ),
-        body: Center(
+        body: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -178,7 +178,7 @@ class _HomeState extends State<Home> {
 
     double timeWidth = 45;
     // 맨좌우 여백 10, 각 시간 블록 사이 여백 5씩
-    double scheduleHeight = 270 * deviceHeight / _designHeight;
+    double scheduleHeight = 280 * deviceHeight / _designHeight;
 
     return Container(
         width: deviceWidth,
@@ -205,7 +205,7 @@ class _HomeState extends State<Home> {
                       children: [
                         const SizedBox(
                           width: 50,
-                          height: 2,
+                          height: 1,
                         ),
                         Column(children: [
                           const Text(
@@ -224,8 +224,8 @@ class _HomeState extends State<Home> {
                             icon: const Icon(
                               Icons.autorenew,
                               color: Colors.black38,
-                              size: 30,
-                            ))
+                              size: 25,
+                            )),
                       ])),
               ScheduleViewer(),
             ],

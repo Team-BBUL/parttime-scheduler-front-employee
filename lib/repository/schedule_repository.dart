@@ -8,17 +8,17 @@ import 'package:sidam_worker/data/remote_data_source.dart';
 
 import 'package:sidam_worker/model/schedule_model.dart';
 import 'package:sidam_worker/model/user_model.dart';
-import 'package:sidam_worker/model/store_model.dart';
+import 'package:sidam_worker/model/store.dart';
 
-import 'package:sidam_worker/repository/store_repository.dart';
+import 'package:sidam_worker/data/repository/store_repository.dart';
 
-import 'package:sidam_worker/utility/date_utility.dart';
-import 'package:sidam_worker/utility/sp_helper.dart';
+import 'package:sidam_worker/util/date_utility.dart';
+import 'package:sidam_worker/util/sp_helper.dart';
 
 class ScheduleRepository {
   final LocalDataSource _dataSource = LocalDataSource();
   final Session _session = Session();
-  final StoreRepository _storeRepository = StoreRepository();
+  final StoreRepositoryImpl _storeRepository = StoreRepositoryImpl();
   final _logger = Logger();
   final _helper = SPHelper();
 

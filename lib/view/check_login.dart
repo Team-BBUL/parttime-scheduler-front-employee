@@ -8,6 +8,7 @@ import 'package:sidam_worker/view/login.dart';
 import 'package:sidam_worker/view/signup.dart';
 import 'package:sidam_worker/view/store_list_page.dart';
 
+import '../main.dart';
 import 'home.dart';
 class CheckLoginScreen extends StatefulWidget{
 
@@ -56,7 +57,7 @@ class _CheckLoginScreenState extends State<CheckLoginScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => Home(),
+          builder: (context) => MyHomePage(title: ''),
         ),
       );
     }else if (isLoggedIn && isRegistered) {

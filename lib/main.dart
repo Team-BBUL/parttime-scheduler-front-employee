@@ -2,22 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:sidam_worker/data/repository/store_repository.dart';
+import 'package:sidam_worker/view/cost_page.dart';
 
-import 'package:sidam_worker/viewModel/cost_view_model.dart';
-import 'package:sidam_worker/viewModel/notice_view_model.dart';
-import 'package:sidam_worker/viewModel/schedule_view_model.dart';
-import 'package:sidam_worker/viewModel/store_view_model.dart';
-import 'package:sidam_worker/viewModel/user_view_model.dart';
-import 'package:sidam_worker/viewModel/work_swap_view_model.dart';
+import 'package:sidam_worker/view_model/monthly_cost_view_model.dart';
+import 'package:sidam_worker/view_model/notice_view_model.dart';
+import 'package:sidam_worker/view_model/schedule_view_model.dart';
+import 'package:sidam_worker/view_model/store_view_model.dart';
+import 'package:sidam_worker/view_model/user_view_model.dart';
+import 'package:sidam_worker/view_model/work_swap_view_model.dart';
 import 'package:sidam_worker/view_model/announcement_view_model.dart';
+import 'package:sidam_worker/view_model/selected_store_info_view_model.dart';
 
 import 'package:sidam_worker/view/alarm_view.dart';
 import 'package:sidam_worker/view/home.dart';
-import 'package:sidam_worker/view/cost_view.dart';
 import 'package:sidam_worker/view/time_table_view.dart';
 import 'package:sidam_worker/view/check_login.dart';
 
-import 'package:sidam_worker/utility/shared_preference_provider.dart';
+import 'package:sidam_worker/util/shared_preference_provider.dart';
 import 'package:sidam_worker/util/appColor.dart';
 
 import 'data/repository/announcement_repository.dart';
@@ -39,16 +41,19 @@ void main() {
               create: (context) => NoticeViewModel()
           ),
           ChangeNotifierProvider(
-              create: (context) => StoreViewModel()
+              create: (context) => StoreViewModel(StoreRepositoryImpl())
           ),
           ChangeNotifierProvider(
-              create: (context) => CostViewModel()
+              create: (context) => MonthlyCostViewModel()
           ),
           ChangeNotifierProvider(
               create: (context) => WorkSwapViewModel()
           ),
           ChangeNotifierProvider(
             create: (_) => AnnouncementViewModel(AnnouncementRepositoryImpl()),
+          ),
+          ChangeNotifierProvider(
+              create: (context) => SelectedStore()
           ),
         ],
         child: const MyApp()
@@ -87,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final Logger _logger = Logger();
 
   int _currentIndex = 0;
-  final List<Widget> _children = [Home(), TimeTable(), Cost(), AlarmView()];
+  final List<Widget> _children = [Home(), TimeTable(), CostPage(), AlarmView()];
 
   void _onTap(int index) {
     setState(() {
@@ -99,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
 
     final provider = Provider.of<SharedPreferencesProvider>(context);
-    provider.debugSetup();
+    //provider.debugSetup();
 
     return Scaffold(
       body: _children[_currentIndex],

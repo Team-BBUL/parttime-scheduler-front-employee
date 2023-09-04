@@ -6,10 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:sidam_worker/util/appColor.dart';
 import 'package:sidam_worker/model/schedule_model.dart';
 
-import 'package:sidam_worker/viewModel/store_view_model.dart';
-import 'package:sidam_worker/viewModel/work_swap_view_model.dart';
+import 'package:sidam_worker/view_model/selected_store_info_view_model.dart';
+import 'package:sidam_worker/view_model/work_swap_view_model.dart';
 
-import 'package:sidam_worker/utility/shared_preference_provider.dart';
+import 'package:sidam_worker/util/shared_preference_provider.dart';
 
 class SwapViewer extends StatefulWidget {
   @override
@@ -114,7 +114,7 @@ class _ViewerState extends State<SwapViewer> {
       const SizedBox(
         height: 10,
       ),
-      Consumer<StoreViewModel>(builder: (context, storeProv, child) {
+      Consumer<SelectedStore>(builder: (context, storeProv, child) {
         return Consumer<WorkSwapViewModel>(builder: (context, prov, child) {
           return Padding(
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
@@ -168,8 +168,8 @@ class _ViewerState extends State<SwapViewer> {
                     height: scheduleHeight - 24,
                     child: ListView.builder(
                         physics: const ClampingScrollPhysics(),
-                        itemCount: (storeProv.store.close ?? 0) -
-                            (storeProv.store.open ?? 0),
+                        itemCount: (storeProv.storeInfo.close ?? 0) -
+                            (storeProv.storeInfo.open ?? 0),
                         itemBuilder: (context, idx) {
                           return Column(children: [
                             Row(children: [
@@ -180,7 +180,7 @@ class _ViewerState extends State<SwapViewer> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      '${idx + (storeProv.store.open ?? 0)}:00',
+                                      '${idx + (storeProv.storeInfo.open ?? 0)}:00',
                                       style: TextStyle(
                                           fontSize: 12 * deviceHeight / _designHeight),
                                     )
@@ -205,7 +205,7 @@ class _ViewerState extends State<SwapViewer> {
                                                 ? color.mainColor
                                                 : Colors.black12,
                                             height: 42 * deviceHeight
-                                                / _designHeight - ((storeProv.store.close ?? 0) - (storeProv.store.open ?? 0)),
+                                                / _designHeight - ((storeProv.storeInfo.close ?? 0) - (storeProv.storeInfo.open ?? 0)),
                                             width: dayWidth,
                                             margin: const EdgeInsets.symmetric(
                                                 horizontal: 3),
@@ -216,7 +216,7 @@ class _ViewerState extends State<SwapViewer> {
 
                                               print('${prov.mySchedules[j].id} 스케줄 선택됨');
 
-                                              checkDialog(prov.mySchedules[j], storeProv.store.open ?? 0);
+                                              checkDialog(prov.mySchedules[j], storeProv.storeInfo.open ?? 0);
                                               prov.mySchedule = prov.mySchedules[j];
                                             }
                                           },
@@ -257,7 +257,7 @@ class _ViewerState extends State<SwapViewer> {
       const SizedBox(
         height: 5,
       ),
-      Consumer<StoreViewModel>(builder: (context, storeProv, child) {
+      Consumer<SelectedStore>(builder: (context, storeProv, child) {
         return Consumer<WorkSwapViewModel>(builder: (context, prov, child) {
           return Padding(
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
@@ -314,8 +314,8 @@ class _ViewerState extends State<SwapViewer> {
                     height: scheduleHeight - 55,
                     child: ListView.builder(
                         physics: const ClampingScrollPhysics(),
-                        itemCount: (storeProv.store.close ?? 0) -
-                            (storeProv.store.open ?? 0),
+                        itemCount: (storeProv.storeInfo.close ?? 0) -
+                            (storeProv.storeInfo.open ?? 0),
                         itemBuilder: (context, idx) {
                           return Column(children: [
                             Row(children: [
@@ -326,7 +326,7 @@ class _ViewerState extends State<SwapViewer> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      '${idx + (storeProv.store.open ?? 0)}:00',
+                                      '${idx + (storeProv.storeInfo.open ?? 0)}:00',
                                       style: TextStyle(
                                           fontSize: 12 * deviceHeight / _designHeight),
                                     )
@@ -351,7 +351,7 @@ class _ViewerState extends State<SwapViewer> {
                                                 ? color.mainColor
                                                 : Colors.black12,
                                             height: 40 * deviceHeight /
-                                                _designHeight - ((storeProv.store.close ?? 0) - (storeProv.store.open ?? 0)),
+                                                _designHeight - ((storeProv.storeInfo.close ?? 0) - (storeProv.storeInfo.open ?? 0)),
                                             width: dayWidth,
                                             margin: const EdgeInsets.symmetric(
                                                 horizontal: 3),
@@ -362,7 +362,7 @@ class _ViewerState extends State<SwapViewer> {
 
                                               print('${prov.otherSchedules[j].id} 스케줄 선택됨');
 
-                                              checkDialog(prov.otherSchedules[j], storeProv.store.open ?? 0);
+                                              checkDialog(prov.otherSchedules[j], storeProv.storeInfo.open ?? 0);
                                               prov.target = prov.otherSchedules[j];
                                             }
                                           },
@@ -457,8 +457,8 @@ class _ViewerState extends State<SwapViewer> {
                                           children: <TextSpan>[
                                             TextSpan(text: '${week[prov.mySchedule!.day.weekday]}요일'
                                                 '(${prov.mySchedule!.day.day}일) '
-                                                '${(storeProv.store.open ?? 0) + _findStartTime(prov.mySchedule!)}:00 - '
-                                                '${(storeProv.store.open ?? 0) + _findStartTime(prov.mySchedule!) + _calculateTime(prov.mySchedule!)}:00 근무',
+                                                '${(storeProv.storeInfo.open ?? 0) + _findStartTime(prov.mySchedule!)}:00 - '
+                                                '${(storeProv.storeInfo.open ?? 0) + _findStartTime(prov.mySchedule!) + _calculateTime(prov.mySchedule!)}:00 근무',
                                                 style: const TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.black)),
@@ -474,8 +474,8 @@ class _ViewerState extends State<SwapViewer> {
 
                                             TextSpan(text: '${week[prov.target!.day.weekday]}요일'
                                                 '(${prov.target!.day.day}일) '
-                                                '${(storeProv.store.open ?? 0) + _findStartTime(prov.target!)}:00 - '
-                                                '${(storeProv.store.open ?? 0) + _findStartTime(prov.target!) + _calculateTime(prov.target!)}:00 근무',
+                                                '${(storeProv.storeInfo.open ?? 0) + _findStartTime(prov.target!)}:00 - '
+                                                '${(storeProv.storeInfo.open ?? 0) + _findStartTime(prov.target!) + _calculateTime(prov.target!)}:00 근무',
                                                 style: const TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.black)),

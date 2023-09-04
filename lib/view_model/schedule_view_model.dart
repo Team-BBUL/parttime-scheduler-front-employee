@@ -1,16 +1,19 @@
 import 'package:flutter/cupertino.dart';
 
 import 'package:logger/logger.dart';
+import 'package:sidam_worker/data/repository/store_repository.dart';
 
 import 'package:sidam_worker/repository/schedule_repository.dart';
 import 'package:sidam_worker/model/schedule_model.dart';
-import 'package:sidam_worker/utility/date_utility.dart';
-import 'package:sidam_worker/utility/sp_helper.dart';
+import 'package:sidam_worker/model/store.dart';
+import 'package:sidam_worker/util/date_utility.dart';
+import 'package:sidam_worker/util/sp_helper.dart';
 
 class ScheduleViewModel extends ChangeNotifier {
   final _logger = Logger();
 
   late final ScheduleRepository _scheduleRepository;
+  late final StoreRepositoryImpl _storeRepository;
   late final SPHelper _helper;
   late final DateUtility _dateUtility;
 
@@ -24,6 +27,7 @@ class ScheduleViewModel extends ChangeNotifier {
 
   ScheduleViewModel() {
     _scheduleRepository = ScheduleRepository();
+    _storeRepository = StoreRepositoryImpl();
     _dateUtility = DateUtility();
     _helper = SPHelper();
     _helper.init();
@@ -41,18 +45,28 @@ class ScheduleViewModel extends ChangeNotifier {
   Future<void> renew() async {
     _weeklySchedule = [];
     await _getScheduleList();
+    notifyListeners();
   }
 
   // 화면에 그릴 스케줄을 가지고 오는 메소드
   Future<void> _getScheduleList() async {
 
-    List<Schedule> weeklySchedule = await _scheduleRepository.loadMySchedule(DateTime.now());
-    _findThisWeekSchedule(weeklySchedule);
+    try{
+      List<Schedule> weeklySchedule =
+          await _scheduleRepository.loadMySchedule(DateTime.now());
+      _findThisWeekSchedule(weeklySchedule);
 
-    if(!_monthly) {
-      _getMonthSchedule();
+      if (!_monthly) {
+        _getMonthSchedule();
+      }
+      _scheduleRepository.getWeeklySchedule(DateTime.now()); // 서버에서 데이터 가져옴
+
+      _setScheduleDummy(_dateUtility.findStartDay(DateTime.now(), _helper.getWeekStartDay() ?? 1));
+
+    } catch(error) {
+      _logger.e('$error');
+      _setScheduleDummy(_dateUtility.findStartDay(DateTime.now(), _helper.getWeekStartDay() ?? 1));
     }
-    _scheduleRepository.getWeeklySchedule(DateTime.now()); // 서버에서 데이터 가져옴
 
     notifyListeners();
   }
@@ -93,7 +107,9 @@ class ScheduleViewModel extends ChangeNotifier {
   }
 
   // 없는 날짜에 더미 추가
-  void _setScheduleDummy(DateTime start) {
+  void _setScheduleDummy(DateTime start) async {
+
+    Store store = await _storeRepository.getStoreData();
 
     bool check;
     for (int i = 0; i < 7; i++){
@@ -106,7 +122,12 @@ class ScheduleViewModel extends ChangeNotifier {
       }
 
       if (!check) {
-        _weeklySchedule.add(Schedule(id: 0, day: start.add(Duration(days: i)), time: [], workers: []));
+        _weeklySchedule.add(
+            Schedule.dummy(
+                start.add(Duration(days: i)),
+                ((store.close ?? 0) - (store.open ?? 0))
+            )
+        );
       }
     }
   }

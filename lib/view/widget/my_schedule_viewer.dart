@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 
 import 'package:sidam_worker/util/appColor.dart';
 
-import 'package:sidam_worker/viewModel/store_view_model.dart';
-import 'package:sidam_worker/viewModel/schedule_view_model.dart';
+import 'package:sidam_worker/view_model/selected_store_info_view_model.dart';
+import 'package:sidam_worker/view_model/schedule_view_model.dart';
 
 class ScheduleViewer extends StatefulWidget {
   @override
@@ -30,11 +30,12 @@ class _ScheduleViewerState extends State<ScheduleViewer> {
     double dayWidth = (deviceWidth - timeWidth - 10 - 20) / 8;
     double scheduleHeight = 280 * deviceHeight / _designHeight;
 
-    return Consumer<StoreViewModel>(builder: (context, storeProv, child) {
+    return Consumer<SelectedStore>(builder: (context, storeProv, child) {
       return Consumer<ScheduleViewModel>(builder: (context, prov, child) {
         return Padding(
             padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
             child: Column(children: [
+              //Text('${((storeProv.storeInfo.close ?? 0) - (storeProv.storeInfo.open ?? 0))}'),
               SizedBox(
                   width: deviceWidth,
                   child: Row(
@@ -85,8 +86,7 @@ class _ScheduleViewerState extends State<ScheduleViewer> {
                   height: scheduleHeight - 24,
                   child: ListView.builder(
                     physics: const ClampingScrollPhysics(),
-                      itemCount: (storeProv.store.close ?? 0) -
-                          (storeProv.store.open ?? 0),
+                      itemCount: ((storeProv.storeInfo.close ?? 0) - (storeProv.storeInfo.open ?? 0)),
                       itemBuilder: (context, idx) {
                         return Column(children: [
                           Row(children: [
@@ -97,10 +97,10 @@ class _ScheduleViewerState extends State<ScheduleViewer> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    '${idx + (storeProv.store.open ?? 0)}:00',
+                                    '${idx + (storeProv.storeInfo.open ?? 0)}:00',
                                     style: TextStyle(
                                         fontSize:
-                                            12 * deviceHeight / _designHeight),
+                                            11 * deviceHeight / _designHeight),
                                   )
                                 ],
                               ),
@@ -109,23 +109,17 @@ class _ScheduleViewerState extends State<ScheduleViewer> {
                             Row(children: [
                               for (int j = 0; j < 7; j++) ...[
                                 Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       Container(
                                         color: prov.scheduleList.isNotEmpty &&
-                                             prov.scheduleList[j].time
-                                                 .isNotEmpty &&
+                                              prov.scheduleList[j].time.isNotEmpty &&
                                               prov.scheduleList[j].time[idx]
                                              ? color.mainColor :
                                             Colors.black12,
-                                        height: 31 *
-                                                deviceHeight /
-                                                _designHeight -
-                                            ((storeProv.store.close ?? 0) -
-                                                (storeProv.store.open ?? 0)),
+                                        height: 29.5 * deviceHeight /
+                                            _designHeight - ((storeProv.storeInfo.close ?? 0) - (storeProv.storeInfo.open ?? 0)),
                                         width: dayWidth,
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 3),

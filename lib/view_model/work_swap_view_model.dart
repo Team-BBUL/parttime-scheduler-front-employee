@@ -10,8 +10,8 @@ import 'package:sidam_worker/repository/change_request_repository.dart';
 import 'package:sidam_worker/repository/user_repository.dart';
 import 'package:sidam_worker/repository/schedule_repository.dart';
 
-import 'package:sidam_worker/utility/date_utility.dart';
-import 'package:sidam_worker/utility/sp_helper.dart';
+import 'package:sidam_worker/util/date_utility.dart';
+import 'package:sidam_worker/util/sp_helper.dart';
 
 class WorkSwapViewModel extends ChangeNotifier {
   final _logger = Logger();

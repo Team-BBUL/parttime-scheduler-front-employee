@@ -6,8 +6,8 @@ import "package:sidam_worker/view/widget/loading.dart";
 import "package:sidam_worker/view/widget/pass_fail_viewer.dart";
 import "package:sidam_worker/view/widget/swap_schedule_viewer.dart";
 
-import "package:sidam_worker/viewModel/work_swap_view_model.dart";
-import 'package:sidam_worker/utility/shared_preference_provider.dart';
+import 'package:sidam_worker/view_model/work_swap_view_model.dart';
+import 'package:sidam_worker/util/shared_preference_provider.dart';
 
 class WorkSwap extends StatefulWidget {
   @override

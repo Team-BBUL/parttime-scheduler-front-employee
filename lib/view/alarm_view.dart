@@ -3,11 +3,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
-import 'package:sidam_worker/viewModel/alarm_http_provider.dart';
+import 'package:sidam_worker/view_model/alarm_http_provider.dart';
 import 'package:sidam_worker/model/AlarmModel.dart';
 import 'package:provider/provider.dart';
 import 'package:sidam_worker/util/appColor.dart';
-import 'package:sidam_worker/viewModel/alarm_view_model.dart';
+import 'package:sidam_worker/view_model/alarm_view_model.dart';
 
 class AlarmView extends StatefulWidget{
 

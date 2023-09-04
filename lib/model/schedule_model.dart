@@ -22,10 +22,10 @@ class ScheduleList {
 
 class Schedule {
 
-  final int id;
-  final DateTime day;
-  final List<bool> time;
-  final List<User> workers;
+  late int id;
+  late DateTime day;
+  late List<bool> time;
+  late List<User> workers;
 
   Schedule({
     required this.id,
@@ -33,6 +33,17 @@ class Schedule {
     required this.time,
     required this.workers
   });
+
+  Schedule.dummy(DateTime day, int time) {
+    this.id = 0;
+    this.workers = [];
+    this.time = [];
+    this.day = day;
+
+    for (int i = 0; i < time; i++) {
+      this.time.add(false);
+    }
+  }
 
   factory Schedule.fromJson(Map<String, dynamic> json, DateTime day) {
     return Schedule(

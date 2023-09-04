@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_worker/viewModel/store_view_model.dart';
-import 'package:sidam_worker/viewModel/work_swap_view_model.dart';
+import 'package:sidam_worker/view_model/selected_store_info_view_model.dart';
+import 'package:sidam_worker/view_model/work_swap_view_model.dart';
 
 class ResultViewer extends StatefulWidget {
   @override
@@ -64,7 +64,7 @@ class _PassFailState extends State<ResultViewer> {
 
     double textSize = 17 * deviceWidth / _designWidth;
 
-    return Consumer<StoreViewModel>(builder: (context, storeProv, child) {
+    return Consumer<SelectedStore>(builder: (context, storeProv, child) {
       return Consumer<WorkSwapViewModel>(builder: (context, prov, child) {
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           SvgPicture.asset(
@@ -86,8 +86,8 @@ class _PassFailState extends State<ResultViewer> {
                   TextSpan(
                     text: '${week[prov.mySchedule!.day.weekday]}요일'
                         '(${prov.mySchedule!.day.day}일) '
-                        '${(storeProv.store.open ?? 0) + prov.findStartTime(prov.mySchedule!)}:00 - '
-                        '${(storeProv.store.open ?? 0) + prov.findStartTime(prov.mySchedule!) + prov.calculateTime(prov.mySchedule!)}:00 근무',
+                        '${(storeProv.storeInfo.open ?? 0) + prov.findStartTime(prov.mySchedule!)}:00 - '
+                        '${(storeProv.storeInfo.open ?? 0) + prov.findStartTime(prov.mySchedule!) + prov.calculateTime(prov.mySchedule!)}:00 근무',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -109,8 +109,8 @@ class _PassFailState extends State<ResultViewer> {
                   TextSpan(
                       text: '${week[prov.target!.day.weekday]}요일'
                           '(${prov.target!.day.day}일) '
-                          '${(storeProv.store.open ?? 0) + prov.findStartTime(prov.target!)}:00 - '
-                          '${(storeProv.store.open ?? 0) + prov.findStartTime(prov.target!) + prov.calculateTime(prov.target!)}:00 근무',
+                          '${(storeProv.storeInfo.open ?? 0) + prov.findStartTime(prov.target!)}:00 - '
+                          '${(storeProv.storeInfo.open ?? 0) + prov.findStartTime(prov.target!) + prov.calculateTime(prov.target!)}:00 근무',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.black,

@@ -4,9 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
 
 import 'package:sidam_worker/data/remote_data_source.dart';
+import 'package:sidam_worker/data/repository/store_repository.dart';
 import 'package:sidam_worker/model/notice_model.dart';
-import 'package:sidam_worker/model/store_model.dart';
-import 'package:sidam_worker/repository/store_repository.dart';
+import 'package:sidam_worker/model/store.dart';
+import 'package:sidam_worker/util/sp_helper.dart';
 
 class NoticeViewModel extends ChangeNotifier {
   
@@ -17,10 +18,12 @@ class NoticeViewModel extends ChangeNotifier {
   late final Session _session = Session();
   Notice _mainNotice = Notice(title: '공지사항이 없습니다', timeStamp: DateTime.now().toIso8601String(), id: 0, read: true);
   Notice get lastNotice => _mainNotice;
+  SPHelper _helper = SPHelper();
 
   NoticeViewModel() {
-    _storeRepository = StoreRepository();
+    _storeRepository = StoreRepositoryImpl();
     _session.init();
+    _helper.init();
     getTitle();
   }
 
@@ -33,7 +36,7 @@ class NoticeViewModel extends ChangeNotifier {
 
     _store = await _storeRepository.getStoreData();
 
-    var res = await _session.get("/api/notice/${_store.id}/view/list?last=0&cnt=1&role=${_session.roleId}");
+    var res = await _session.get("/api/notice/${_store.id ?? _helper.getStoreId()}/view/list?last=0&cnt=1&role=${_session.roleId}");
 
     var data = jsonDecode(res.body);
 
