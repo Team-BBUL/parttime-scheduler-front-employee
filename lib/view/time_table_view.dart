@@ -1,9 +1,8 @@
 import "package:flutter/material.dart";
 import 'package:sidam_worker/util/appColor.dart';
 import 'package:sidam_worker/view/work_swap_view.dart';
+import 'package:sidam_worker/view/unworkable_schedule_page.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-
-import 'impossible_time_select_view.dart';
 
 class TimeTable extends StatefulWidget {
   @override
@@ -27,7 +26,7 @@ class _TimeTableState extends State<TimeTable> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ImpossibleTime()));
+                        builder: (context) => const UnworkableSchedulePage()));
               },
               style: ElevatedButton.styleFrom(
                   minimumSize: Size.zero,

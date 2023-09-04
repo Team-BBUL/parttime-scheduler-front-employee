@@ -176,9 +176,8 @@ class _HomeState extends State<Home> {
       double deviceWidth, double deviceHeight, DateTime now) {
     var week = ['error', '월', '화', '수', '목', '금', '토', '일'];
 
-    double timeWidth = 45;
     // 맨좌우 여백 10, 각 시간 블록 사이 여백 5씩
-    double scheduleHeight = 280 * deviceHeight / _designHeight;
+    double scheduleHeight = 290 * deviceHeight / _designHeight;
 
     return Container(
         width: deviceWidth,

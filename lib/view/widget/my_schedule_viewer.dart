@@ -28,7 +28,7 @@ class _ScheduleViewerState extends State<ScheduleViewer> {
     double timeWidth = 45;
     // 맨좌우 여백 10, 각 시간 블록 사이 여백 5씩
     double dayWidth = (deviceWidth - timeWidth - 10 - 20) / 8;
-    double scheduleHeight = 280 * deviceHeight / _designHeight;
+    double scheduleHeight = 290 * deviceHeight / _designHeight;
 
     return Consumer<SelectedStore>(builder: (context, storeProv, child) {
       return Consumer<ScheduleViewModel>(builder: (context, prov, child) {
