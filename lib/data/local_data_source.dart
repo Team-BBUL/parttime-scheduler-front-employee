@@ -17,7 +17,7 @@ class LocalDataSource {
 
   Future<void> init() async {
     _path = await _localPath;
-    await Directory('$_path/data').create(recursive: true);
+    await Directory('$_path/data/schedules').create(recursive: true);
   }
 
   Future<String> get _localPath async {
