@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
 import 'package:sidam_worker/data/remote_data_source.dart';
 
-import 'package:sidam_worker/model/AlarmModel.dart';
+import 'package:sidam_worker/model/alarm_model.dart';
 
 class AlarmHttpProvider extends ChangeNotifier {
 
