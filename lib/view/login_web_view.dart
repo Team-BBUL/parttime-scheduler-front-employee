@@ -4,6 +4,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:html/parser.dart';
 import 'package:provider/provider.dart';
+import 'package:sidam_employee/view/check_login.dart';
 
 import '../util/app_toast.dart';
 import '../view_model/login_view_model.dart';
@@ -88,10 +89,11 @@ class LoginWebView extends StatelessWidget{
                           );
                           viewModel.urlController.text = viewModel.url;
                           var isSuccess = await viewModel.saveToken(viewModel.url);
-                          if(isSuccess){
+                          if(isSuccess) {
+                            await viewModel.getAccountInfo();
                             Navigator.pushAndRemoveUntil(context,
                                 MaterialPageRoute(
-                                    builder: (context) => SignupScreen()
+                                    builder: (context) => CheckLoginScreen()
                                 ),(route) => false
                             );
                             AppToast.showToast('로그인 성공');
