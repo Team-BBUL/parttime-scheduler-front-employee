@@ -10,11 +10,13 @@ import '../../util/sp_helper.dart';
 
 abstract class UserRepository{
   Future<List<dynamic>> getUsers();
-  Future<Account> getUser();
+  Future<Account> fetchUser();
+
   Future<dynamic> createUser(String name);
   Future<dynamic> updateUser(Map<String, dynamic> user);
   Future<dynamic> deleteUser(String id);
-}
+
+  }
 
 class UserRepositoryImpl implements UserRepository {
   SPHelper helper = SPHelper();
@@ -52,7 +54,21 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Account> getUser() async {
+  Future<List> getUsers() {
+    // TODO: implement getUsers
+    throw UnimplementedError();
+  }
+
+  @override
+  Future updateUser(Map<String, dynamic> user) {
+    // TODO: implement updateUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Account> fetchUser() async {
+    SPHelper helper = SPHelper();
+
     const String apiUrl = 'http://10.0.2.2:8088/member';
     final headers = {'Authorization': 'Bearer '+helper.getJWT(),
       'Content-Type': 'application/json; charset=utf-8'};
@@ -66,7 +82,9 @@ class UserRepositoryImpl implements UserRepository {
         log("response = ${response.body}");
         Map<String, dynamic> decodedData = json.decode(response.body);
         print('User got successfully.');
-        return Account.fromJson(decodedData['data']);
+        Account account = Account.fromJson(decodedData['data']);
+        helper.writeAlias(account.name!);
+        return account;
       } else {
         log("response = ${response.body}");
         if(response.body == "UNAUTHORIZED"){
@@ -80,17 +98,5 @@ class UserRepositoryImpl implements UserRepository {
     } catch (e){
       throw Exception('Failed to get user. Error: $e');
     }
-  }
-
-  @override
-  Future<List> getUsers() {
-    // TODO: implement getUsers
-    throw UnimplementedError();
-  }
-
-  @override
-  Future updateUser(Map<String, dynamic> user) {
-    // TODO: implement updateUser
-    throw UnimplementedError();
   }
 }
