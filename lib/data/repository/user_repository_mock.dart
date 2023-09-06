@@ -63,4 +63,10 @@ class MockUserRepository extends UserRepository{
     throw UnimplementedError();
   }
 
+  @override
+  Future<Account> fetchUser() {
+    // TODO: implement fetchUser
+    throw UnimplementedError();
+  }
+
 }
