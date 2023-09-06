@@ -1,5 +1,5 @@
-import 'package:sidam_worker/data/repository/user_repository.dart';
-import 'package:sidam_worker/model/account.dart';
+import 'package:sidam_employee/data/repository/user_repository.dart';
+import 'package:sidam_employee/model/account.dart';
 
 
 class MockUserRepository extends UserRepository{

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_worker/view_model/chatting_view_model.dart';
+import 'package:sidam_employee/view_model/chatting_view_model.dart';
 
 import '../util/appColor.dart';
 

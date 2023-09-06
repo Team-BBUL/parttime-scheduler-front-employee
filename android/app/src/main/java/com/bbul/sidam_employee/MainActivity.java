@@ -1,4 +1,4 @@
-package com.bbul.sidamworker.sidam_worker;
+package com.bbul.sidam_employee;
 
 import io.flutter.embedding.android.FlutterActivity;
 

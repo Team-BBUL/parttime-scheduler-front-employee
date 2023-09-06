@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:sidam_worker/data/repository/store_repository.dart';
-import 'package:sidam_worker/model/account_role.dart';
+import 'package:sidam_employee/data/repository/store_repository.dart';
+import 'package:sidam_employee/model/account_role.dart';
 
 import '../../model/store.dart';
 

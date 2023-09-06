@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 
 import 'package:logger/logger.dart';
-import 'package:sidam_worker/data/repository/store_repository.dart';
+import 'package:sidam_employee/data/repository/store_repository.dart';
 
-import 'package:sidam_worker/repository/schedule_repository.dart';
-import 'package:sidam_worker/model/schedule_model.dart';
-import 'package:sidam_worker/model/store.dart';
-import 'package:sidam_worker/util/date_utility.dart';
-import 'package:sidam_worker/util/sp_helper.dart';
+import 'package:sidam_employee/repository/schedule_repository.dart';
+import 'package:sidam_employee/model/schedule_model.dart';
+import 'package:sidam_employee/model/store.dart';
+import 'package:sidam_employee/util/date_utility.dart';
+import 'package:sidam_employee/util/sp_helper.dart';
 
 class ScheduleViewModel extends ChangeNotifier {
   final _logger = Logger();

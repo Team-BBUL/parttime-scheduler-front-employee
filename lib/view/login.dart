@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_worker/view/login_web_view.dart';
-import 'package:sidam_worker/view/login_web_view_page.dart';
-import 'package:sidam_worker/view_model/login_view_model.dart';
+import 'package:sidam_employee/view/login_web_view.dart';
+import 'package:sidam_employee/view/login_web_view_page.dart';
+import 'package:sidam_employee/view_model/login_view_model.dart';
 
 class LoginScreen extends StatelessWidget {
   final _designWidth = 411;

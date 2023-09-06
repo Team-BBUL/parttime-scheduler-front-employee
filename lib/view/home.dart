@@ -2,15 +2,15 @@ import "package:flutter/material.dart";
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import 'package:sidam_worker/util/shared_preference_provider.dart';
-import 'package:sidam_worker/view/widget/main_cost.dart';
-import 'package:sidam_worker/view/widget/my_schedule_viewer.dart';
-import 'package:sidam_worker/view_model/notice_view_model.dart';
-import 'package:sidam_worker/view_model/schedule_view_model.dart';
+import 'package:sidam_employee/util/shared_preference_provider.dart';
+import 'package:sidam_employee/view/widget/main_cost.dart';
+import 'package:sidam_employee/view/widget/my_schedule_viewer.dart';
+import 'package:sidam_employee/view_model/notice_view_model.dart';
+import 'package:sidam_employee/view_model/schedule_view_model.dart';
 
-import 'package:sidam_worker/view/announcement_page.dart';
-import 'package:sidam_worker/view/unworkable_schedule_page.dart';
-import 'package:sidam_worker/view/setting.dart';
+import 'package:sidam_employee/view/announcement_page.dart';
+import 'package:sidam_employee/view/unworkable_schedule_page.dart';
+import 'package:sidam_employee/view/setting.dart';
 
 import '../util/appColor.dart';
 import '../util/sp_helper.dart';

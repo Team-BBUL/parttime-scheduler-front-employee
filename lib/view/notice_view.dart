@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sidam_worker/model/notice_model.dart';
+import 'package:sidam_employee/model/notice_model.dart';
 
 class NoticeView extends StatefulWidget{
 

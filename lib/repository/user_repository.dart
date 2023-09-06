@@ -1,5 +1,5 @@
-import 'package:sidam_worker/data/local_data_source.dart';
-import 'package:sidam_worker/model/user_model.dart';
+import 'package:sidam_employee/data/local_data_source.dart';
+import 'package:sidam_employee/model/user_model.dart';
 
 class UserRepository {
   final LocalDataSource _localDataSource = LocalDataSource();

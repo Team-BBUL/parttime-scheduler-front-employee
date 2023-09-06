@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_worker/view/store_list_page.dart';
-import 'package:sidam_worker/view_model/store_view_model.dart';
+import 'package:sidam_employee/view/store_list_page.dart';
+import 'package:sidam_employee/view_model/store_view_model.dart';
 
 import '../main.dart';
 import '../util/appColor.dart';

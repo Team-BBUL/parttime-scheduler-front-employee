@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_worker/view/store_list_search_page.dart';
+import 'package:sidam_employee/view/store_list_search_page.dart';
 
 import '../main.dart';
 import '../util/appColor.dart';

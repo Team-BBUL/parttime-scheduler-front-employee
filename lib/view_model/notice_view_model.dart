@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
 
-import 'package:sidam_worker/data/remote_data_source.dart';
-import 'package:sidam_worker/data/repository/store_repository.dart';
-import 'package:sidam_worker/model/notice_model.dart';
-import 'package:sidam_worker/model/store.dart';
-import 'package:sidam_worker/util/sp_helper.dart';
+import 'package:sidam_employee/data/remote_data_source.dart';
+import 'package:sidam_employee/data/repository/store_repository.dart';
+import 'package:sidam_employee/model/notice_model.dart';
+import 'package:sidam_employee/model/store.dart';
+import 'package:sidam_employee/util/sp_helper.dart';
 
 class NoticeViewModel extends ChangeNotifier {
   

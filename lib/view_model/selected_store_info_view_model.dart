@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
 
-import 'package:sidam_worker/data/repository/store_repository.dart';
-import 'package:sidam_worker/model/store.dart';
+import 'package:sidam_employee/data/repository/store_repository.dart';
+import 'package:sidam_employee/model/store.dart';
 
 class SelectedStore extends ChangeNotifier {
 

@@ -8,7 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:sidam_worker/main.dart';
+import 'package:sidam_employee/main.dart';
 
 void main() {
 

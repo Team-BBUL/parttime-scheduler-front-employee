@@ -1,4 +1,4 @@
-import 'package:sidam_worker/model/user_model.dart';
+import 'package:sidam_employee/model/user_model.dart';
 
 class ScheduleList {
   final int id;

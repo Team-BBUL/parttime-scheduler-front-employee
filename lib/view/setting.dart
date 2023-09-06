@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sidam_worker/view/notify.dart';
-import 'package:sidam_worker/view/notify_page.dart';
+import 'package:sidam_employee/view/notify.dart';
+import 'package:sidam_employee/view/notify_page.dart';
 
 import '../main.dart';
 import '../util/sp_helper.dart';

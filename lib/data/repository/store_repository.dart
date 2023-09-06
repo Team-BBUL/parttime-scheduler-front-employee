@@ -4,11 +4,11 @@ import 'dart:developer';
 
 import 'package:logger/logger.dart';
 
-import 'package:sidam_worker/data/local_data_source.dart';
-import 'package:sidam_worker/model/account_role.dart';
-import 'package:sidam_worker/model/store.dart';
+import 'package:sidam_employee/data/local_data_source.dart';
+import 'package:sidam_employee/model/account_role.dart';
+import 'package:sidam_employee/model/store.dart';
 import '../../util/sp_helper.dart';
-import 'package:sidam_worker/data/remote_data_source.dart';
+import 'package:sidam_employee/data/remote_data_source.dart';
 
 import 'package:http/http.dart' as http;
 

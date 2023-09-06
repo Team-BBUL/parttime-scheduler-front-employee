@@ -1,4 +1,4 @@
-name: sidam_worker
+name: sidam_employee
 description: 2023 Capstone Design, worker App
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.

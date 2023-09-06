@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:logger/logger.dart';
 import 'package:http/http.dart' as http;
-import 'package:sidam_worker/util/sp_helper.dart';
+import 'package:sidam_employee/util/sp_helper.dart';
 
 class Session {
 

@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
-import 'package:sidam_worker/util/appColor.dart';
-import 'package:sidam_worker/view/work_swap_view.dart';
-import 'package:sidam_worker/view/unworkable_schedule_page.dart';
+import 'package:sidam_employee/util/appColor.dart';
+import 'package:sidam_employee/view/work_swap_view.dart';
+import 'package:sidam_employee/view/unworkable_schedule_page.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class TimeTable extends StatefulWidget {

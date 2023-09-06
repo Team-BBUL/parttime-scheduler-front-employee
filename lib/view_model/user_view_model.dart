@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-import 'package:sidam_worker/model/user_model.dart';
-import 'package:sidam_worker/repository/user_repository.dart';
+import 'package:sidam_employee/model/user_model.dart';
+import 'package:sidam_employee/repository/user_repository.dart';
 
 class UserProvider with ChangeNotifier {
 

@@ -1,8 +1,8 @@
 import 'package:logger/logger.dart';
 
-import 'package:sidam_worker/data/remote_data_source.dart';
+import 'package:sidam_employee/data/remote_data_source.dart';
 
-import 'package:sidam_worker/util/sp_helper.dart';
+import 'package:sidam_employee/util/sp_helper.dart';
 
 class ChangeRequestRepository {
   final Session _session = Session();

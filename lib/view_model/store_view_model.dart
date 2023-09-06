@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:sidam_worker/data/repository/store_repository.dart';
+import 'package:sidam_employee/data/repository/store_repository.dart';
 
 import '../model/store.dart';
 

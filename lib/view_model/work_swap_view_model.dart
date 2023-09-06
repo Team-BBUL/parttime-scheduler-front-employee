@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
-import 'package:sidam_worker/model/user_model.dart';
-import 'package:sidam_worker/model/schedule_model.dart';
-import 'package:sidam_worker/model/worker_model.dart';
+import 'package:sidam_employee/model/user_model.dart';
+import 'package:sidam_employee/model/schedule_model.dart';
+import 'package:sidam_employee/model/worker_model.dart';
 
-import 'package:sidam_worker/repository/change_request_repository.dart';
-import 'package:sidam_worker/repository/user_repository.dart';
-import 'package:sidam_worker/repository/schedule_repository.dart';
+import 'package:sidam_employee/repository/change_request_repository.dart';
+import 'package:sidam_employee/repository/user_repository.dart';
+import 'package:sidam_employee/repository/schedule_repository.dart';
 
-import 'package:sidam_worker/util/date_utility.dart';
-import 'package:sidam_worker/util/sp_helper.dart';
+import 'package:sidam_employee/util/date_utility.dart';
+import 'package:sidam_employee/util/sp_helper.dart';
 
 class WorkSwapViewModel extends ChangeNotifier {
   final _logger = Logger();

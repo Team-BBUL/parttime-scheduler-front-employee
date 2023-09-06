@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
 
-import 'package:sidam_worker/model/announcement.dart';
+import 'package:sidam_employee/model/announcement.dart';
 import 'package:http/http.dart' as http;
 import '../../util/sp_helper.dart';
 

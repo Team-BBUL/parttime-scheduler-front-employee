@@ -3,13 +3,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import 'package:sidam_worker/util/appColor.dart';
-import 'package:sidam_worker/model/schedule_model.dart';
+import 'package:sidam_employee/util/appColor.dart';
+import 'package:sidam_employee/model/schedule_model.dart';
 
-import 'package:sidam_worker/view_model/selected_store_info_view_model.dart';
-import 'package:sidam_worker/view_model/work_swap_view_model.dart';
+import 'package:sidam_employee/view_model/selected_store_info_view_model.dart';
+import 'package:sidam_employee/view_model/work_swap_view_model.dart';
 
-import 'package:sidam_worker/util/shared_preference_provider.dart';
+import 'package:sidam_employee/util/shared_preference_provider.dart';
 
 class SwapViewer extends StatefulWidget {
   @override
