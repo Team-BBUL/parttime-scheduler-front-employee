@@ -33,6 +33,7 @@ class StoreRepositoryImpl implements StoreRepository{
   late LocalDataSource _dataSource;
 
   static String storeApi = 'http://10.0.2.2:8088/store';
+  static String enterUrl = 'http://10.0.2.2:8088/api';
 
   static SPHelper helper = SPHelper();
   final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
@@ -187,11 +188,13 @@ class StoreRepositoryImpl implements StoreRepository{
   @override
   Future enterStore(int storeId) async {
     helper.init();
-    final String apiUrl = '$storeApi/enter/$storeId';
+    final String apiUrl = '$enterUrl/enter/$storeId';
     final response = await http.get(
       Uri.parse(apiUrl),
       headers: headers,
     );
+
+    log('$apiUrl로 입장 요청');
     if (response.statusCode == 200) {
       log(response.body);
       Map<String, dynamic> decodedData = json.decode(response.body);

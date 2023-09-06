@@ -32,6 +32,10 @@ class NoticeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> reload() async {
+    _mainNotice = await _loadMainNotice();
+  }
+
   Future<Notice> _loadMainNotice() async {
 
     _store = await _storeRepository.getStoreData();

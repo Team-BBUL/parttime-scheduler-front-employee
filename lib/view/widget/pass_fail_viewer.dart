@@ -34,7 +34,9 @@ class _PassFailState extends State<ResultViewer> {
               width: 300 * deviceWidth / _designWidth,
               height: 300 * deviceHeight / _designHeight,
               child: prov.result
-                  ? changeResultViewer()
+                  ? (prov.target != null
+                      ? changeResultViewer()
+                      : nonTargetResult())
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -124,6 +126,53 @@ class _PassFailState extends State<ResultViewer> {
                       )),
                 ]),
           )
+        ]);
+      });
+    });
+  }
+
+  Widget nonTargetResult() {
+    var week = ['error', '월', '화', '수', '목', '금', '토', '일'];
+
+    final deviceWidth = MediaQuery.of(context).size.width;
+    final deviceHeight = MediaQuery.of(context).size.height;
+
+    double textSize = 17 * deviceWidth / _designWidth;
+
+    return Consumer<SelectedStore>(builder: (context, storeProv, child) {
+      return Consumer<WorkSwapViewModel>(builder: (context, prov, child) {
+        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          SvgPicture.asset(
+            'assets/icons/check.svg',
+            color: Colors.green,
+            width: 40,
+            height: 40,
+          ),
+          RichText(
+              textAlign: TextAlign.center,
+              strutStyle: const StrutStyle(fontSize: 25),
+              text: TextSpan(
+                  text: '당신이 ',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: textSize,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: '${week[prov.mySchedule!.day.weekday]}요일'
+                          '(${prov.mySchedule!.day.day}일) '
+                          '${(storeProv.storeInfo.open ?? 0) + prov.findStartTime(prov.mySchedule!)}:00 - '
+                          '${(storeProv.storeInfo.open ?? 0) + prov.findStartTime(prov.mySchedule!) + prov.calculateTime(prov.mySchedule!)}:00 근무',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontSize: textSize,
+                      ),
+                    ),
+                    TextSpan(
+                      text: '를 하지 못한다고 사장님에게 알렸어요.\n진행 상황은 알림 탭에서 확인해주세요!'
+                    )
+                  ]))
         ]);
       });
     });

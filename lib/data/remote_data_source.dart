@@ -7,22 +7,22 @@ import 'package:sidam_worker/util/sp_helper.dart';
 class Session {
 
   Session() {
-    init();
+    //init();
   }
 
   void init() async {
-    await helper.init();
+    await _helper.init();
 
-    _accountRoleId = helper.getRoleId() ?? 0;
-    headers['Authorization'] = 'Bearer ${helper.getJWT()}';
+    _accountRoleId = _helper.getRoleId() ?? 0;
+    headers['Authorization'] = 'Bearer ${_helper.getJWT()}';
   }
 
   var logger = Logger();
-  SPHelper helper = SPHelper();
+  static SPHelper _helper = SPHelper();
 
   // TODO: _server 변수 실제 서버의 주소로 변경하기
-  final String _server = "http://192.168.219.105:8088"; // 서버의 주소
-  int _accountRoleId = 0; // 현재 클라이언트의 사용자 ID
+  final String _server = "http://192.168.219.104:8088"; // 서버의 주소
+  int _accountRoleId = _helper.getRoleId() ?? 0; // 현재 클라이언트의 사용자 ID
 
   set setRoleId(int id) { _accountRoleId = id; }
   get roleId { return _accountRoleId; }
@@ -31,6 +31,7 @@ class Session {
   Map<String, String> headers = {
     'Content_type': 'application/json',
     'Accept': 'application/json',
+    'Authorization': 'Bearer ${_helper.getJWT()}',
   };
 
   Map<String, String> cookies = {};
@@ -51,10 +52,9 @@ class Session {
 
   // url = '/api/store/data' 와 같은 형식으로 전달
   Future<http.Response> post(String url, dynamic data) async {
-    logger.i("post - $url, ${data.toString()}");
-    http.Response response =
-        await http.post(Uri.parse('$server/$url'),
-            body: jsonEncode(data), headers: headers);
+    logger.i("post - ${Uri.parse('$server$url')}, ${data.toString()}\n${headers['Authorization']}");
+    http.Response response = await http.post(Uri.parse('$server$url'),
+          body: jsonEncode(data), headers: headers);
 
     final int statusCode = response.statusCode;
 
@@ -69,7 +69,7 @@ class Session {
   Future<http.Response> delete(String url) async {
     logger.i("delete - $url");
     http.Response response =
-    await http.delete(Uri.parse('$server/$url'));
+    await http.delete(Uri.parse('$server$url'));
 
     final int statusCode = response.statusCode;
 

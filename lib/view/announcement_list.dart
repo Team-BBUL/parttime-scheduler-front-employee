@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../view_model/announcement_view_model.dart';
 import 'announcement_detail.dart';
 
-class AnnouncementListScreen extends StatelessWidget{
+class AnnouncementListScreen extends StatefulWidget {
   const AnnouncementListScreen({super.key});
+
+  @override
+  _AnnouncementListScreenState createState() => _AnnouncementListScreenState();
+}
+
+class _AnnouncementListScreenState extends State<AnnouncementListScreen> {
 
   @override
   Widget build(BuildContext context) {
     final _viewModel = Provider.of<AnnouncementViewModel>(context,listen: false );
     _viewModel.getAnnouncementList(100);
+
+    final deviceWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
           title: const Text('공지사항'),
@@ -18,7 +28,7 @@ class AnnouncementListScreen extends StatelessWidget{
       ),
       body: Consumer<AnnouncementViewModel>(
           builder:(context, viewModel,child){
-            if (viewModel.announcementList == null || viewModel.announcementList!.length != 0) {
+            if (viewModel.announcementList == null || viewModel.announcementList!.length == 0) {
               return SizedBox(
                 width: double.infinity,
                   height: double.infinity,
@@ -38,6 +48,9 @@ class AnnouncementListScreen extends StatelessWidget{
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
+                        setState(() {
+                          viewModel.announcementList?[index].read = true;
+                        });
                         Navigator.push(context, MaterialPageRoute(
                             builder: (context) {
                               int id = viewModel.announcementList?[index].id ??
@@ -49,16 +62,31 @@ class AnnouncementListScreen extends StatelessWidget{
                       child: Container(
                         height: 50,
                         alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 0, horizontal: 10),
+                        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                        margin: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                         decoration: const BoxDecoration(
                           border: Border(bottom: BorderSide(
                             color: Colors.grey, width: 1.0,),),
                           // border: Border.all(width: 1, color: Colors.black)
                         ),
-                        child: Column(
-                          children: [
+                        child: Row(children: [
+                          !(viewModel.announcementList?[index].read ?? false) ?
+                          Container(
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 4, right: 4),
+                                child: const Text('new',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ))
+                              : const Text(""),
+                          !(viewModel.announcementList?[index].read ?? false) ?
+                              SizedBox(width: 10, height: 1,) : Text(''),
+
+                          Container(child: Column(children: [
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
@@ -68,20 +96,20 @@ class AnnouncementListScreen extends StatelessWidget{
                             ),
                             const Spacer(),
                             Align(
+
                               alignment: Alignment.centerLeft,
-                              child: Text(viewModel.announcementList?[index]
-                                  .timeStamp != null
-                                  ? '${viewModel.announcementList?[index]
-                                  .appendZeroMonth()}/'
-                                  '${viewModel.announcementList?[index]
-                                  .appendZeroDay()}'
+                              child: Text(viewModel.announcementList?[index].timeStamp != null
+                                  ? '${DateFormat('yyyy년 MM월 dd일 HH:mm:ss').format(viewModel.announcementList?[index].timeStamp ?? DateTime(2023, 1, 1))}'
                                   : '',
                                   style: TextStyle(
-                                      fontSize: 15, color: Colors.grey)),
-                            )
-                            ,
+                                      fontSize: 13, color: Colors.grey)),
+                            ),
                           ],
-                        ),
+                            mainAxisAlignment: MainAxisAlignment.start,
+                          ),
+                            width: deviceWidth - 80,
+                          )
+                        ],),
                       ),
                     );
                   });

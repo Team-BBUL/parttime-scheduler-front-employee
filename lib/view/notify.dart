@@ -13,7 +13,7 @@ class NotifyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Notify Screen'),
+          title: const Text('알림 설정'),
 
         ),
         body : Consumer<NotifyViewModel>(

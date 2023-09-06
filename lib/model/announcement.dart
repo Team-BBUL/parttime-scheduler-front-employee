@@ -9,10 +9,12 @@ class Announcement{
   List<Uint8List>? memoryImage;
   List<GetPhoto>? getPhoto;
   DateTime? timeStamp;
-  Announcement({required this.id, required this.subject, required this.content, required this.photo, required this.timeStamp, required this.getPhoto});
+  bool? read;
+  Announcement({required this.id, required this.subject, required this.content, required this.photo, required this.timeStamp, required this.getPhoto, required this.read});
 
   Announcement.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    read = json['check'];
     subject= json['subject'];
     content= json['content'] ?? '';
     if (json['photo'] != null) {
@@ -24,7 +26,7 @@ class Announcement{
       photo = [];
     }
     photo = json['images'] != null ? json['images'].cast<File>() : [];
-    timeStamp= DateTime.parse(json['timeStamp']) ;
+    timeStamp= DateTime.parse(json['timeStamp']);
   }
 
   Map<String, dynamic> toJson() {
@@ -34,6 +36,7 @@ class Announcement{
     data['content'] = this.content;
     // data['photo'] = this.photo;
     data['timeStamp'] = this.timeStamp.toString();
+    data['check'] = this.read;
     return data;
   }
   Map<String, dynamic> toJsonExcludeIdAndTimeStamp() {
@@ -41,6 +44,7 @@ class Announcement{
     data['subject'] = this.subject;
     data['content'] = this.content;
     // data['photo'] = this.photo;
+    data['check'] = this.read;
     return data;
   }
 
@@ -50,6 +54,7 @@ class Announcement{
     this.content = announcement.content;
     this.photo = announcement.photo;
     this.timeStamp = announcement.timeStamp;
+    this.read = announcement.read;
   }
 
   koreanWeekday() {

@@ -57,17 +57,32 @@ class _ViewerState extends State<SwapViewer> {
                   const SizedBox(width: 5,),
                   TextButton(
                     style: ButtonStyle(
+                      side: MaterialStateProperty.resolveWith((states) {
+                        /*
+                        // 선택하거나 선택한 근무자가 현재 띄우고 있는 객체일 경우 보색으로 강조표시
+                        if (states.contains(MaterialState.pressed) || prov.otherId == prov.workers[idx].id) {
+                          int color = 0xFFFFFFFF - int.parse(prov.workers[idx].color);
+                          color += 0xFF000000;
+                          return BorderSide(color: Color(color), width: 4);
+                        } else {
+                          return BorderSide.none;
+                        }*/
+                        if(states.contains(MaterialState.pressed) || prov.otherId == prov.workers[idx].id) {
+                          return BorderSide(color: Colors.red, width: 4);
+                        } else {
+                          return BorderSide.none;
+                        }
+                  }),
                       minimumSize: MaterialStateProperty.all(Size.zero),
                       foregroundColor: MaterialStateProperty.all(Colors.white),
-                      backgroundColor:
-                      MaterialStateProperty.resolveWith((states) {
-                        // 선택하거나 선택한 근무자가 현재 띄우고 있는 객체일 경우 빨갛게 강조표시
-                        if (states.contains(MaterialState.pressed) || prov.otherId == prov.workers[idx].id) {
-                          return Colors.red;
-                        } else {
-                          return Color(int.parse(prov.workers[idx].color));
-                        }
-                      }),
+                      backgroundColor: //MaterialStateProperty.all(Color(int.parse(prov.workers[idx].color)))
+                        MaterialStateProperty.resolveWith((states) {
+                          if (states.contains(MaterialState.pressed) || prov.otherId == prov.workers[idx].id) {
+                            return Colors.black54;
+                          } else {
+                            return Color(int.parse(prov.workers[idx].color));
+                          }
+                        }),
                       padding: MaterialStateProperty.all(const EdgeInsets.only(
                           left: 10, right: 10, top: 5, bottom: 5)),
                     ),
@@ -101,7 +116,7 @@ class _ViewerState extends State<SwapViewer> {
     double timeWidth = 45;
     // 맨좌우 여백 10, 각 시간 블록 사이 여백 5씩
     double dayWidth = (deviceWidth - timeWidth - 10 - 20) / 8;
-    double scheduleHeight = 430;
+    double scheduleHeight = deviceHeight - 300;
 
     return Column(children: [
       const SizedBox(
@@ -246,7 +261,7 @@ class _ViewerState extends State<SwapViewer> {
     double timeWidth = 45;
     // 맨좌우 여백 10, 각 시간 블록 사이 여백 5씩
     double dayWidth = (deviceWidth - timeWidth - 10 - 20) / 8;
-    double scheduleHeight = 430;
+    double scheduleHeight = deviceHeight - 300;
 
     return Column(children: [
 

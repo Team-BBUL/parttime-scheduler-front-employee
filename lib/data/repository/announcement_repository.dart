@@ -16,7 +16,8 @@ abstract class AnnouncementRepository {
 
 class AnnouncementRepositoryImpl implements AnnouncementRepository{
 
-  static String noticeApi = 'http://10.0.2.2:8088/api/notice/';
+  static String server = 'http://10.0.2.2:8088';
+  static String noticeApi = '$server/api/notice/';
   static SPHelper helper = SPHelper();
   final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
     'Content-Type': 'application/json'};
@@ -24,7 +25,7 @@ class AnnouncementRepositoryImpl implements AnnouncementRepository{
   @override
   Future<Announcement> fetchAnnouncement(int announcementId) async {
     final String apiUrl = '$noticeApi${helper.getStoreId()}'
-        '/view/detail?id=$announcementId';
+        '/view/detail?id=$announcementId&role=${helper.getRoleId()}';
     log("fetchAnnouncement $apiUrl");
     final response = await http.get(
       Uri.parse(apiUrl),
@@ -44,7 +45,7 @@ class AnnouncementRepositoryImpl implements AnnouncementRepository{
 
   @override
   Future<List<Announcement>> fetchAnnouncementList(int page) async {
-    final String apiUrl = '$noticeApi${helper.getStoreId()}/view/list?last=0&cnt=10000';
+    final String apiUrl = '$noticeApi${helper.getStoreId()}/view/list?last=0&cnt=10000&role=${helper.getRoleId()}';
     log("fetchAnnouncementList $apiUrl");
     final response = await http.get(
       Uri.parse(apiUrl),
@@ -70,7 +71,7 @@ class AnnouncementRepositoryImpl implements AnnouncementRepository{
 
   @override
   Future fetchImage(String url, String fileName) async {
-    final String apiUrl = "http://10.0.2.2:8088$url?filename=$fileName";
+    final String apiUrl = "$server$url?filename=$fileName";
     Uint8List imageBytes;
     log("getImage $apiUrl");
     final response = await http.get(

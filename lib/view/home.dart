@@ -55,6 +55,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+
+    final _viewModel = Provider.of<NoticeViewModel>(context, listen: false);
+    _viewModel.reload();
   }
 
   @override

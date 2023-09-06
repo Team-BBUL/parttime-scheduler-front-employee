@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 import 'package:sidam_worker/util/appColor.dart';
 import 'package:sidam_worker/view_model/alarm_view_model.dart';
 
+import '../util/shared_preference_provider.dart';
+
 class AlarmView extends StatefulWidget{
 
   @override
@@ -21,7 +23,7 @@ class _AlarmState extends State<AlarmView> {
 
   final _designWidth = 411;
   final _designHeight = 683;
-  final _myId = 7;
+  int _myId = 0;
 
   AppColor color = AppColor();
 
@@ -30,8 +32,21 @@ class _AlarmState extends State<AlarmView> {
     super.initState();
   }
 
+  void loadSPProvider() async {
+
+    final provider = Provider.of<SharedPreferencesProvider>(context);
+
+    int id = await provider.getRoleId();
+
+    setState(() {
+      _myId = id;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    loadSPProvider();
+
     final ScrollController scrollController = ScrollController();
 
     final deviceWidth = MediaQuery.of(context).size.width;
@@ -49,6 +64,7 @@ class _AlarmState extends State<AlarmView> {
         return Scaffold(
             appBar: AppBar(
               centerTitle: true,
+              automaticallyImplyLeading: false,
               actions: [
                 IconButton( // 새로고침 버튼
                     onPressed: () {
@@ -97,7 +113,7 @@ class _AlarmState extends State<AlarmView> {
                           Container(
                             padding: const EdgeInsets.all(0),
                             child: Column( children: [
-                              alarmBuilder(state.alarms[index], deviceWidth),
+                              alarmBuilder(state.alarms[index], deviceWidth, index),
                               Divider(indent: indent, endIndent: indent, color: Colors.grey,),
                             ])
                         ),
@@ -124,7 +140,7 @@ class _AlarmState extends State<AlarmView> {
   }
 
   // 알림 객체를 이용해 내용을 생성, 위젯을 반환하는 메소드
-  Widget alarmBuilder(Alarm alarm, double width) {
+  Widget alarmBuilder(Alarm alarm, double width, int idx) {
 
     AlarmViewModel alarmVM = AlarmViewModel();
 
@@ -157,7 +173,8 @@ class _AlarmState extends State<AlarmView> {
                   ),
 
                   // 알림의 종류가 교환이고 점주와 근무자가 모두 수락했다면
-                  if (alarm.type == "CHANGE" && alarm.request?.own == "PASS" && alarm.request?.res == "PASS")
+                  if (alarm.type == "CHANGE" && alarm.request?.own == "PASS" && alarm.request?.res == "PASS" ||
+                      (alarm.type == "CHANGE" && alarm.request?.own == "PASS" && alarm.request?.res == "INVALID"))
                     Row( children:[
                       // 알림 승낙
                       SvgPicture.asset('assets/icons/accept.svg'),
@@ -222,13 +239,9 @@ class _AlarmState extends State<AlarmView> {
                               padding: EdgeInsets.zero
                             ),
                             onPressed: () async {
-                              Future<bool> check = alarmVM.answerAlarm("change", true, alarm.id);
-                              check.then((value) {
-                                setState(() {
-                                  alarm.request?.res = "PASS";
-                                });
-                              }).catchError((error){
-                                logger.e(error);
+                              checkPopup(true, idx);
+                              setState(() {
+                                alarm.request?.res = 'STANDBY';
                               });
                             },
                             child: const Text("수락", style: TextStyle(fontSize: 11),)
@@ -244,15 +257,10 @@ class _AlarmState extends State<AlarmView> {
                           padding: EdgeInsets.zero
                         ),
                         onPressed: () async {
-                          Future<bool> check = alarmVM.answerAlarm("change", false, alarm.id);
-                          check.then((value) {
-                            setState(() {
-                              alarm.request?.res = "FAIL";
-                            });
-                          }).catchError((error) {
-                            logger.e(error);
+                          checkPopup(false, idx);
+                          setState(() {
+                            alarm.request?.res = 'STANDBY';
                           });
-                          // api 요청 -> 알림 거절
                         },
                         child: const Text("거절", style: TextStyle(fontSize: 11),)
                     )),
@@ -351,5 +359,46 @@ class _AlarmState extends State<AlarmView> {
       );
     }
     return const Text("alarm formatting error");
+  }
+
+  // 재확인 체크 팝업을 띄우는 메소드
+  void checkPopup(bool pf, int idx) {
+
+    AlarmViewModel alarmVM = AlarmViewModel();
+
+    showDialog(context: context, builder: (BuildContext context) {
+      return Consumer<AlarmHttpProvider>(builder:(context, state, child) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              contentPadding: const EdgeInsets.all(25),
+              actionsAlignment: MainAxisAlignment.spaceAround,
+              alignment: Alignment.center,
+              backgroundColor: Colors.white,
+              content: Text(
+                  '정말 교환 요청을 ${pf ? '승낙' : '거절'}하시겠습니까?\n이 선택은 되돌릴 수 없습니다.'),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    icon: SvgPicture.asset('assets/icons/x.svg')),
+                IconButton(
+                    onPressed: () {
+                      Future<bool> check = alarmVM.answerAlarm("change", true, state.alarms[idx].id);
+                      check.then((value) {
+                        setState(() {
+                          state.alarms[idx].request?.res = pf ? "PASS" : 'FAIL';
+                        });
+                      }).catchError((error){
+                        logger.e(error);
+                      });
+                      Navigator.of(context).pop();
+                    },
+                    icon: SvgPicture.asset('assets/icons/check.svg')),
+              ],
+            );
+          });
+    });
   }
 }

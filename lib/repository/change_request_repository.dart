@@ -11,7 +11,7 @@ class ChangeRequestRepository {
 
   ChangeRequestRepository() {
     _helper.init();
-    _session.init();
+    //_session.init();
   }
 
   // 대상 비지정 요청 전송
@@ -40,7 +40,7 @@ class ChangeRequestRepository {
     _logger.i('대상 지정 근무 변경 요청 전송, $scheduleId 스케줄을 $targetId의 $obId 스케줄로 변경 요청함');
 
     // api url
-    var url = '/api/schedule/change/$storeId?id=$roleId&schedule=$scheduleId&target=$targetId&objective=$obId';
+    var url = '/api/schedule/change/assignment/$storeId?id=$roleId&schedule=$scheduleId&target=$targetId&objective=$obId';
 
     _logger.i('http post $url');
 

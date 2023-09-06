@@ -36,6 +36,8 @@ class UnworkableScheduleScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 child: Column(
                     children: [
+                      Text('1. 먼저 날짜를 선택해주세요.\n2. 그 다음 근무가 불가능한 시간을 선택해주세요.'),
+                      SizedBox(height: 15, width: 1,),
                       Row(
                           children: viewModel.unscheduledDate!.dates
                               .map((dates) =>
