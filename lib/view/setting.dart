@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sidam_employee/view/notify.dart';
-import 'package:sidam_employee/view/notify_page.dart';
+import 'package:sidam_worker/view/notify.dart';
+import 'package:sidam_worker/view/notify_page.dart';
 
 import '../main.dart';
 import '../util/sp_helper.dart';
@@ -15,8 +15,8 @@ class SettingScreen extends StatelessWidget{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Setting Screen'),
-
+        title: const Text('설정'),
+        centerTitle: true,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,

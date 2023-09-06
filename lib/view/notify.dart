@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_employee/view_model/notify_view_model.dart';
+import 'package:sidam_worker/view_model/notify_view_model.dart';
 
 import 'custom_cupertino_picker.dart';
 
@@ -13,7 +13,7 @@ class NotifyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Notify Screen'),
+          title: const Text('알림 설정'),
 
         ),
         body : Consumer<NotifyViewModel>(

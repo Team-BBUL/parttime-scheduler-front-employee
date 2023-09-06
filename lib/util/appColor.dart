@@ -7,4 +7,5 @@ class AppColor{
   final Color whiterColor = const Color(0xFFFFC0D6);
   final Color lightGreyColor = const Color(0xFFEFEFEF);
   final Color redColor = const Color(0xFFFF5656);
+  final Color moreWhiterColor = const Color(0x88FFFFC0D6);
 }

@@ -1,5 +1,5 @@
-import 'package:sidam_employee/data/repository/user_repository.dart';
-import 'package:sidam_employee/model/account.dart';
+import 'package:sidam_worker/data/repository/user_repository.dart';
+import 'package:sidam_worker/model/account.dart';
 
 
 class MockUserRepository extends UserRepository{
@@ -45,25 +45,21 @@ class MockUserRepository extends UserRepository{
 
   @override
   Future updateUser(Map<String, dynamic> user) {
-    // TODO: implement updateUser
     throw UnimplementedError();
   }
 
   @override
   Future deleteUser(String id) {
-    // TODO: implement deleteUser
     throw UnimplementedError();
   }
 
   @override
   Future createUser(String name) {
-    // TODO: implement createUser
     throw UnimplementedError();
   }
 
   @override
   Future<Account> getUser() {
-    // TODO: implement getUser
     throw UnimplementedError();
   }
 

@@ -47,7 +47,6 @@ class FixedAnnouncementRepositoryStub implements AnnouncementRepository {
 
   @override
   fetchImage(String s, String t) {
-    // TODO: implement fetchImage
     throw UnimplementedError();
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:sidam_employee/data/repository/store_repository.dart';
-import 'package:sidam_employee/model/account_role.dart';
+import 'package:sidam_worker/data/repository/store_repository.dart';
+import 'package:sidam_worker/model/account_role.dart';
 
 import '../../model/store.dart';
 
@@ -80,25 +80,21 @@ class MockStoreRepository implements StoreRepository{
 
   @override
   Future addStore(int storeId) {
-    // TODO: implement addStore
     throw UnimplementedError();
   }
 
   @override
   Future<List<Store>> fetchMyStoreList() {
-    // TODO: implement fetchMyStoreList
     throw UnimplementedError();
   }
 
   @override
   saveToSpCurrentStore(Store store) {
-    // TODO: implement saveToSpCurrentStore
     throw UnimplementedError();
   }
 
   @override
   Future enterStore(int storeId) {
-    // TODO: implement enterStore
     throw UnimplementedError();
   }
 

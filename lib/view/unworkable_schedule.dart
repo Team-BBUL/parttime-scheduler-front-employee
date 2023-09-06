@@ -1,7 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_layout_grid/flutter_layout_grid.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_employee/view_model/unworkable_schedule_view_model.dart';
+import 'package:sidam_worker/view_model/unworkable_schedule_view_model.dart';
 
 import '../util/appColor.dart';
 
@@ -18,7 +20,7 @@ class UnworkableScheduleScreen extends StatelessWidget {
                   preferredSize: Size.fromHeight(kToolbarHeight),
                   // AppBar의 높이 지정
                   child: AppBar(
-                    title: Text("Unworkable Schedule"),
+                    title: Text("근무가 불가능한 시간을 선택"),
                     actions: [
                       IconButton(
                           icon: Icon(Icons.check_box),
@@ -34,6 +36,8 @@ class UnworkableScheduleScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 child: Column(
                     children: [
+                      Text('1. 먼저 날짜를 선택해주세요.\n2. 그 다음 근무가 불가능한 시간을 선택해주세요.'),
+                      SizedBox(height: 15, width: 1,),
                       Row(
                           children: viewModel.unscheduledDate!.dates
                               .map((dates) =>
@@ -54,9 +58,11 @@ class UnworkableScheduleScreen extends StatelessWidget {
                                   return GestureDetector(
                                     onTap: () {
                                       viewModel.toggleCell(cell);
+                                      log('시간 탭, cell = ${cell.isSelected}');
                                     },
                                     onPanStart: (_) {
                                       viewModel.toggleCell(cell);
+                                      log('터치 시작');
                                     },
                                     onPanUpdate: (details) {
                                       if (viewModel.selectedColumnIndex != -1) {
@@ -79,6 +85,7 @@ class UnworkableScheduleScreen extends StatelessWidget {
                                         viewModel.updateDragSelection(
                                             startCell, endCell);
                                       }
+                                      log('터치 후 움직임');
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.all(5),

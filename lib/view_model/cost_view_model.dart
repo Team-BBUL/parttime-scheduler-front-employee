@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sidam_employee/data/repository/schedule_repository.dart';
+import 'package:sidam_worker/data/repository/schedule_repository.dart';
 
 import '../model/cost.dart';
 import '../model/schedule.dart';

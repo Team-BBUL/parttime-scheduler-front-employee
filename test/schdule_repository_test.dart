@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:sidam_employee/data/repository/schedule_repository.dart';
+import 'package:sidam_worker/data/repository/schedule_repository.dart';
 import 'package:test/test.dart';
 
 void main(){

@@ -2,12 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sidam_employee/util/app_future_builder.dart';
-import 'package:sidam_employee/util/sp_helper.dart';
-import 'package:sidam_employee/view/login.dart';
-import 'package:sidam_employee/view/signup.dart';
-import 'package:sidam_employee/view/store_list_page.dart';
+import 'package:sidam_worker/util/app_future_builder.dart';
+import 'package:sidam_worker/util/sp_helper.dart';
+import 'package:sidam_worker/view/login.dart';
+import 'package:sidam_worker/view/signup.dart';
+import 'package:sidam_worker/view/store_list_page.dart';
 
+import '../main.dart';
 import 'home.dart';
 class CheckLoginScreen extends StatefulWidget{
 
@@ -56,7 +57,7 @@ class _CheckLoginScreenState extends State<CheckLoginScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => HomeScreen(),
+          builder: (context) => MyHomePage(title: ''),
         ),
       );
     }else if (isLoggedIn && isRegistered) {

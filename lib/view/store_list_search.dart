@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_employee/view/store_list_page.dart';
-import 'package:sidam_employee/view_model/store_view_model.dart';
+import 'package:sidam_worker/view/store_list_page.dart';
+import 'package:sidam_worker/view_model/store_view_model.dart';
 
 import '../main.dart';
 import '../util/appColor.dart';
@@ -84,7 +84,7 @@ class StoreListSearchScreen extends StatelessWidget{
                       "매장명 : ${viewModel.storeInfo.name}\n 주소 :${viewModel.storeInfo.location}",
                     ) : Container(),
                     Flexible(
-                      child: Container(
+                      child: viewModel.storeInfo.id != null ? Container(
                         width: double.infinity,
                         child: Padding(
                           padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
@@ -92,7 +92,7 @@ class StoreListSearchScreen extends StatelessWidget{
                             Message().showConfirmDialog(
                                 context: context,
                                 title: "매장 등록",
-                                message: "매장을 등록하시겠습니까?",
+                                message: "매장에 등록하시겠습니까?",
                               apiCall: () => viewModel.joinStore(),
                             );
                           },
@@ -107,7 +107,7 @@ class StoreListSearchScreen extends StatelessWidget{
                             ),
                           ),
                         ),
-                      ),
+                      ) : SizedBox(height: 80, width: 10,),
                     ),
                   ],
                 ),

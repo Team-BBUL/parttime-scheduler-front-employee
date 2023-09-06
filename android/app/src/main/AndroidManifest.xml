@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.sidam_employee">
+    package="com.bbul.sidamworker.sidam_worker">
     <uses-permission android:name="android.permission.INTERNET" />
     <queries>
         <intent>
@@ -12,7 +12,7 @@
         </intent>
     </queries>
    <application
-        android:label="sidam_employee"
+        android:label="sidam_worker"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

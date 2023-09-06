@@ -1,177 +1,237 @@
-import 'package:flutter/material.dart';
-import 'package:sidam_employee/view/announcement_page.dart';
-import 'package:sidam_employee/view/store_list.dart';
-import 'package:sidam_employee/view/store_list_page.dart';
-import 'package:sidam_employee/view/unworkable_schedule_page.dart';
-import 'package:sidam_employee/view/setting.dart';
+import "package:flutter/material.dart";
+import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
+
+import 'package:sidam_worker/util/shared_preference_provider.dart';
+import 'package:sidam_worker/view/widget/main_cost.dart';
+import 'package:sidam_worker/view/widget/my_schedule_viewer.dart';
+import 'package:sidam_worker/view_model/notice_view_model.dart';
+import 'package:sidam_worker/view_model/schedule_view_model.dart';
+
+import 'package:sidam_worker/view/announcement_page.dart';
+import 'package:sidam_worker/view/unworkable_schedule_page.dart';
+import 'package:sidam_worker/view/setting.dart';
 
 import '../util/appColor.dart';
 import '../util/sp_helper.dart';
 
-
-class HomeScreen extends StatefulWidget{
-  const HomeScreen({super.key});
+class Home extends StatefulWidget {
+  const Home({super.key});
 
   @override
-  State<StatefulWidget> createState() => _HomeScreenState();
-
-
+  _HomeState createState() => _HomeState();
 }
 
-class _HomeScreenState extends State<HomeScreen>{
-  final SPHelper helper = SPHelper();
+class _HomeState extends State<Home> {
+  // models
+  String _storeName = '';
+  String _userAlias = '';
 
-  late final String _userName; // 접속 중인 사용자의 이름 UserRole:alias
-  late final String _storeName; // store:name
-  String annoTitle = "공지 제목"; // anno
+  // design constant
+  final _designWidth = 411;
+  final _designHeight = 683;
 
   AppColor color = AppColor();
+  SPHelper helper = SPHelper();
 
-  late final double _annoHeight;
-  late final double _newPad;
+  late double _newPad;
+
+  // etc
+  Logger logger = Logger();
+
+  void loadSPProvider() async {
+
+    final provider = Provider.of<SharedPreferencesProvider>(context);
+
+    String storeName = await provider.getStoreName();
+    String userAlias = await provider.getAlias();
+
+    setState(() {
+      _storeName = storeName;
+      _userAlias = userAlias;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    // 여기서 데이터 가져와야
 
-    _userName = "000님"; // userName 가져오기 (json)
-
-    _storeName = "가게이름"; // storeName 가져오기 (json)
-
-    // _annoTitle 가져오기 (api)
-
-    // 크기 관련 변수 지정
-    _annoHeight = 40;
-    _newPad = 4;
+    final _viewModel = Provider.of<NoticeViewModel>(context, listen: false);
+    _viewModel.reload();
   }
-
 
   @override
   Widget build(BuildContext context) {
-    int? id = helper.getStoreId();
+    loadSPProvider();
+
+    final deviceWidth = MediaQuery.of(context).size.width;
+    final deviceHeight = MediaQuery.of(context).size.height;
+
+    // x : y = w : t  ->  x = y * w / t
+    // 크기 관련 변수 지정
+    _newPad = deviceWidth * 4 / deviceWidth;
+    final storeFontSize = deviceWidth * 20 / _designWidth;
+    final nameFontSize = deviceWidth * 13 / _designWidth;
+
+    DateTime now = DateTime.now();
+
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        leading:  TextButton(
-          onPressed: (){
-            Navigator.push(context, MaterialPageRoute<void>(
-              builder: (BuildContext context) => SettingScreen(),
-            ));
-          },
-          child: Text('${helper.getAlias()}', style: TextStyle(color: Colors.black, fontSize: 16)),
+        appBar: AppBar(
+          title: Text(
+            _storeName,
+            style: TextStyle(fontSize: storeFontSize),
+          ),
+          centerTitle: true,
+          leading: Center(
+              child: Text(
+                _userAlias,
+            style: TextStyle(fontSize: nameFontSize),
+          )),
+          actions: <Widget>[
+            IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute<void>(
+                  builder: (BuildContext context) => SettingScreen(),
+                ));
+              },
+              icon: const Icon(Icons.settings),
+            )
+          ],
         ),
-        title: TextButton(
-            onPressed: (){
-              Navigator.push(context, MaterialPageRoute<void>(
-                builder: (BuildContext context) => StoreListPage(),
-              ));
-            },
-            child: Text("${helper.getStoreName()}", style: TextStyle(color: Colors.black, fontSize: 16))
-        ),
-
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            tooltip: 'Go to the next page',
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute<void>(
-                builder: (BuildContext context) => SettingScreen(),
-              ));
-            },
+        body: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              announceWidget(),
+              const MonthlyCost(),
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute<void>(
+                        builder: (BuildContext context) => const UnworkableSchedulePage()
+                    ));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size.zero,
+                    foregroundColor: color.mainColor,
+                    backgroundColor: color.moreWhiterColor,
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, top: 5, bottom: 5),
+                  ),
+                  child: const Text(
+                    '스케줄 희망 편성',
+                    style: TextStyle(color: Colors.black87, fontSize: 13),
+                  ),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+              ]),
+              timetableWidget(deviceWidth, deviceHeight, now),
+            ],
           ),
-          IconButton(
-            icon: const Icon(Icons.add_alert),
-            tooltip: 'Go to the next page',
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute<void>(
-                builder: (BuildContext context) {
-                  return Scaffold(
-                    appBar: AppBar(
-                      title: const Text('Next page'),
-                    ),
-                    body: const Center(
-                      child: Text(
-                        'This is the next page',
-                        style: TextStyle(fontSize: 24),
-                      ),
-                    ),
-                  );
-                },
-              ));
-            },
-          ),
-        ],
-
-      ),
-      body: Stack(
-        children: [
-          Center(
-            child: Column(
-              children: <Widget> [
-                announceWidget(),
-                Container(
-                    child: IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute<void>(
-                            builder: (BuildContext context) => const UnworkableSchedulePage()
-                        ));
-                      },
-                    )
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+        ));
   }
+
   Widget announceWidget() {
     return Container(
-        height: _annoHeight,
+        height: 50,
         color: color.mainColor,
-        child: Row(
+        child: InkWell(
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => AnnouncementPage(),),
+            );
+          },
+          child: Consumer<NoticeViewModel>(builder: (context, prov, child) {
+            return Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.only(left: _newPad, right: _newPad),
-                        child: const Text(
-                          'new',
-                          style: TextStyle(
-                            color: Colors.white,
+                  (!prov.lastNotice.read
+                      ? Container(
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                        ),
-                      )
-                  ),
+                          child: Padding(
+                            padding:
+                                EdgeInsets.only(left: _newPad, right: _newPad),
+                            child: const Text(
+                              'new',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ))
+                      : const Text("")),
                   SizedBox(width: _newPad),
-                  Center(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AnnouncementPage(),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        annoTitle,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ),
+                  Text(
+                    prov.lastNotice.title,
+                    style: const TextStyle(fontSize: 17),
                   ),
-                ]
-            ),
-    );
+                ]);
+          }),
+        ));
+  }
+
+  Widget timetableWidget(
+      double deviceWidth, double deviceHeight, DateTime now) {
+    var week = ['error', '월', '화', '수', '목', '금', '토', '일'];
+
+    // 맨좌우 여백 10, 각 시간 블록 사이 여백 5씩
+    double scheduleHeight = 290 * deviceHeight / _designHeight;
+
+    return Container(
+        width: deviceWidth,
+        height: scheduleHeight + 90,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(40),
+            boxShadow: [
+              BoxShadow(
+                color: color.mainColor,
+                spreadRadius: 0,
+                blurRadius: 5.0,
+                offset: const Offset(0, -5),
+              )
+            ]),
+        child: Consumer<ScheduleViewModel>(builder: (context, prov, child) {
+          return Column(
+            children: [
+              const SizedBox(height: 3),
+              SizedBox(
+                  width: deviceWidth,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const SizedBox(
+                          width: 50,
+                          height: 1,
+                        ),
+                        Column(children: [
+                          const Text(
+                            "이번주 근무",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          Text(
+                            "${now.month}월 ${now.day}일 ${week[now.weekday]}요일",
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        ]),
+                        IconButton(
+                            onPressed: () {
+                              prov.renew();
+                            },
+                            icon: const Icon(
+                              Icons.autorenew,
+                              color: Colors.black38,
+                              size: 25,
+                            )),
+                      ])),
+              ScheduleViewer(),
+            ],
+          );
+        }));
   }
 }

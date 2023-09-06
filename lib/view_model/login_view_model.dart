@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -30,8 +28,9 @@ class LoginViewModel extends ChangeNotifier{
         allowsInlineMediaPlayback: true,
       ));
 
+  // TODO: 실제 서버 주소로 바꾸기
   late PullToRefreshController pullToRefreshController;
-  String url = "http://10.0.2.2:8088/auth/authorize/kakao";
+  String url = "http://192.168.219.105:8088/auth/authorize/kakao";
   double progress = 0;
   final urlController = TextEditingController();
 

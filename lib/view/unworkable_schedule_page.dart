@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_employee/view/unworkable_schedule.dart';
-import 'package:sidam_employee/view_model/unworkable_schedule_view_model.dart';
+import 'package:sidam_worker/view/unworkable_schedule.dart';
+import 'package:sidam_worker/view_model/unworkable_schedule_view_model.dart';
 
 import '../data/repository/unworkable_schedule_repository.dart';
 

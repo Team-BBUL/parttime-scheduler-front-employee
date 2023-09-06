@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sidam_employee/view/store_list_page.dart';
+import 'package:sidam_worker/view/store_list_page.dart';
 
 import '../data/repository/user_repository.dart';
 import '../main.dart';
@@ -23,7 +23,7 @@ class _SignupState extends State<SignupScreen>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('TextField'),
+        title: Text(''),
       ),
       body: CustomScrollView(
         scrollDirection: Axis.vertical,

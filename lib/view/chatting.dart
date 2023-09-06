@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_employee/view_model/chatting_view_model.dart';
+import 'package:sidam_worker/view_model/chatting_view_model.dart';
 
 import '../util/appColor.dart';
 
@@ -23,7 +23,7 @@ class ChattingScreen extends StatelessWidget{
                 indicatorColor: AppColor().mainColor,
                 tabs: [
                   Tab(icon: Icon(Icons.people)),
-                  Tab(icon: SvgPicture.asset('asset/icons/message_square_icon.svg'),)
+                  Tab(icon: SvgPicture.asset('assets/icons/message_square_icon.svg'),)
                 ]),
           ),
           body: Consumer<ChattingViewModel>(
@@ -83,7 +83,6 @@ class ChattingScreen extends StatelessWidget{
 class Test extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     throw UnimplementedError();
   }
 
