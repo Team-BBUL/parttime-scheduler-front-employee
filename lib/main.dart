@@ -25,9 +25,6 @@ import 'package:sidam_employee/util/appColor.dart';
 import 'data/repository/announcement_repository.dart';
 
 void main() {
-
-  PackageInfo.fromPlatform();
-
   runApp(
     MultiProvider(
         providers: [
