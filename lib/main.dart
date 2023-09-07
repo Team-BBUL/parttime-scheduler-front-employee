@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:logger/logger.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:sidam_employee/data/repository/store_repository.dart';
 import 'package:sidam_employee/view/cost_page.dart';
@@ -25,6 +25,9 @@ import 'package:sidam_employee/util/appColor.dart';
 import 'data/repository/announcement_repository.dart';
 
 void main() {
+
+  PackageInfo.fromPlatform();
+
   runApp(
     MultiProvider(
         providers: [
@@ -89,7 +92,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   final AppColor color = AppColor();
-  final Logger _logger = Logger();
 
   int _currentIndex = 0;
   final List<Widget> _children = [Home(), TimeTable(), CostPage(), AlarmView()];
@@ -102,9 +104,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-
-    final provider = Provider.of<SharedPreferencesProvider>(context);
-    //provider.debugSetup();
 
     return Scaffold(
       body: _children[_currentIndex],
