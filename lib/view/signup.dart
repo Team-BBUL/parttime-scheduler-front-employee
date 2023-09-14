@@ -1,11 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sidam_employee/view/store_list_page.dart';
 
 import '../data/repository/user_repository.dart';
-import '../main.dart';
 import '../model/account.dart';
-import '../util/appColor.dart';
+import '../util/app_color.dart';
 
 class SignupScreen extends StatefulWidget{
 

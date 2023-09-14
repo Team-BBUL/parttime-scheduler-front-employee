@@ -45,7 +45,7 @@ class LocalDataSource {
       _logger.i('${jsonFile.path} 파일 읽어오기 성공');
     } catch (e) {
       _logger.e('[$fileName.json 파일 읽어오기 오류] $e');
-      jsonString = '{ "message": "[read fail] $e" }';
+      jsonString = '{ "code": "error", "message": "[read fail] $e" }';
     }
 
     // JSON 데이터 파싱

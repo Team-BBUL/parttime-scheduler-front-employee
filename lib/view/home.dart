@@ -12,7 +12,7 @@ import 'package:sidam_employee/view/announcement_page.dart';
 import 'package:sidam_employee/view/unworkable_schedule_page.dart';
 import 'package:sidam_employee/view/setting.dart';
 
-import '../util/appColor.dart';
+import '../util/app_color.dart';
 import '../util/sp_helper.dart';
 
 class Home extends StatefulWidget {

@@ -7,10 +7,9 @@ import 'package:sidam_employee/util/sp_helper.dart';
 class Session {
 
   Session() {
-    //init();
   }
 
-  void init() async {
+  Future init() async {
     await _helper.init();
 
     _accountRoleId = _helper.getRoleId() ?? 0;
@@ -21,7 +20,7 @@ class Session {
   static SPHelper _helper = SPHelper();
 
   // TODO: _server 변수 실제 서버의 주소로 변경하기
-  final String _server = "http://192.168.219.104:8088"; // 서버의 주소
+  final String _server = "http://10.0.2.2:8088"; // 서버의 주소
   int _accountRoleId = _helper.getRoleId() ?? 0; // 현재 클라이언트의 사용자 ID
 
   set setRoleId(int id) { _accountRoleId = id; }
@@ -29,7 +28,7 @@ class Session {
   get server { return _server; }
 
   Map<String, String> headers = {
-    'Content_type': 'application/json',
+    'Content-type': 'application/json',
     'Accept': 'application/json',
     'Authorization': 'Bearer ${_helper.getJWT()}',
   };
@@ -75,6 +74,19 @@ class Session {
 
     if (statusCode < 200 || statusCode >= 400) {
       logger.w('$url\ndelete warning\n${response.body}');
+    }
+
+    return response;
+  }
+
+  Future<http.Response> put(String url, dynamic data) async {
+    logger.i('put - $url');
+    http.Response response =
+    await http.put(Uri.parse('$server$url'),
+        body: jsonEncode(data), headers: headers);
+
+    if (response.statusCode < 200 || response.statusCode >= 400) {
+      logger.w('$url\nput warning\n${response.body}');
     }
 
     return response;

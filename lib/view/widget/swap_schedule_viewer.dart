@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import 'package:sidam_employee/util/appColor.dart';
+import 'package:sidam_employee/util/app_color.dart';
 import 'package:sidam_employee/model/schedule_model.dart';
 
 import 'package:sidam_employee/view_model/selected_store_info_view_model.dart';
@@ -507,16 +507,14 @@ class _ViewerState extends State<SwapViewer> {
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           },
-                                          icon: SvgPicture.asset(
-                                              'assets/icons/x.svg')),
+                                          icon: SvgPicture.asset('assets/icons/x.svg')),
                                       IconButton(
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                             // 데이터 전송 프로세스
                                             prov.postChangeReq(true);
                                           },
-                                          icon: SvgPicture.asset(
-                                              'assets/icons/check.svg')),
+                                          icon: SvgPicture.asset('assets/icons/check.svg')),
                                     ],
                                   );
                                 },

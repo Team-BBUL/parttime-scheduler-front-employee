@@ -1,15 +1,13 @@
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sidam_employee/util/app_future_builder.dart';
 import 'package:sidam_employee/util/sp_helper.dart';
 import 'package:sidam_employee/view/login.dart';
-import 'package:sidam_employee/view/signup.dart';
-import 'package:sidam_employee/view/store_list_page.dart';
 
 import '../main.dart';
-import 'home.dart';
+import 'account_details.dart';
+
 class CheckLoginScreen extends StatefulWidget{
 
   @override
@@ -37,50 +35,34 @@ class _CheckLoginScreenState extends State<CheckLoginScreen> {
 
   _checkLoginStatus() async {
     await helper.init();
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     bool isLoggedIn = helper.getIsLoggedIn();
     int? currentStoreId = helper.getStoreId();
     bool isRegistered = helper.getIsRegistered();
     String jwt = helper.getJWT();
     if(jwt.isEmpty) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoginScreen(),
-        ),
-      );
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => LoginScreen()));
     }
+    log('jwt: $jwt');
     log(isLoggedIn ? '로그인됨' : '로그인안됨');
     log(isRegistered ? '등록됨' : '등록안됨');
-    log(currentStoreId != null ? '$currentStoreId' : '가게선택안됨');
+    log(currentStoreId != null ? '가게 id = $currentStoreId' : '가게선택안됨');
+
     if(isLoggedIn && isRegistered && currentStoreId != null){
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MyHomePage(title: ''),
-        ),
-      );
-    }else if (isLoggedIn && isRegistered) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => StoreListPage(),
-        ),
-      );
-    }else if(isLoggedIn){
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SignupScreen(),
-        ),
-      );
-    }else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoginScreen(),
-        ),
-      );
+      log('홈으로 이동');
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const MyHomePage(title: '',)));
+
+    } else if(isLoggedIn) {
+      log('회원 정보 등록으로 이동');
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => AccountDetailsScreen()));
+
+    } else {
+      log('로그인으로 이동');
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => LoginScreen()));
     }
   }
 }

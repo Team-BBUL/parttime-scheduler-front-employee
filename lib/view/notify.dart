@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:provider/provider.dart';
-import 'package:sidam_employee/util/appColor.dart';
+import 'package:sidam_employee/util/app_color.dart';
 import 'package:sidam_employee/view_model/notify_view_model.dart';
 
 import 'custom_cupertino_picker.dart';
