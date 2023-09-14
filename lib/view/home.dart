@@ -20,6 +20,8 @@ class Home extends StatefulWidget {
 
   @override
   _HomeState createState() => _HomeState();
+
+  // TODO 홈에서 인센티브인지 특별 수당인지 받아오기
 }
 
 class _HomeState extends State<Home> {

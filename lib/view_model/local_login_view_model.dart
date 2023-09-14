@@ -65,6 +65,7 @@ class LocalLoginViewModel extends ChangeNotifier {
         log('$data');
         _helper.writeStoreId(data['store']);
         init = data['user']['valid'] ?? false;
+        _helper.writeIsRegistered(init);
         _helper.writeRoleId(data['user']['id']);
         _helper.writeAlias(data['user']['alias']);
 
@@ -89,6 +90,11 @@ class LocalLoginViewModel extends ChangeNotifier {
       updateLoading = true;
 
       message = await _loginRepository.updateAccountData(AccountData.update(id, pw, pwCheck));
+
+      if (message.contains('성공')) {
+        log('등록 성공');
+        _helper.writeIsRegistered(true);
+      }
 
       Future.delayed(const Duration(milliseconds: 1000), (){
         updateLoading = false;

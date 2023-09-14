@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
@@ -62,10 +63,6 @@ class LocalDataSource {
     File file;
     try {
       file = File('${await _localPath}/data/$fileName');
-
-      if (file.existsSync()) { // 있으면 삭제
-        file.delete();
-      }
 
       file.writeAsString(jsonString);
       _logger.i('${file.path} 저장 성공');

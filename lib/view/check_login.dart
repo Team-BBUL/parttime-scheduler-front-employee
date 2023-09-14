@@ -34,16 +34,20 @@ class _CheckLoginScreenState extends State<CheckLoginScreen> {
   }
 
   _checkLoginStatus() async {
+
     await helper.init();
     await Future.delayed(const Duration(seconds: 1));
+
     bool isLoggedIn = helper.getIsLoggedIn();
     int? currentStoreId = helper.getStoreId();
     bool isRegistered = helper.getIsRegistered();
     String jwt = helper.getJWT();
+
     if(jwt.isEmpty) {
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => LoginScreen()));
     }
+
     log('jwt: $jwt');
     log(isLoggedIn ? '로그인됨' : '로그인안됨');
     log(isRegistered ? '등록됨' : '등록안됨');

@@ -17,7 +17,7 @@ class MonthlyCostViewModel extends ChangeNotifier {
   // Map<DateTime, int> _dailyCost = [];
   // Map<DateTime, int> get dailyCost => _dailyCost;
 
-  CostViewModel() {
+  MonthlyCostViewModel() {
     _scheduleRepository = ScheduleRepository();
     _userRepository = UserRepository();
     _getMonthlyPay(DateTime.now());

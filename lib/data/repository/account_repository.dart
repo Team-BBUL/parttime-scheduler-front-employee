@@ -64,7 +64,7 @@ class AccountRepository{
   // 회원 정보 저장
   Future<void> saveAccountRole(AccountRole role) async {
 
-    _dataSource.saveModels(role.toJson(), 'userData');
+    _dataSource.saveModels(role.toJson(), 'userData.json');
   }
   
   // 직원 id, pw 수정
@@ -77,6 +77,6 @@ class AccountRepository{
     if (res.statusCode == 200) {
       return '성공';
     }
-    return '${jsonDecode(res.body)['message']}';
+    return '${jsonDecode(utf8.decode(res.bodyBytes))['message']}';
   }
 }

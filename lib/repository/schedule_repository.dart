@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
@@ -44,7 +45,7 @@ class ScheduleRepository {
     var res = await _session.get(url);
 
     // json 저장 형식으로 변환해서 객체로 돌려받음
-    var saveData = _restructureSchedule(jsonDecode(res.body), getDate);
+    var saveData = _restructureSchedule(jsonDecode(utf8.decode(res.bodyBytes)), getDate);
 
     // 받아온 스케줄 정보가 없을 경우 저장하지 않고 종료
     if (saveData.isEmpty) {
@@ -67,7 +68,7 @@ class ScheduleRepository {
 
     DateFormat nameFormat = DateFormat("yyyyMM");
     DateTime thisDate = DateTime(base.year, base.month, 1); // 이번달 1일
-    DateTime lastDate = DateTime(thisDate.year, thisDate.month - 1, 1).subtract(const Duration(days: 1)); // 저번달 1일
+    DateTime lastDate = DateTime(thisDate.year, thisDate.month - 1, 1); // 저번달 1일
     DateTime nextDate = DateTime(thisDate.year, thisDate.month + 1, 1); // 다음달 1일
 
     List<ScheduleList> thisMonthSchedule = [];
@@ -81,7 +82,7 @@ class ScheduleRepository {
       else if (schedule.day.month == lastDate.month){
         lastMonthSchedule.add(schedule);
       }
-      else {
+      else if (schedule.day.month == nextDate.month){
         nextMonthSchedule.add(schedule);
       }
     }
@@ -89,8 +90,7 @@ class ScheduleRepository {
     // 이번달 데이터 저장 - json -> ScheduleList로 변환해서 전달하기
     if (thisMonthSchedule.isNotEmpty) {
       _combineAndSaveSchedule(
-          _localToScheduleList(
-              await _dataSource.getSchedule(thisDate)),
+          _localToScheduleList(await _dataSource.getSchedule(thisDate)),
           thisMonthSchedule,
           nameFormat.format(thisDate)
       );
@@ -115,7 +115,7 @@ class ScheduleRepository {
     }
   }
 
-  // 로컬에 저장되어있던 json을 ScheduleList 형으로 변환
+  // json을 ScheduleList 형으로 변환 - OK
   List<ScheduleList> _localToScheduleList(Map<String, dynamic> json) {
 
     List<ScheduleList> result = [];
@@ -146,16 +146,14 @@ class ScheduleRepository {
   // 이미 저장되어있던 파일(saved)을 읽어와서 서버에서 새로 get한 데이터(bring)와 합치고 fileName이란 이름으로 저장
   void _combineAndSaveSchedule(List<ScheduleList> saved, List<ScheduleList> bring, String fileName) {
 
-    bring.sort((a, b) => a.day.compareTo(b.day));
+    bring.sort((a, b) => a.day.compareTo(b.day)); // 날짜순 정렬
 
     int last = (bring.length - 1) < 0 ? 0 : bring.length - 1;
-    DateTime start = bring[0].day; // 스케줄 시작일
-    DateTime next = DateTime(start.year, start.month + 1, 1); // 다음달의 첫날
-    DateTime end = bring[last].day.isBefore(next)
-        ? bring[last].day : next.subtract(const Duration(days: 1)); // 스케줄 마지막날
+    DateTime start = bring[0].day.subtract(const Duration(days: 1)); // 스케줄 시작일 - 1
+    DateTime end = bring[last].day.add(const Duration(days: 1));
 
-    // 스케줄 시작일보다 이전이거나 스케줄 마지막날 이후인 경우 삭제
-    saved.removeWhere((element) => start.isBefore(element.day) || end.isAfter(element.day));
+    // 서버에서 가져온 데이터와 겹치는 데이터 삭제
+    saved.removeWhere((element) => element.day.isAfter(start) && element.day.isBefore(end));
     saved.addAll(bring);
 
     _dataSource.saveModels({

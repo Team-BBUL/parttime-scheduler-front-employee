@@ -86,7 +86,7 @@ class Session {
         body: jsonEncode(data), headers: headers);
 
     if (response.statusCode < 200 || response.statusCode >= 400) {
-      logger.w('$url\nput warning\n${response.body}');
+      logger.w('$url\nput warning\n${utf8.decode(response.bodyBytes)}');
     }
 
     return response;

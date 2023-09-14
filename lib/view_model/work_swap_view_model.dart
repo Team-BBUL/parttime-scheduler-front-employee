@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
@@ -13,11 +15,14 @@ import 'package:sidam_employee/repository/schedule_repository.dart';
 import 'package:sidam_employee/util/date_utility.dart';
 import 'package:sidam_employee/util/sp_helper.dart';
 
+import '../data/repository/store_repository.dart';
+import '../model/store.dart';
+
 class WorkSwapViewModel extends ChangeNotifier {
   final _logger = Logger();
 
   late final ScheduleRepository _scheduleRepository;
-  //late final StoreRepository _storeRepository;
+  late final StoreRepositoryImpl _storeRepository;
   late final ChangeRequestRepository _changeRequestRepository;
   late final UserRepository _userRepository;
   late final SPHelper _helper;
@@ -60,7 +65,7 @@ class WorkSwapViewModel extends ChangeNotifier {
     _userRepository = UserRepository();
     _scheduleRepository = ScheduleRepository();
     _changeRequestRepository = ChangeRequestRepository();
-    //_storeRepository = StoreRepository();
+    _storeRepository = StoreRepositoryImpl();
     _helper = SPHelper();
     _helper.init();
     getMyData();
@@ -144,6 +149,12 @@ class WorkSwapViewModel extends ChangeNotifier {
     _logger
         .i('${DateFormat('yyyy년 MM월 dd일').format(_week)} 날짜의 스케줄 loading...');
     await _getSchedule(_week);
+    _setScheduleDummy(_week);
+
+    _logger.i('$_week에 ${_myWeeklySchedule.length}개의 스케줄 불러옴');
+    for (var schedule in _myWeeklySchedule) {
+      log('${schedule.day}');
+    }
 
     notifyListeners();
   }
@@ -159,15 +170,17 @@ class WorkSwapViewModel extends ChangeNotifier {
   }
 
   // 가져온 데이터(data)에서 특정 날짜(now)가 포함된 주차의 데이터를 찾아서 스케줄 목록에 저장하는 메소드
-  Future<List<Schedule>> _findNowWeekSchedule(
-      List<Schedule> data, DateTime now) async {
+  Future<List<Schedule>> _findNowWeekSchedule(List<Schedule> data, DateTime now) async {
     List<Schedule> result = [];
 
     // 이번 주차 시작일 찾기
     DateTime beforeDay = _findStartDay(now);
 
+    _logger.w('가져온 데이터 확인 ${data.length}개');
+
     // 스케줄을 하나씩 확인해서, 이번 주차인 걸 찾아야 됨
     for (Schedule schedule in data) {
+      log('${DateFormat('yyyy년 MM월 dd일').format(_week)} : ${schedule.day}일자');
       if (schedule.day.isAfter(beforeDay
               .subtract(const Duration(days: 1))) // schedule의 day가 시작일 이후고
           &&
@@ -287,6 +300,34 @@ class WorkSwapViewModel extends ChangeNotifier {
         _deon = true;
         notifyListeners();
       });
+    }
+  }
+
+  // 없는 날짜에 더미 추가
+  void _setScheduleDummy(DateTime start) async {
+
+    Store store = await _storeRepository.getStoreData();
+
+    bool check;
+    for (int i = 0; i < 7; i++){
+
+      check = false;
+      for (var schedule in _myWeeklySchedule) {
+        if (schedule.day == start.add(Duration(days: i))) {
+          log('데이터 있음, ${DateFormat('MM월 dd일').format(start.add(Duration(days: i)))}');
+          check = true;
+        }
+      }
+
+      if (!check) {
+        log('더미 추가, ${DateFormat('MM월 dd일').format(start.add(Duration(days: i)))}');
+        _myWeeklySchedule.add(
+            Schedule.dummy(
+                start.add(Duration(days: i)),
+                ((store.close ?? 0) - (store.open ?? 0))
+            )
+        );
+      }
     }
   }
 }

@@ -223,7 +223,7 @@ class StoreRepositoryImpl implements StoreRepository{
       if (data["code"] != null && data["code"] == "error") {
         // 서버에서 데이터 가져오기
         var res = await _session.get('/store/my-list?role=EMPLOYEE');
-        var json = jsonDecode(res.body);
+        var json = jsonDecode(utf8.decode(res.bodyBytes));
 
         if (res.statusCode == 200) {
           Store store = Store.fromJson(json['data']);
