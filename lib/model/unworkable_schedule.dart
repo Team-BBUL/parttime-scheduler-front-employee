@@ -1,4 +1,6 @@
 
+import 'package:intl/intl.dart';
+
 class UnWorkableSchedule {
   List<Unworkable>? unWorkable;
 
@@ -23,19 +25,23 @@ class UnWorkableSchedule {
 }
 
 class Unworkable {
-  String? date;
+  DateTime date;
   List<bool>? time;
 
-  Unworkable({this.date, this.time});
+  Unworkable({required this.date, this.time});
 
-  Unworkable.fromJson(Map<String, dynamic> json) {
-    date = json['date'];
-    time = json['time'].cast<bool>();
+  factory Unworkable.fromJson(Map<String, dynamic> json) {
+    String dateString = json['date'];
+    List<String> convert = dateString.split('-');
+    DateTime date = DateTime(int.parse(convert[0]), int.parse(convert[1]), int.parse(convert[2]));
+    List<bool> time = json['time'].cast<bool>();
+
+    return Unworkable(date: date, time: time);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['date'] = this.date;
+    data['date'] = DateFormat('yyyy-MM-dd').format(this.date);
     data['time'] = this.time;
     return data;
   }

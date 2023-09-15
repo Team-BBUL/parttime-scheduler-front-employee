@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:sidam_employee/data/repository/store_repository.dart';
 import 'package:sidam_employee/view/cost_page.dart';
+import 'package:sidam_employee/view_model/home_view_model.dart';
 import 'package:sidam_employee/view_model/local_login_view_model.dart';
 
 import 'package:sidam_employee/view_model/monthly_cost_view_model.dart';
@@ -57,6 +58,9 @@ void main() {
           ),
           ChangeNotifierProvider(
               create: (context) => LocalLoginViewModel()
+          ),
+          ChangeNotifierProvider(
+              create: (context) => HomeViewModel()
           ),
         ],
         child: const MyApp()

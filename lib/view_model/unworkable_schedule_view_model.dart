@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_layout_grid/flutter_layout_grid.dart';
+import 'package:sidam_employee/data/remote_data_source.dart';
 import '../data/repository/unworkable_schedule_repository.dart';
 import '../model/cell.dart';
 import '../model/unworkable_schedule.dart';
@@ -9,6 +10,8 @@ import '../model/unscheduled_date.dart';
 
 
 class UnworkableScheduleViewModel extends ChangeNotifier {
+
+  late final Session _session;
   late final ImpossibleScheduleRepository _impossibleScheduleRepository;
   UnscheduledDate? unscheduledDate;
   List<List<Cell>> grid = [];
@@ -27,6 +30,7 @@ class UnworkableScheduleViewModel extends ChangeNotifier {
 
   UnworkableScheduleViewModel(this._impossibleScheduleRepository){
     loadData();
+    _session = Session();
   }
 
   void loadData() async {
@@ -40,7 +44,7 @@ class UnworkableScheduleViewModel extends ChangeNotifier {
     columnSizes = List<TrackSize>.filled(7,1.fr);
     unWorkableSchedule = await _impossibleScheduleRepository.loadJson();
     log(unWorkableSchedule!.toJson().toString());
-    validateData();
+    //validateData();
     convertTimeToGrid();
     notifyListeners();
   }
@@ -48,6 +52,15 @@ class UnworkableScheduleViewModel extends ChangeNotifier {
   saveData(){
     convertGridToTime();
     _impossibleScheduleRepository.saveJson(unWorkableSchedule!);
+
+    // server에 전송
+
+  }
+
+  Future<void> _postData() async {
+
+    await _session.init();
+
   }
 
   void toggleCell(Cell cell) {
@@ -155,8 +168,7 @@ class UnworkableScheduleViewModel extends ChangeNotifier {
     List<Unworkable> unWorkable = [];
     int dayIndex = 0;
     for (var o in grid) {
-      String yearMonthDay = "${unscheduledDate!.dates[dayIndex].year}-${unscheduledDate!.dates[dayIndex].month}-${unscheduledDate!.dates[dayIndex].day}";
-      unWorkable.add(Unworkable(date: yearMonthDay, time: o.map((element) => element.isSelected).toList()));
+      unWorkable.add(Unworkable(date: unscheduledDate!.dates[dayIndex], time: o.map((element) => element.isSelected).toList()));
       dayIndex++;
     }
     unWorkableSchedule = UnWorkableSchedule(unWorkable : unWorkable);
@@ -177,22 +189,14 @@ class UnworkableScheduleViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void validateData() {
-    String data ="";
-    List<int> date = [];
-    for(int i = 0; i < unWorkableSchedule!.unWorkable![0].date!.length; i++){
-      if(unWorkableSchedule!.unWorkable![0].date![i] == "-" || i == unWorkableSchedule!.unWorkable![0].date!.length-1){
-        date.add(int.parse(data));
-        continue;
-      }
-      data += unWorkableSchedule!.unWorkable![0].date![i];
-    }
-    DateTime jsonDateTime = DateTime(date[0], date[1], date[2]);
-    int result = unscheduledDate!.dates[0].compareTo(jsonDateTime);
+  void validateData(int idx) {
+
+    DateTime date = unWorkableSchedule!.unWorkable![idx].date;
+    int result = unscheduledDate!.dates[0].compareTo(date);
 
     if(result < 0){
 
-    }else{
+    } else {
 
     }
   }

@@ -59,4 +59,9 @@ class MonthlyCostViewModel extends ChangeNotifier {
     _sumCost = pay;
     notifyListeners();
   }
+
+  // 인센티브를 서버에서 받아오는 메소드
+  Future<void> getIncentive() async {
+
+  }
 }
