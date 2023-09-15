@@ -60,6 +60,8 @@ class WorkSwapViewModel extends ChangeNotifier {
   bool get result => _result;
   bool _deon = false; // 모든 교환 절차가 완료되었는지 확인하는 메소드
   bool get deon => _deon;
+  bool _targeting = false; // 비지정인지 지정인지 구분, 지정 = true, 비지정 = false
+  bool get targeting => _targeting;
 
   WorkSwapViewModel() {
     _userRepository = UserRepository();
@@ -125,14 +127,14 @@ class WorkSwapViewModel extends ChangeNotifier {
   }
 
   // now 날짜를 포함하는 주차의 시작일을 찾는 메소드
-  DateTime _findStartDay(DateTime now) {
+  DateTime findStartDay(DateTime now) {
     return _dateUtility.findStartDay(
         DateTime(now.year, now.month, now.day), _helper.getWeekStartDay() ?? 1);
   }
 
   // 화면에 그릴 스케줄의 날짜를 바꾸는 메소드
   Future<void> changeDate(DateTime date) async {
-    _week = _findStartDay(date);
+    _week = findStartDay(date);
     await renew();
   }
 
@@ -174,7 +176,7 @@ class WorkSwapViewModel extends ChangeNotifier {
     List<Schedule> result = [];
 
     // 이번 주차 시작일 찾기
-    DateTime beforeDay = _findStartDay(now);
+    DateTime beforeDay = findStartDay(now);
 
     _logger.w('가져온 데이터 확인 ${data.length}개');
 
@@ -277,11 +279,13 @@ class WorkSwapViewModel extends ChangeNotifier {
       if (mySchedule != null) {
         // 비지정 요청이면
         if (!exist || target == null) {
+          _targeting = false;
           tmp = await _changeRequestRepository.nonTargetChange(
               _helper.getStoreId() ?? 0,
               _helper.getRoleId() ?? 0,
               mySchedule!.id);
         } else {
+          _targeting = true;
           tmp = await _changeRequestRepository.targetingChange(
               _helper.getStoreId() ?? 0,
               _helper.getRoleId() ?? 0,

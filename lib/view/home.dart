@@ -113,7 +113,7 @@ class _HomeState extends State<Home> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute<void>(
-                        builder: (BuildContext context) => const UnworkableSchedulePage()
+                        builder: (BuildContext context) => UnworkableSchedulePage()
                     ));
                   },
                   style: ElevatedButton.styleFrom(

@@ -6,12 +6,11 @@ import 'package:sidam_employee/view_model/unworkable_schedule_view_model.dart';
 import '../data/repository/unworkable_schedule_repository.dart';
 
 class UnworkableSchedulePage extends StatelessWidget{
-  const UnworkableSchedulePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<UnworkableScheduleViewModel>(
         create: (_) => UnworkableScheduleViewModel(ImpossibleScheduleRepository()),
-        child: const UnworkableScheduleScreen());
+        child: UnworkableScheduleScreen());
   }
 }

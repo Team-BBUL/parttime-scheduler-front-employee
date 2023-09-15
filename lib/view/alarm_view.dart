@@ -141,9 +141,6 @@ class _AlarmState extends State<AlarmView> {
 
   // 알림 객체를 이용해 내용을 생성, 위젯을 반환하는 메소드
   Widget alarmBuilder(Alarm alarm, double width, int idx) {
-
-    AlarmViewModel alarmVM = AlarmViewModel();
-
     return Container(
         padding: const EdgeInsets.only(left: 25, right: 25),
         width: width,
@@ -163,7 +160,7 @@ class _AlarmState extends State<AlarmView> {
                                 SizedBox(width: 5,)
                               ])
                             : const SizedBox(),
-                        SizedBox(width: 260 * width / _designWidth, child: alarmTextBuilder(alarm),)
+                        SizedBox(width: 270 * width / _designWidth, child: alarmTextBuilder(alarm),)
                       ]),
                       Text(
                         DateFormat('yyyy년 MM월 dd일 HH:mm:ss').format(alarm.date),
@@ -338,7 +335,11 @@ class _AlarmState extends State<AlarmView> {
 
           // request.old를 id로 스케줄을 조회해 바꾸려는 시간 가져오기
           Container(
-            padding: const EdgeInsets.only(left: 10),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15.0),
+                  //color: _myId == alarm.request?.requester.id ? color.whiterColor : Color(0xFFA9D330)
+              ),
+            padding: const EdgeInsets.only(left: 8, right: 8, bottom: 1, top: 1),
             child: _myId != alarm.request?.requester.id ?
                 Text('${alarm.request?.requester.alias}의 ${alarm.request?.oldText} 근무') :
                 Text('당신의 ${alarm.request?.oldText} 근무')
@@ -347,9 +348,15 @@ class _AlarmState extends State<AlarmView> {
           alarm.request?.receiver != null ?
           // request.target를 id로 스케줄을 조회해 바꾸려는 시간 가져오기
               Column(children:[
-                const Text("|"),
+                SizedBox(height: 3,),
+                SvgPicture.asset('assets/icons/trade.svg', height: 15, width: 15,),
+                SizedBox(height: 3,),
                 Container(
-                  padding: const EdgeInsets.only(left: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15.0),
+                    //color: _myId == alarm.request?.receiver?.id ? color.whiterColor : Color(0xFFA9D330)
+                  ),
+                  padding: const EdgeInsets.only(left: 8, right: 8, bottom: 1, top: 1),
                   child: _myId != alarm.request?.receiver?.id ?
                     Text('${alarm.request?.receiver!.alias}의 ${alarm.request?.targetText} 근무') :
                     Text('당신의 ${alarm.request?.targetText} 근무'),

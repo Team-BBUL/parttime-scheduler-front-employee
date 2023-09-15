@@ -26,7 +26,7 @@ class _TimeTableState extends State<TimeTable> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const UnworkableSchedulePage()));
+                        builder: (context) => UnworkableSchedulePage()));
               },
               style: ElevatedButton.styleFrom(
                   minimumSize: Size.zero,

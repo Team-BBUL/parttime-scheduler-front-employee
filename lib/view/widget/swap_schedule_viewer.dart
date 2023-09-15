@@ -425,18 +425,29 @@ class _ViewerState extends State<SwapViewer> {
                                   ),),
                                 actionsAlignment: MainAxisAlignment.spaceAround,
                                 actions: [
-                                  IconButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      icon: SvgPicture.asset('assets/icons/x.svg')),
-                                  IconButton(
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();},
+                                    child: Text('취소', style: TextStyle(color: Colors.white),),
+                                    style: TextButton.styleFrom(
+                                      minimumSize: Size.zero,
+                                      padding: const EdgeInsets.fromLTRB(35, 7, 35, 7),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  ),
+                                  TextButton(
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                         // 데이터 전송 프로세스
+                                        //prov.success();
                                         prov.postChangeReq(false);
                                       },
-                                      icon: SvgPicture.asset('assets/icons/check.svg')),
+                                      style: TextButton.styleFrom(
+                                        minimumSize: Size.zero,
+                                        padding: const EdgeInsets.fromLTRB(35, 7, 35, 7),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                      child: Text('전송', style: TextStyle(color: Colors.white),)),
                                 ],
                               );
                             },
@@ -465,7 +476,60 @@ class _ViewerState extends State<SwapViewer> {
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     contentPadding: const EdgeInsets.all(25.0),
-                                    content: RichText(
+                                    content:
+                                        SizedBox(child: Column(children: [
+                                          Row(children: [
+                                            const Text('  당신의'),
+                                            const SizedBox(width: 10,),
+                                            Container(
+                                              width: 150,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                color: color.whiterColor,
+                                                borderRadius: BorderRadius.circular(10.0),
+                                              ),
+                                              child: Center(
+                                                  child: Text('${week[prov.mySchedule!.day.weekday]}요일'
+                                                      '(${prov.mySchedule!.day.day}일)\n'
+                                                      '${(storeProv.storeInfo.open ?? 0) + _findStartTime(prov.mySchedule!)}:00 - '
+                                                      '${(storeProv.storeInfo.open ?? 0) + _findStartTime(prov.mySchedule!) + _calculateTime(prov.mySchedule!)}:00 근무',
+                                                    textAlign: TextAlign.center,
+                                                  )
+                                              ),
+                                            ),
+                                          ]),
+                                          const SizedBox(height: 10,),
+                                          SvgPicture.asset('assets/icons/trade.svg', width: 30, height: 30,),
+                                          const SizedBox(height: 10,),
+
+                                          Row(children: [
+                                            Text('${prov.name}님의'),
+                                            const SizedBox(width: 10,),
+                                            Container(
+                                              width: 150,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                color: Color(0xFFA9D330),
+                                                borderRadius: BorderRadius.circular(10.0),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                    '${week[prov.target!.day.weekday]}요일(${prov.target!.day.day}일)\n'
+                                                        '${(storeProv.storeInfo.open ?? 0) + _findStartTime(prov.target!)}:00 - '
+                                                        '${(storeProv.storeInfo.open ?? 0) + _findStartTime(prov.target!) + _calculateTime(prov.target!)}:00 근무',
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            )
+                                          ],)
+                                        ],
+                                        //mainAxisAlignment: MainAxisAlignment.end,
+                                        crossAxisAlignment: CrossAxisAlignment.center,),
+                                          width: double.infinity,
+                                          height: 150,
+                                        ),
+
+                                    /*RichText(
                                       text: TextSpan(
                                           text: '당신의 ',
                                           style: const TextStyle(color: Colors.black),
@@ -499,22 +563,33 @@ class _ViewerState extends State<SwapViewer> {
                                                 style: TextStyle(
                                                   color: Colors.black,)),
                                           ]),
-                                    ),
+                                    ),*/
                                     actionsAlignment:
-                                        MainAxisAlignment.spaceAround,
+                                        MainAxisAlignment.spaceBetween,
                                     actions: [
-                                      IconButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
                                           },
-                                          icon: SvgPicture.asset('assets/icons/x.svg')),
-                                      IconButton(
+                                        child: Text('취소', style: TextStyle(color: Colors.white),),
+                                        style: TextButton.styleFrom(
+                                          minimumSize: Size.zero,
+                                          padding: const EdgeInsets.fromLTRB(35, 7, 35, 7),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      ),
+                                      TextButton(
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                             // 데이터 전송 프로세스
                                             prov.postChangeReq(true);
                                           },
-                                          icon: SvgPicture.asset('assets/icons/check.svg')),
+                                          style: TextButton.styleFrom(
+                                            minimumSize: Size.zero,
+                                            padding: const EdgeInsets.fromLTRB(35, 7, 35, 7),
+                                            backgroundColor: Colors.green,
+                                          ),
+                                          child: Text('전송', style: TextStyle(color: Colors.white),)),
                                     ],
                                   );
                                 },
