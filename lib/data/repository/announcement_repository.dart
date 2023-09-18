@@ -16,7 +16,8 @@ abstract class AnnouncementRepository {
 
 class AnnouncementRepositoryImpl implements AnnouncementRepository{
 
-  static String server = 'http://10.0.2.2:8088';
+  //static String server = 'http://10.0.2.2:8088';
+  static String server = 'https://sidam-scheduler.link';
   static String noticeApi = '$server/api/notice/';
   static SPHelper helper = SPHelper();
   final headers = {'Authorization': 'Bearer ${helper.getJWT()}',

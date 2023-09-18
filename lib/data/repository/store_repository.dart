@@ -32,8 +32,10 @@ class StoreRepositoryImpl implements StoreRepository{
   final _logger = Logger();
   late LocalDataSource _dataSource;
 
-  static String storeApi = 'http://10.0.2.2:8088/store';
-  static String enterUrl = 'http://10.0.2.2:8088/api';
+  //static String storeApi = 'http://10.0.2.2:8088/store';
+  static String storeApi = 'https://sidam-schedule.link/store';
+  //static String enterUrl = 'http://10.0.2.2:8088/api';
+  static String enterUrl = 'https://sidam-schedule.link/api';
 
   static SPHelper helper = SPHelper();
   final headers = {'Authorization': 'Bearer ${helper.getJWT()}',

@@ -17,6 +17,8 @@ class HomeViewModel extends ChangeNotifier {
   Store _store = Store();
   Store get store => _store;
 
+  // TODO 인센티브 받아다 저장하는 메소드 만들기
+
   HomeViewModel() {
     _dataSource = LocalDataSource();
     _session = Session();

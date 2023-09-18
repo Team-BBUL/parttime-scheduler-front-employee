@@ -20,7 +20,8 @@ class Session {
   static SPHelper _helper = SPHelper();
 
   // TODO: _server 변수 실제 서버의 주소로 변경하기
-  final String _server = "http://10.0.2.2:8088"; // 서버의 주소
+  //final String _server = "https://10.0.2.2:8088"; // 서버의 주소
+  final String _server = "https://sidam-scheduler.link"; // 서버의 주소
   int _accountRoleId = _helper.getRoleId() ?? 0; // 현재 클라이언트의 사용자 ID
 
   set setRoleId(int id) { _accountRoleId = id; }
