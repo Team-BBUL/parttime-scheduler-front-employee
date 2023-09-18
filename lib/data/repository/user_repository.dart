@@ -24,7 +24,8 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<void> createUser(String name) async{
     print(helper.getJWT());
-    const String apiUrl = 'http://10.0.2.2:8088/member/regist';
+    //const String apiUrl = 'http://10.0.2.2:8088/member/regist';
+    const String apiUrl = 'https://sidam-schedule.link/member/regist';
     final headers = {'Authorization': 'Bearer '+helper.getJWT(),
       'Content-Type': 'application/json; charset=utf-8'};
     try {
@@ -68,7 +69,8 @@ class UserRepositoryImpl implements UserRepository {
   Future<Account> fetchUser() async {
     SPHelper helper = SPHelper();
 
-    const String apiUrl = 'http://10.0.2.2:8088/member';
+    //const String apiUrl = 'http://10.0.2.2:8088/member';
+    const String apiUrl = 'https://sidam-schedule.link/member';
     final headers = {'Authorization': 'Bearer '+helper.getJWT(),
       'Content-Type': 'application/json; charset=utf-8'};
     try {

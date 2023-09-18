@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
@@ -45,7 +46,7 @@ class LocalDataSource {
       _logger.i('${jsonFile.path} 파일 읽어오기 성공');
     } catch (e) {
       _logger.e('[$fileName.json 파일 읽어오기 오류] $e');
-      jsonString = '{ "message": "[read fail] $e" }';
+      jsonString = '{ "code": "error", "message": "[read fail] $e" }';
     }
 
     // JSON 데이터 파싱
@@ -62,10 +63,6 @@ class LocalDataSource {
     File file;
     try {
       file = File('${await _localPath}/data/$fileName');
-
-      if (file.existsSync()) { // 있으면 삭제
-        file.delete();
-      }
 
       file.writeAsString(jsonString);
       _logger.i('${file.path} 저장 성공');

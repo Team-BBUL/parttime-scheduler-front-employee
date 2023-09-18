@@ -71,6 +71,19 @@ class Store {
     'startDayOfWeek': weekStartDay,
     'deadlineOfSubmit': deadlineOfSubmit,
   };
+
+  bool compare(Store ob) {
+
+    if (this.id != ob.id || this.name != ob.name || this.open != ob.open ||
+    this.close != ob.close || this.deadlineOfSubmit != ob.deadlineOfSubmit ||
+    this.weekStartDay != ob.weekStartDay || this.payday != ob.payday ||
+    this.location != ob.location
+    ) {
+      return false;
+    }
+
+    return true;
+  }
 }
 
 /*

@@ -2,6 +2,10 @@ class UnscheduledDate{
   List<DateTime> dates = [];
   late DateTime now = utcToKSt(DateTime.now());
 
+  UnscheduledDate() {
+    now = utcToKSt(DateTime.now());
+  }
+
   UnscheduledDate.getRecentWeekOnUnscheduled(int scheduleStartDay, int daysBeforeLimited){
     DateTime unscheduledDate = getNextUnscheduledDate(scheduleStartDay);
     if(isWeekValid(unscheduledDate, daysBeforeLimited)){

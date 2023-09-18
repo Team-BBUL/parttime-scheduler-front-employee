@@ -32,8 +32,10 @@ class StoreRepositoryImpl implements StoreRepository{
   final _logger = Logger();
   late LocalDataSource _dataSource;
 
-  static String storeApi = 'http://10.0.2.2:8088/store';
-  static String enterUrl = 'http://10.0.2.2:8088/api';
+  //static String storeApi = 'http://10.0.2.2:8088/store';
+  static String storeApi = 'https://sidam-schedule.link/store';
+  //static String enterUrl = 'http://10.0.2.2:8088/api';
+  static String enterUrl = 'https://sidam-schedule.link/api';
 
   static SPHelper helper = SPHelper();
   final headers = {'Authorization': 'Bearer ${helper.getJWT()}',
@@ -220,13 +222,12 @@ class StoreRepositoryImpl implements StoreRepository{
     try {
       Map<String, dynamic>? data = await _dataSource.loadJson('store');
 
-      if (data == null) {
+      if (data["code"] != null && data["code"] == "error") {
         // 서버에서 데이터 가져오기
+        var res = await _session.get('/store/my-list?role=EMPLOYEE');
+        var json = jsonDecode(utf8.decode(res.bodyBytes));
 
-        var res = await _session.get('/store/${_helper.getStoreId()}');
-        var json = jsonDecode(res.body);
-
-        if (json['status_code'] == 200) {
+        if (res.statusCode == 200) {
           Store store = Store.fromJson(json['data']);
 
           _dataSource.saveModels(store.toJson(), 'store.json');

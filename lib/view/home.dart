@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:sidam_employee/util/shared_preference_provider.dart';
 import 'package:sidam_employee/view/widget/main_cost.dart';
 import 'package:sidam_employee/view/widget/my_schedule_viewer.dart';
+import 'package:sidam_employee/view_model/home_view_model.dart';
 import 'package:sidam_employee/view_model/notice_view_model.dart';
 import 'package:sidam_employee/view_model/schedule_view_model.dart';
 
@@ -12,7 +13,7 @@ import 'package:sidam_employee/view/announcement_page.dart';
 import 'package:sidam_employee/view/unworkable_schedule_page.dart';
 import 'package:sidam_employee/view/setting.dart';
 
-import '../util/appColor.dart';
+import '../util/app_color.dart';
 import '../util/sp_helper.dart';
 
 class Home extends StatefulWidget {
@@ -20,6 +21,8 @@ class Home extends StatefulWidget {
 
   @override
   _HomeState createState() => _HomeState();
+
+  // TODO 홈에서 인센티브인지 특별 수당인지 받아오기
 }
 
 class _HomeState extends State<Home> {
@@ -56,8 +59,8 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
 
-    final _viewModel = Provider.of<NoticeViewModel>(context, listen: false);
-    _viewModel.reload();
+    /*final _viewModel = Provider.of<NoticeViewModel>(context, listen: false);
+    _viewModel.reload();*/
   }
 
   @override
@@ -77,10 +80,12 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(
-            _storeName,
-            style: TextStyle(fontSize: storeFontSize),
-          ),
+          title: Consumer<HomeViewModel>(builder: (context, state, child) {
+            return Text(
+              state.store.name ?? '매장',
+              style: TextStyle(fontSize: storeFontSize),
+            );
+          }),
           centerTitle: true,
           leading: Center(
               child: Text(
@@ -108,7 +113,7 @@ class _HomeState extends State<Home> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute<void>(
-                        builder: (BuildContext context) => const UnworkableSchedulePage()
+                        builder: (BuildContext context) => UnworkableSchedulePage()
                     ));
                   },
                   style: ElevatedButton.styleFrom(

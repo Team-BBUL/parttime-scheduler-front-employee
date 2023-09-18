@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:sidam_employee/view_model/chatting_view_model.dart';
 
-import '../util/appColor.dart';
+import '../util/app_color.dart';
 
 class ChattingScreen extends StatelessWidget{
   const ChattingScreen({super.key});

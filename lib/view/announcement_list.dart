@@ -87,6 +87,7 @@ class _AnnouncementListScreenState extends State<AnnouncementListScreen> {
                               SizedBox(width: 10, height: 1,) : Text(''),
 
                           Container(child: Column(children: [
+                            const SizedBox(height: 5,),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
@@ -94,9 +95,8 @@ class _AnnouncementListScreenState extends State<AnnouncementListScreen> {
                                       '',
                                   style: TextStyle(fontSize: 16)),
                             ),
-                            const Spacer(),
+                            const SizedBox(height: 5,),
                             Align(
-
                               alignment: Alignment.centerLeft,
                               child: Text(viewModel.announcementList?[index].timeStamp != null
                                   ? '${DateFormat('yyyy년 MM월 dd일 HH:mm:ss').format(viewModel.announcementList?[index].timeStamp ?? DateTime(2023, 1, 1))}'
@@ -106,6 +106,7 @@ class _AnnouncementListScreenState extends State<AnnouncementListScreen> {
                             ),
                           ],
                             mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                           ),
                             width: deviceWidth - 80,
                           )

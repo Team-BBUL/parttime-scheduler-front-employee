@@ -42,12 +42,12 @@ class NoticeViewModel extends ChangeNotifier {
 
     var res = await _session.get("/api/notice/${_store.id ?? _helper.getStoreId()}/view/list?last=0&cnt=1&role=${_session.roleId}");
 
-    var data = jsonDecode(res.body);
+    var data = jsonDecode(utf8.decode(res.bodyBytes));
 
     if (res.statusCode == 200 && data['data'].isNotEmpty) {
       return Notice.fromJson(data['data'][0]);
     } else {
-      _logger.e('공지사항 불러오기 오류: ${data['message'] ?? '데이터가 없습니다.'}');
+      _logger.w('공지사항 불러오기 오류: ${data['message'] ?? '데이터가 없습니다.'}');
       return Notice(title: '공지사항이 없습니다', timeStamp: '2023-01-01', id: 0, read: true);
     }
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:sidam_employee/util/app_color.dart';
 import 'package:sidam_employee/view_model/selected_store_info_view_model.dart';
 import 'package:sidam_employee/view_model/work_swap_view_model.dart';
 
@@ -12,6 +13,8 @@ class ResultViewer extends StatefulWidget {
 class _PassFailState extends State<ResultViewer> {
   final _designWidth = 411;
   final _designHeight = 683;
+
+  final AppColor _color = AppColor();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +37,7 @@ class _PassFailState extends State<ResultViewer> {
               width: 300 * deviceWidth / _designWidth,
               height: 300 * deviceHeight / _designHeight,
               child: prov.result
-                  ? (prov.target != null
+                  ? (prov.targeting
                       ? changeResultViewer()
                       : nonTargetResult())
                   : Column(
@@ -64,7 +67,7 @@ class _PassFailState extends State<ResultViewer> {
     final deviceWidth = MediaQuery.of(context).size.width;
     final deviceHeight = MediaQuery.of(context).size.height;
 
-    double textSize = 17 * deviceWidth / _designWidth;
+    double textSize = 20;
 
     return Consumer<SelectedStore>(builder: (context, storeProv, child) {
       return Consumer<WorkSwapViewModel>(builder: (context, prov, child) {
@@ -75,57 +78,62 @@ class _PassFailState extends State<ResultViewer> {
             width: 40,
             height: 40,
           ),
-          RichText(
-            textAlign: TextAlign.center,
-            strutStyle: const StrutStyle(fontSize: 25),
-            text: TextSpan(
-                text: '당신의 ',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: textSize,
+            const SizedBox(height: 10,),
+
+            Row(children: [
+              Text(' 당신의', style: TextStyle(fontSize: textSize - 3),
+              ),
+              const SizedBox(width: 10,),
+              Container(
+                width: 200,
+                height: 70,
+                decoration: BoxDecoration(
+                  color: _color.whiterColor,
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
-                children: <TextSpan>[
-                  TextSpan(
-                    text: '${week[prov.mySchedule!.day.weekday]}요일'
-                        '(${prov.mySchedule!.day.day}일) '
+                child: Center(
+                    child: Text('${week[prov.mySchedule!.day.weekday]}요일'
+                        '(${prov.mySchedule!.day.day}일)\n'
                         '${(storeProv.storeInfo.open ?? 0) + prov.findStartTime(prov.mySchedule!)}:00 - '
                         '${(storeProv.storeInfo.open ?? 0) + prov.findStartTime(prov.mySchedule!) + prov.calculateTime(prov.mySchedule!)}:00 근무',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontSize: textSize,
-                    ),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: textSize),
+                    )
+                ),
+              ),
+            ],
+              mainAxisAlignment: MainAxisAlignment.center,
+            ),
+            const SizedBox(height: 10,),
+            SvgPicture.asset('assets/icons/trade_bigger.svg', width: 30, height: 30,),
+            const SizedBox(height: 10,),
+
+            Row(children: [
+              Text('${prov.name}님의', style: TextStyle(fontSize: textSize - 3),),
+              const SizedBox(width: 10,),
+              Container(
+                width: 200,
+                height: 70,
+                decoration: BoxDecoration(
+                  color: Color(0xFFA9D330),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Center(
+                  child: Text(
+                    '${week[prov.target!.day.weekday]}요일(${prov.target!.day.day}일)\n'
+                        '${(storeProv.storeInfo.open ?? 0) + prov.findStartTime(prov.target!)}:00 - '
+                        '${(storeProv.storeInfo.open ?? 0) + prov.findStartTime(prov.target!) + prov.calculateTime(prov.target!)}:00 근무',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: textSize),
                   ),
-                  TextSpan(
-                      text: '를\n',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: textSize,
-                      )),
-                  TextSpan(
-                      text: '${prov.name}님의 ',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: textSize,
-                      )),
-                  TextSpan(
-                      text: '${week[prov.target!.day.weekday]}요일'
-                          '(${prov.target!.day.day}일) '
-                          '${(storeProv.storeInfo.open ?? 0) + prov.findStartTime(prov.target!)}:00 - '
-                          '${(storeProv.storeInfo.open ?? 0) + prov.findStartTime(prov.target!) + prov.calculateTime(prov.target!)}:00 근무',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontSize: textSize,
-                      )),
-                  TextSpan(
-                      text: '와 교환하는 요청에 성공했습니다.\n진행 상황은 알림 탭에서 확인해주세요!',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: textSize,
-                      )),
-                ]),
-          )
+                ),
+              )
+            ],
+              mainAxisAlignment: MainAxisAlignment.center,
+            ),
+
+          const SizedBox(height: 20,),
+          Text('교환 요청 성공!')
         ]);
       });
     });

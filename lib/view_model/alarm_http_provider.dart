@@ -86,7 +86,7 @@ class AlarmHttpProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) { // 요청이 성공하면
 
-        List<Alarm> result = jsonDecode(response.body)['data'].map<Alarm>((alarm) {
+        List<Alarm> result = jsonDecode(utf8.decode(response.bodyBytes))['data'].map<Alarm>((alarm) {
           return Alarm.fromJson(alarm);
         }).toList();
         

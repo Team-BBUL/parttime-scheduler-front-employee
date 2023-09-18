@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sidam_employee/view/store_list_search_page.dart';
 
 import '../main.dart';
-import '../util/appColor.dart';
+import '../util/app_color.dart';
 import '../view_model/store_view_model.dart';
 
 class StoreListScreen extends StatelessWidget{

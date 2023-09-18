@@ -2,9 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../util/appColor.dart';
+import '../util/app_color.dart';
 import '../util/sp_helper.dart';
-import 'notify_page.dart';
 import 'account_withdrawal.dart';
 import 'check_login.dart';
 import 'help.dart';
@@ -32,7 +31,7 @@ class SettingScreen extends StatelessWidget{
         body: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Container(
+              /*Container(
                   width: double.infinity,
                   margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),
                   decoration: const BoxDecoration(
@@ -55,7 +54,7 @@ class SettingScreen extends StatelessWidget{
                         ),
                       )
                   )
-              ),
+              ),*/
               Container(
                   width: double.infinity,
                   margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 10),

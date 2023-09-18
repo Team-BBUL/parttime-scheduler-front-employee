@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:sidam_employee/data/repository/store_repository.dart';
 import 'package:sidam_employee/view/cost_page.dart';
+import 'package:sidam_employee/view_model/home_view_model.dart';
+import 'package:sidam_employee/view_model/local_login_view_model.dart';
 
 import 'package:sidam_employee/view_model/monthly_cost_view_model.dart';
 import 'package:sidam_employee/view_model/notice_view_model.dart';
@@ -20,7 +21,7 @@ import 'package:sidam_employee/view/time_table_view.dart';
 import 'package:sidam_employee/view/check_login.dart';
 
 import 'package:sidam_employee/util/shared_preference_provider.dart';
-import 'package:sidam_employee/util/appColor.dart';
+import 'package:sidam_employee/util/app_color.dart';
 
 import 'data/repository/announcement_repository.dart';
 
@@ -54,6 +55,12 @@ void main() {
           ),
           ChangeNotifierProvider(
               create: (context) => SelectedStore()
+          ),
+          ChangeNotifierProvider(
+              create: (context) => LocalLoginViewModel()
+          ),
+          ChangeNotifierProvider(
+              create: (context) => HomeViewModel()
           ),
         ],
         child: const MyApp()

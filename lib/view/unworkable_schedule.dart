@@ -5,14 +5,22 @@ import 'package:flutter_layout_grid/flutter_layout_grid.dart';
 import 'package:provider/provider.dart';
 import 'package:sidam_employee/view_model/unworkable_schedule_view_model.dart';
 
-import '../util/appColor.dart';
+import '../util/app_color.dart';
 
 
-class UnworkableScheduleScreen extends StatelessWidget {
-  const UnworkableScheduleScreen({super.key});
+class UnworkableScheduleScreen extends StatefulWidget {
+
+  @override
+  State<StatefulWidget> createState() => _UnworkableScheduleState();
+}
+
+class _UnworkableScheduleState extends State<UnworkableScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    AppColor color = AppColor();
+
     return Consumer<UnworkableScheduleViewModel>(
         builder: (context, viewModel, _) {
           return Scaffold(
@@ -25,8 +33,26 @@ class UnworkableScheduleScreen extends StatelessWidget {
                       IconButton(
                           icon: Icon(Icons.check_box),
                           onPressed: () {
-                            viewModel.saveData();
-                            Navigator.pop(context);
+                            viewModel.saveData().then((value) {
+                              if (!viewModel.result){
+                                showDialog(context: context, builder: (context) {
+                                  return AlertDialog(
+                                    backgroundColor: Color(0xFFFFFFFF),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),),
+                                    contentPadding: const EdgeInsets.all(25.0),
+                                    content: Text('서버에 저장하는 것에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+                                    actions: [
+                                      TextButton(onPressed: () {
+                                          Navigator.of(context).pop();
+                                        }, child: const Text('확인'))
+                                    ],
+                                  );
+                                });
+                              } else {
+                                Navigator.pop(context);
+                              }
+                            });
                           }
                       ),
                     ],
@@ -46,13 +72,14 @@ class UnworkableScheduleScreen extends StatelessWidget {
                       ),
                       Flexible(
                         child: Container(
-                          child: LayoutGrid(
+                          child: viewModel.isLoading ?
+                              Center(child: CircularProgressIndicator(color: color.mainColor,),) :
+                          LayoutGrid(
                             columnSizes: viewModel.columnSizes,
                             rowSizes: List.filled(1, (1.fr)),
                             children: List.generate(7, (row) {
                               return Column(
-                                children: List.generate(
-                                    viewModel.openingHours!, (col) {
+                                children: List.generate(viewModel.openingHours, (col) {
                                   // final cell = viewModel.getCell(row, col);
                                   final cell = viewModel.grid[row][col];
                                   return GestureDetector(
