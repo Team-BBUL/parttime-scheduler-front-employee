@@ -64,6 +64,10 @@ class LocalDataSource {
     try {
       file = File('${await _localPath}/data/$fileName');
 
+      if (file.existsSync()) {
+        await file.delete();
+      }
+
       file.writeAsString(jsonString);
       _logger.i('${file.path} 저장 성공');
 
