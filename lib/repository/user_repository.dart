@@ -9,7 +9,7 @@ class UserRepository {
     Map<String, dynamic>? data = await _localDataSource.loadJson('userData');
 
     if (data == null) {
-      return User(name: 'NON', id: 0, color: '0xFFFFFFFF`', cost: 0);
+      return User(alias: 'NON', id: 0, color: '0xFFFFFFFF`', cost: 0);
     }
 
     return User.fromJson(data);

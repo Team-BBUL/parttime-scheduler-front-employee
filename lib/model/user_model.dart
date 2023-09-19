@@ -1,7 +1,7 @@
 class User {
 
   User({
-    required this.name,
+    required this.alias,
     required this.id,
     required this.color,
     required this.cost
@@ -9,7 +9,7 @@ class User {
     salary = true;
   }
 
-  final String name;
+  final String alias;
   final int id;
   late final bool salary;
   String color = '0xFFFFFFFF';
@@ -17,7 +17,7 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-        name: json['alias'] ?? json['name'] ?? '이름',
+        alias: json['alias'] ?? json['name'] ?? '이름',
         id: json['id'],
         color: json['color'],
         cost: json['cost']
@@ -25,7 +25,7 @@ class User {
   }
 
   Map<String, dynamic> toJson() => {
-    'name': name,
+    'alias': alias,
     'id': id,
     'color': color,
     'cost': cost,

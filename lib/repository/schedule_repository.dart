@@ -388,4 +388,48 @@ class ScheduleRepository {
 
     return result;
   }
+
+
+  // 로컬에서 오늘 스케줄을 모두 읽어오는 메소드
+  Future<List<ViewSchedule>> loadTodaySchedule(DateTime now) async {
+
+    var thisMonthSchedule = await _dataSource.getSchedule(now);
+
+    return fromJsonViewSchedule(thisMonthSchedule, now);
+  }
+
+  // 읽어온 json을 ViewSchedule 형식으로 변형하는 메소드
+  List<ViewSchedule> fromJsonViewSchedule(Map<String, dynamic> data, DateTime now) {
+
+    // 데이터가 없을 경우
+    if (data['date'] == null || data['date'] == 'NON') {
+      _logger.i('${DateFormat('yyyy년 MM월 dd일').format(now)} 데이터 존재하지 않음');
+      return [];
+    }
+
+    // 혹시 모르니까 시각 정보 삭제
+    DateTime today = DateTime(now.year, now.month, now.day);
+    List<ViewSchedule> result = [];
+
+
+    // 있으면 변환
+    for (var day in data['date']) {
+
+      if(day == null) { break; }
+
+      List<String> days = day['day'].split('-');
+      DateTime thisDay = DateTime(int.parse(days[0]), int.parse(days[1]), int.parse(days[2]));
+
+      // 오늘 날짜가 맞으면
+      if (thisDay == today) {
+
+        for (var daily in day['schedule']) {
+          Schedule schedule = Schedule.fromJson(daily, thisDay);
+          result.addAll(schedule.toViewSchedule());
+        }
+      }
+    }
+
+    return result;
+  }
 }

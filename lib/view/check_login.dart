@@ -53,7 +53,7 @@ class _CheckLoginScreenState extends State<CheckLoginScreen> {
     log(isRegistered ? '등록됨' : '등록안됨');
     log(currentStoreId != null ? '가게 id = $currentStoreId' : '가게선택안됨');
 
-    if(isLoggedIn && isRegistered && currentStoreId != null){
+    if (isLoggedIn && isRegistered && currentStoreId != null && currentStoreId != 0){
       log('홈으로 이동');
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => const MyHomePage(title: '',)));

@@ -11,6 +11,7 @@ import 'package:sidam_employee/view_model/notice_view_model.dart';
 import 'package:sidam_employee/view_model/schedule_view_model.dart';
 import 'package:sidam_employee/view_model/store_view_model.dart';
 import 'package:sidam_employee/view_model/user_view_model.dart';
+import 'package:sidam_employee/view_model/weekly_schedule_view_model.dart';
 import 'package:sidam_employee/view_model/work_swap_view_model.dart';
 import 'package:sidam_employee/view_model/announcement_view_model.dart';
 import 'package:sidam_employee/view_model/selected_store_info_view_model.dart';
@@ -61,6 +62,9 @@ void main() {
           ),
           ChangeNotifierProvider(
               create: (context) => HomeViewModel()
+          ),
+          ChangeNotifierProvider(
+              create: (context) => WeeklyScheduleViewModel()
           ),
         ],
         child: const MyApp()
