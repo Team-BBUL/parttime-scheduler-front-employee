@@ -203,7 +203,7 @@ class WorkSwapViewModel extends ChangeNotifier {
     for (var s in _allWeeklySchedule) {
       for (var w in s.workers) {
         if (w.id != (_helper.getRoleId() ?? 0)) {
-          Worker tmp = Worker(id: w.id, name: w.name, color: w.color);
+          Worker tmp = Worker(id: w.id, name: w.alias, color: w.color);
           result.add(tmp);
         }
       }

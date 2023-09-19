@@ -245,4 +245,8 @@ class StoreRepositoryImpl implements StoreRepository{
       return Store.setTime(id: 0, name: '매장', location: '', phone: '', open: 10, close: 23);
     }
   }
+
+  Future<Store> loadStore() async {
+    return Store.fromJson(await _dataSource.loadJson('store'));
+  }
 }

@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:sidam_employee/util/app_color.dart';
+import 'package:sidam_employee/view/widget/weekly_schedule_viewer.dart';
 import 'package:sidam_employee/view/work_swap_view.dart';
 import 'package:sidam_employee/view/unworkable_schedule_page.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -67,9 +68,9 @@ class _TimeTableState extends State<TimeTable> {
         ),
         body: Center(
           child: Container(
-            color: Color(0xFFa0c0c0), // 0xffc1c1c1 부터 검은색
-            child: Text('스케줄', style: TextStyle(color: Colors.white),),)//Text('스케줄'),//scheduleView(),
-        ));
+            //color: Color(0xFFa0c0c0), // 0xffc1c1c1 부터 검은색
+            child: WeeklyScheduleViewer()
+        )));
   }
 
   Widget scheduleView() {

@@ -78,4 +78,31 @@ class Schedule {
       return value.toJson();
     }).toList()
   };
+
+  List<ViewSchedule> toViewSchedule() {
+    List<ViewSchedule> result = [];
+    int idx = 1;
+
+    for (var worker in workers) {
+      ViewSchedule viewSchedule = ViewSchedule(
+          id: idx++,
+          day: day,
+          time: time,
+          worker: worker
+      );
+
+      result.add(viewSchedule);
+    }
+
+    return result;
+  }
+}
+
+class ViewSchedule {
+  late int id;
+  late DateTime day;
+  late List<bool> time;
+  late User worker;
+
+  ViewSchedule({required this.id, required this.day, required this.time, required this.worker});
 }
