@@ -1,111 +1,245 @@
-import 'package:flutter/material.dart';
-import 'package:sidam_employee/data/repository/schedule_repository.dart';
+import 'dart:developer';
 
-import '../model/cost.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:sidam_employee/data/repository/schedule_repository.dart';
+import 'package:sidam_employee/util/sp_helper.dart';
+
+import '../data/repository/incentive_repository.dart';
+import '../data/repository/schedule_local_repository.dart';
+import '../model/Incentive.dart';
+import '../model/employee_cost.dart';
 import '../model/schedule.dart';
-//TODO json 추가 트리거 고안
-//TODO json 파일 생성 : 백엔드 데이터 기반
-//TODO json 파일 수정 : json deserialize -> add -> serialize
+
 class CostViewModel extends ChangeNotifier{
-  final ScheduleRepository _scheduleRepository = ScheduleRepository();
-  late MonthSchedule monthSchedule;
+  final ScheduleLocalRepository _scheduleLocalRepository = ScheduleLocalRepository();
+  final ScheduleRepository _scheduleRemoteRepository;
+  final IncentiveRepository _incentiveRepository;
+
+  MonthSchedule? monthSchedule;
+  MonthSchedule? thisWeekSchedule;
+  List<MonthIncentive>? monthIncentives;
+
+  int _pickerYear = DateTime.now().year;
+  DateTime _selectedMonth = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    1,
+  );
+  NumberFormat moneyFormat = NumberFormat('###,###,###,###');
+
   bool isExpanded = false;
-  late List<String> dateList = [];
-  String user = '성춘향';
-  DateTime now = DateTime.now();
-  List<Cost> monthCost = [];
-  //TODO : 값 로딩 중 로딩 화면 표시
-  // late String selectedDate = dateList[dateList.length -1];
-  late String selectedDate = "${now.year}년 0${now.month}월";
-  late int dateIndex = dateList.length -1;
-  int costDay = 8;
-  late int totalPay = 0;
-  late int totalWorkTime = 0;
-  late int pay = 0;
-  bool isLastDayOfMonth = false;
-  bool isCostByMonth = true;
-  CostViewModel(){
+  List<EmployeeCost>? employeesCost;
+  String? selectedDate;
+  int? dateIndex;
+  int costDay = 1;
+  int totalWorkTime = 0;
+  int totalPay = 0;
+  int? ownerId;
+  int prevMonthTotalPay = 0;
+  bool customTileExpanded = false;
+  get pickerYear => _pickerYear;
+  get selectedMonth => _selectedMonth;
+
+  CostViewModel(this._scheduleRemoteRepository, this._incentiveRepository){
     loadData();
   }
 
   Future<void> loadData() async {
-    dateList = await _scheduleRepository.getDateList();
-    dateList.add("${now.year}년 0${now.month}월");
-    selectedDate = dateList[dateList.length -1];
-    dateIndex = dateList.length -1;
-    getCost(selectedDate);
-    notifyListeners();
-  }
+    SPHelper helper = SPHelper();
+    ownerId = helper.getRoleId();
+    // String yearMonth = DateFormat('yyyyMM').format(_selectedMonth);
+    employeesCost = [];
+    monthSchedule = null;
+    try {
+      log("----------------------------------------loadData-----------------------");
+      // await loadDateList();
+      // await fetchRemoteSchedule();
+      await fetchLocalSchedule(_selectedMonth);
 
-  getCost(String selectedDate) async{
-    String yearMonth = _scheduleRepository.convertCostScreenDateToYearMonth(selectedDate);
-
-    if(isLastDayOfMonth){
-      monthSchedule = await _scheduleRepository.getMonthSchedule(yearMonth);
-    }else{
-      monthSchedule = await _scheduleRepository.getPrevMonthAndCurMonthScheduleByDay(yearMonth, costDay);
+      // await loadDateList();
+      await getMonthIncentive();
+      await getCost();
+      await align();
+      await calculateTotalCost();
+    }catch(e){
+      log("loadData $e");
     }
-
-    calculateCost();
     notifyListeners();
   }
 
-  bool isSameCurrentMonthAndPreviousMonth(String date, int costDay) {
-    DateTime currentDate = DateTime(int.parse(date.substring(0,4)), int.parse(date.substring(4,6)), costDay);
-    DateTime prevDate = DateTime(currentDate.year, currentDate.month-1, costDay+1);
-    return isSameMonth(currentDate, prevDate);
+  // loadDateList() async{
+  //   dateList = await _scheduleLocalRepository.getDateList();
+  //   if(dateList!.isNotEmpty) {
+  //     dateIndex = dateList!.length - 1;
+  //   }
+  //   log("loadDateList $dateList");
+  //   notifyListeners();
+  // }
+
+  loadSchedule() async{
+    log("----------------------------------------loadSchedule-----------------------");
+
+    // if(dateIndex == dateList!.length){
+    //   await fetchRemoteSchedule();
+    // }else{
+    //   await fetchLocalSchedule(dateList![dateIndex!]);
+    // }
   }
 
-  bool isSameMonth(DateTime dateTime1, DateTime dateTime2) {
-    return dateTime1.year == dateTime2.year && dateTime1.month == dateTime2.month;
-  }
-
-
-  setDate(int selectedItem){
-    selectedDate = dateList[selectedItem];
-    dateIndex = selectedItem;
+  getCost() async {
+    log("getCost processing");
+    await calculateCost();
+    // await calculateTotalCost();
+    prevMonthTotalPay = await _scheduleLocalRepository.getPrevMonthCost(
+        selectedMonth, costDay);
     notifyListeners();
   }
 
-  //TODO 야간 근무 계산 로직 추가
+  getMonthIncentive() async{
+    try {
+      monthIncentives = await _incentiveRepository.fetchOnesMonthIncentive();
+      log("getMonthIncentive success");
+    }catch(e){
+      monthIncentives = [];
+      log("getMonthIncentive error : $e");
+    }
+  }
+
+  Future<String> fetchLocalSchedule(DateTime dateTime) async {
+
+    monthSchedule = null;
+    if(costDay > 28){
+      monthSchedule = await _scheduleLocalRepository.fetchSchedule(dateTime);
+    }else{
+      monthSchedule = await _scheduleLocalRepository.fetchScheduleByPaycheck(dateTime, costDay);
+    }
+    return monthSchedule?.timeStamp ?? '';
+  }
+
+
+  void mergeData() {
+    if(monthSchedule?.date != null && thisWeekSchedule?.date != null){
+      monthSchedule?.date!.addAll(thisWeekSchedule!.date!);
+    }else {
+      monthSchedule?.date ??= thisWeekSchedule?.date;
+    }
+  }
+
   calculateCost(){
-    monthCost = [];
-    int cost = 0;
-    bool isUserSchedule = false;
+    log("calculateCost processing");
+    totalPay = 0;
+    employeesCost = [];
+
+    int monthPay = 0;
+    int bonusDayPay = 0;
+    int monthIncentivePay = 0;
     int dayHour = 0;
     int nightHour = 0;
-    totalPay = 0;
-    totalWorkTime = 0;
-    pay = 0;
-    for (Date date in monthSchedule.date!) {
-      dayHour = 0;
+    // log("${monthSchedule!.toJson()   }");
+
+    for (Date date in monthSchedule!.date!) {
+      log("monthSchedule processing");
+
       nightHour = 0;
-      for (var schedule in date.schedule!) {
-        for (var worker in schedule.workers!) {
-          if(user ==  worker.alias){
-            isUserSchedule = true;
-            cost = worker.cost!;
-            break;
+      for (Schedule schedule in date.schedule!) {
+        log("Schedule processing");
+
+        for (var workTime in schedule.time!) {
+          log("workTime processing");
+
+          if(workTime == true){
+            dayHour++;
           }
         }
-        if(isUserSchedule){
-          for (var workTime in schedule.time!) {
-            if(workTime == true){
-              dayHour++;
+        for (Workers worker in schedule.workers!) {
+          log("worker processing");
+
+          if(employeesCost!.isNotEmpty) {
+            for (EmployeeCost employee in employeesCost!) {
+              log("EmployeeCost processing");
+
+              if (worker.id == ownerId) {
+                // totalPay += (dayHour * worker.cost!);
+              }
             }
           }
+          if(monthIncentives!.isNotEmpty){
+            for (MonthIncentive monthIncentive in monthIncentives!) {
+              if(monthIncentive.id == worker.id){
+                for (Incentive item in monthIncentive.incentives!) {
+                  monthIncentivePay += item.cost!;
+                }
+              }
+            }
+          }
+          log("EmployeeCost processing");
+          // monthPay = (dayHour * worker.cost!) + bonusDayPay + monthIncentivePay;
+          if(worker.id == ownerId){
+            List<String> s_date = date.day!.split('-');
+            DateTime d_date = DateTime(int.parse(s_date[0]),int.parse(s_date[1]),int.parse(s_date[2]));
+            employeesCost!.add(EmployeeCost(d_date, dayHour, 0, worker.cost!, 0, 0));
+          }
         }
-        isUserSchedule = false;
+        log('cost result : $monthPay,$bonusDayPay,$monthIncentivePay,$dayHour');
+        monthPay = 0;
+        bonusDayPay = 0;
+        monthIncentivePay = 0;
+        dayHour = 0;
       }
-      totalWorkTime += dayHour + nightHour;
-      monthCost.add(Cost(date.day!, dayHour, nightHour, cost));
     }
-    totalPay = totalWorkTime * cost;
-    pay = cost;
+    notifyListeners();
   }
 
-  toggleClicked(){
+  //TODO calculateTotalCost 코드 중복 => CostViewModel
+  calculateTotalCost() {
+    if(employeesCost != null) {
+      for (EmployeeCost employeeCost in employeesCost!) {
+        totalPay = totalPay + employeeCost.workingHour * employeeCost.hourlyPay +
+            employeeCost.holidayPay * (employeeCost.hourlyPay * 1.5).round() +
+            employeeCost.bonusDayPay * employeeCost.hourlyPay * 2 +
+            employeeCost.incentive;
+        log('totalcost${totalPay.toString()}');
+
+      }
+    }
+  }
+
+  getEmployeeCost(int index){
+    return employeesCost![index];
+  }
+
+
+
+  void setCustomTileExpanded(bool value) {
+    customTileExpanded = value;
+    notifyListeners();
+  }
+
+  void changeMonth(DateTime dateTime) {
+    _selectedMonth = dateTime;
+    log("changeMonth $dateTime");
+    loadData();
+    notifyListeners();
+  }
+
+  void serPickerYear(param0) {
+    _pickerYear = param0;
+    _selectedMonth = DateTime(_pickerYear, _selectedMonth.month, 1);
+    loadData();
+    log("serPickerYear $_selectedMonth");
+
+    notifyListeners();
+  }
+
+  void toggleClicked() {
     isExpanded = !isExpanded;
     notifyListeners();
+  }
+
+  align() {
+    if(employeesCost != null) {
+      employeesCost!.sort((a, b) => a.date!.compareTo(b.date!));
+    }
   }
 }

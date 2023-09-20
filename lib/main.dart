@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:sidam_employee/data/repository/store_repository.dart';
-import 'package:sidam_employee/view/cost_page.dart';
+import 'package:sidam_employee/view/cost.dart';
+import 'package:sidam_employee/view_model/cost_view_model.dart';
 import 'package:sidam_employee/view_model/home_view_model.dart';
 import 'package:sidam_employee/view_model/local_login_view_model.dart';
 
@@ -25,6 +26,8 @@ import 'package:sidam_employee/util/shared_preference_provider.dart';
 import 'package:sidam_employee/util/app_color.dart';
 
 import 'data/repository/announcement_repository.dart';
+import 'data/repository/incentive_repository.dart';
+import 'data/repository/schedule_repository.dart';
 
 void main() {
   runApp(
@@ -66,6 +69,10 @@ void main() {
           ChangeNotifierProvider(
               create: (context) => WeeklyScheduleViewModel()
           ),
+          ChangeNotifierProvider(
+            create: (_) => CostViewModel(ScheduleRepository(),IncentiveRepositoryImpl()),
+
+          )
         ],
         child: const MyApp()
     )
@@ -102,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final AppColor color = AppColor();
 
   int _currentIndex = 0;
-  final List<Widget> _children = [Home(), TimeTable(), CostPage(), AlarmView()];
+  final List<Widget> _children = [Home(), TimeTable(), CostScreen(), AlarmView()];
 
   void _onTap(int index) {
     setState(() {
