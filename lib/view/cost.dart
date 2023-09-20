@@ -208,14 +208,14 @@ class CostScreen extends StatelessWidget {
                                                                     child: Text("일반 근무 \n${viewModel.employeesCost![index].workingHour}시간"),
                                                                   )
                                                               ),
+                                                              // Expanded(
+                                                              //     child: Center(
+                                                              //       child: Text("주휴 수당 \n${viewModel.employeesCost![index].holidayPay}원"),
+                                                              //     )
+                                                              // ),
                                                               Expanded(
                                                                   child: Center(
-                                                                    child: Text("야간 근무 \n${viewModel.employeesCost![index].holidayPay}시간"),
-                                                                  )
-                                                              ),
-                                                              Expanded(
-                                                                  child: Center(
-                                                                    child: Text("보너스 데이\n${viewModel.employeesCost![index].bonusDayPay}시간"),
+                                                                    child: Text("보너스 데이\n${viewModel.employeesCost![index].bonusDayPay}원"),
                                                                   )
                                                               ),
                                                               Expanded(
@@ -225,7 +225,7 @@ class CostScreen extends StatelessWidget {
                                                               ),
                                                               Expanded(
                                                                   child: Center(
-                                                                    child: Text("일 급여 ${
+                                                                    child: Text("일 급여 \n${
                                                                     viewModel.moneyFormat.format(viewModel.employeesCost![index].workingHour * viewModel.employeesCost![index].hourlyPay +
                                                                         viewModel.employeesCost![index].holidayPay * viewModel.employeesCost![index].hourlyPay * 1.5 +
                                                                         viewModel.employeesCost![index].bonusDayPay * viewModel.employeesCost![index].hourlyPay * 2 +
