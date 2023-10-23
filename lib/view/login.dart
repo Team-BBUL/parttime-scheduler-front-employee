@@ -52,6 +52,7 @@ class _LoginState extends State<LoginScreen> {
     double maxWidth = 280 * deviceWidth / _designWidth;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         surfaceTintColor: color.mainColor,
         //title: const Text('로그인'),

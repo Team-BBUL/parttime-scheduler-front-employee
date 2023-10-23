@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:sidam_employee/data/repository/store_repository.dart';
 import 'package:sidam_employee/view/cost.dart';
+import 'package:sidam_employee/view_model/alarm_http_provider.dart';
 import 'package:sidam_employee/view_model/cost_view_model.dart';
 import 'package:sidam_employee/view_model/home_view_model.dart';
 import 'package:sidam_employee/view_model/local_login_view_model.dart';
@@ -70,9 +72,13 @@ void main() {
               create: (context) => WeeklyScheduleViewModel()
           ),
           ChangeNotifierProvider(
-            create: (_) => CostViewModel(ScheduleRepository(),IncentiveRepositoryImpl()),
-
-          )
+            create: (_) => CostViewModel(
+                ScheduleRepository(),IncentiveRepositoryImpl()
+            ),
+          ),
+          ChangeNotifierProvider(
+              create: (context) => AlarmHttpProvider()
+          ),
         ],
         child: const MyApp()
     )

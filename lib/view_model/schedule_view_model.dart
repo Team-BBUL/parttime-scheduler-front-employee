@@ -24,6 +24,9 @@ class ScheduleViewModel extends ChangeNotifier {
   DateTime get week => _week;
 
   bool _monthly = false;
+  void initMonthly() {
+    _monthly = false;
+  }
 
   ScheduleViewModel() {
     _scheduleRepository = ScheduleRepository();

@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../util/app_color.dart';
 import '../util/sp_helper.dart';
+import '../view_model/delete.dart';
 import 'account_withdrawal.dart';
 import 'check_login.dart';
 import 'help.dart';
@@ -185,6 +186,8 @@ class SettingScreen extends StatelessWidget{
   }
 
   Future<void> _showMyDialog(context) async {
+    DeleteViewModel delete = DeleteViewModel();
+
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -197,8 +200,8 @@ class SettingScreen extends StatelessWidget{
           ),
           TextButton(
             onPressed: () {
-              helper.remove('jwt');
-              helper.remove('isLoggedIn');
+              delete.deleteLocalDataAll();
+              helper.clear();
               Navigator.pushAndRemoveUntil(context,
                   MaterialPageRoute(
                       builder: (context) => CheckLoginScreen()

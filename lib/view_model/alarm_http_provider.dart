@@ -12,6 +12,7 @@ class AlarmHttpProvider extends ChangeNotifier {
 
   int lastId = 0; // 페이지 번호
   bool done = false; // 과거의 데이터 로딩중인지 확인
+  bool check = false; // 수락/거절 선택 중인지 여부 확인
 
   Session session = Session();
 

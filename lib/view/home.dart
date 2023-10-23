@@ -25,7 +25,7 @@ class Home extends StatefulWidget {
   // TODO 홈에서 인센티브인지 특별 수당인지 받아오기
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with WidgetsBindingObserver {
   // models
   String _storeName = '';
   String _userAlias = '';
@@ -57,10 +57,27 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
 
     /*final _viewModel = Provider.of<NoticeViewModel>(context, listen: false);
     _viewModel.reload();*/
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+
+    if (state == AppLifecycleState.detached) {
+      var provider = Provider.of<ScheduleViewModel>(context, listen: false);
+      provider.initMonthly();
+    }
+    super.didChangeAppLifecycleState(state);
   }
 
   @override

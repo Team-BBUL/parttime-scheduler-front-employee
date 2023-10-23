@@ -75,4 +75,17 @@ class LocalDataSource {
       _logger.e('[$fileName 파일 저장하기 오류] $e');
     }
   }
+
+  Future<void> deleteAll() async {
+
+    try {
+      Directory directory = Directory("$path/data");
+
+      if(directory.existsSync()) { // 존재한다면 삭제
+        directory.delete(recursive: true);
+      }
+    } catch (e) {
+      _logger.e('폴더 삭제 오류 : $e');
+    }
+  }
 }
