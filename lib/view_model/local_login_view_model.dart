@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:sidam_employee/data/local_data_source.dart';
 import 'package:sidam_employee/data/repository/store_repository.dart';
 
 import 'package:sidam_employee/model/account_data.dart';
@@ -14,6 +15,7 @@ import '../data/repository/account_repository.dart';
 
 class LocalLoginViewModel extends ChangeNotifier {
 
+  late final LocalDataSource _dataSource;
   late final AccountRepository _loginRepository;
   late final StoreRepositoryImpl _storeRepository;
   AccountData login = AccountData(accountId: '', password: '', role: 'MANAGER');
@@ -30,6 +32,7 @@ class LocalLoginViewModel extends ChangeNotifier {
 
   LocalLoginViewModel() {
     _helper.init();
+    _dataSource = LocalDataSource();
     _loginRepository = AccountRepository();
     _storeRepository = StoreRepositoryImpl();
   }
@@ -46,6 +49,8 @@ class LocalLoginViewModel extends ChangeNotifier {
 
   Future<void> fetchLogin(String id, String pw) async {
     if (!loading){
+
+      await _dataSource.init();
       loading = true;
 
       login.accountId = id;

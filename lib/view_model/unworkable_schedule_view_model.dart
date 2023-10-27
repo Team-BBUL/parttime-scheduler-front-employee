@@ -33,6 +33,8 @@ class UnworkableScheduleViewModel extends ChangeNotifier {
   bool first = false; // 처음 데이터를 입력하는 것인지 확인하는 변수
   bool result = false; // 서버 전송 실패/성공 여부
 
+  bool dragState = false; // drag가 선택인건지 취소인건지 저장
+
   UnworkableScheduleViewModel(this._impossibleScheduleRepository){
 
     _helper = SPHelper();
@@ -143,6 +145,16 @@ class UnworkableScheduleViewModel extends ChangeNotifier {
       if (cell.row == selectedCell.row) {
         cell.isSelected = !cell.isSelected;
       }
+    }
+    notifyListeners();
+  }
+
+  void dragCells(Cell startCell, Cell selected) {
+    if(selected.isSelectedColumn) {
+      selected.isSelected = dragState;
+      dragType = selected.isSelected;
+    }else{
+      clearCell();
     }
     notifyListeners();
   }

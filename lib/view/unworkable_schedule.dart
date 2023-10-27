@@ -87,51 +87,63 @@ class _UnworkableScheduleState extends State<UnworkableScheduleScreen> {
                                       viewModel.toggleCell(cell);
                                       log('시간 탭, cell = ${cell.isSelected}');
                                     },
-                                    onPanStart: (_) {
+                                    /*onPanStart: (_) {
                                       viewModel.toggleCell(cell);
                                       log('터치 시작');
+                                    },*/
+                                    onVerticalDragStart: (details) {
+                                      int selectedRow = viewModel.selectedColumnIndex;
+                                      viewModel.dragState = !viewModel.grid[selectedRow][col].isSelected;
                                     },
-                                    onPanUpdate: (details) {
+                                    onVerticalDragUpdate: (details) {
+
+                                      var position = details.localPosition;
+                                      var cellSize = 45; // 셀 높이
+
+                                      int selectedRow = viewModel.selectedColumnIndex;
+                                      int selectedColumnIdx = (position.dy / cellSize).floor() + col;
+                                      if (selectedColumnIdx >= viewModel.grid[selectedRow].length) {
+                                        selectedColumnIdx = viewModel.grid[selectedRow].length - 1;
+                                      }
+                                      if (selectedColumnIdx < 0) {
+                                        selectedColumnIdx = 0;
+                                      }
+
+                                      viewModel.dragCells(viewModel.grid[selectedRow][col],
+                                          viewModel.grid[selectedRow][selectedColumnIdx]);
+                                    },
+                                    /*onPanUpdate: (details) {
                                       if (viewModel.selectedColumnIndex != -1) {
-                                        RenderBox box = context
-                                            .findRenderObject() as RenderBox;
-                                        var localPosition = box.globalToLocal(
-                                            details.globalPosition);
+                                        RenderBox box = context.findRenderObject() as RenderBox;
+                                        var localPosition = box.globalToLocal(details.globalPosition);
                                         var cellSize = 45; // 셀 크기 계산
+                                        
+                                        log("${localPosition.dx} 움직임");
 
-                                        int selectedColumn = (localPosition.dx /
-                                            cellSize).floor();
-                                        int selected = viewModel
-                                            .selectedColumnIndex;
+                                        int selectedColumn = (localPosition.dx / cellSize).floor();
+                                        int selected = viewModel.selectedColumnIndex;
 
-                                        final startCell = viewModel
-                                            .grid[selected][col];
-                                        final endCell = viewModel
-                                            .grid[selected][selectedColumn];
+                                        final startCell = viewModel.grid[selected][col];
+                                        final endCell = viewModel.grid[selected][selectedColumn];
 
                                         viewModel.updateDragSelection(
                                             startCell, endCell);
                                       }
                                       log('터치 후 움직임');
-                                    },
+                                    },*/
                                     child: Container(
                                       padding: const EdgeInsets.all(5),
                                       width: cell.isSelectedColumn ? 200 : 50,
                                       height: 45,
                                       decoration: BoxDecoration(
                                         border: Border.all(color: Colors.white),
-                                        color: cell.isSelected ? AppColor()
-                                            .redColor : AppColor()
-                                            .lightGreyColor,
+                                        color: cell.isSelected ? AppColor().redColor : AppColor().lightGreyColor,
                                       ),
                                       child: Center(
-                                          child: cell.isSelectedColumn
-                                              ? Text(
-                                              '${col + viewModel.opening}:00')
-                                              : col == 0 || col == 6 ||
-                                              col == 12
-                                              ? Text(
-                                              '${col + viewModel.opening}h')
+                                          child: cell.isSelectedColumn 
+                                              ? Text('${col + viewModel.opening}:00')
+                                              : col == 0 || col == 6 || col == 12
+                                              ? Text('${col + viewModel.opening}h')
                                               : Text('')
                                       ),
                                     ),
@@ -153,7 +165,7 @@ class _UnworkableScheduleState extends State<UnworkableScheduleScreen> {
   }
   Widget unscheduledDate(BuildContext context, UnworkableScheduleViewModel viewModel, dates) {
     int dateIndex = viewModel.unscheduledDate!.dates.indexOf(dates);
-    return  Expanded(
+    return Expanded(
         flex: dateIndex == viewModel.selectedColumnIndex ? 4 : 1,
         child: GestureDetector(
           onTap: () {

@@ -73,8 +73,8 @@ class CostScreen extends StatelessWidget {
           return Scaffold(
               body: SafeArea(
                 child : Consumer<CostViewModel>(
-                    builder:(context, viewModel,child){
-                      return Column(
+                    builder:(context, viewModel, child){
+                      return Container(child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             monthPicker(viewModel),
@@ -126,7 +126,7 @@ class CostScreen extends StatelessWidget {
                                           )
                                       ),
                                       Container(
-                                        padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
+                                        padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
                                         child: Row(
                                             children: [
                                               Expanded(
@@ -151,20 +151,20 @@ class CostScreen extends StatelessWidget {
                                       Flexible(
                                         child:
                                         AnimatedContainer(
-                                            margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                                            margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
                                             duration: Duration(milliseconds: 200),
-                                            height: viewModel.isExpanded ? (viewModel.employeesCost!.length)*75.0 : 0.0,
+                                            height: viewModel.isExpanded ? (viewModel.employeesCost!.length) * 100.0 : 0.0,
                                             curve: Curves.easeInOut,
                                             child: ListView.builder(
                                                 scrollDirection: Axis.vertical,
-                                                physics: AlwaysScrollableScrollPhysics(),
-                                                padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 0),
+                                                physics: ClampingScrollPhysics(),
+                                                padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 5),
                                                 itemCount: viewModel.employeesCost!.length,
                                                 itemBuilder: (BuildContext context, int index){
                                                   return Column(
                                                       children : [
                                                         Container(
-                                                          margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 0),
+                                                          margin: const EdgeInsets.symmetric(vertical: 6,horizontal: 0),
                                                           child: Row(
                                                             children : [
                                                               Expanded(
@@ -247,7 +247,7 @@ class CostScreen extends StatelessWidget {
                             )
 
                           ]
-                      );
+                      ));
                     }
                 ),
               )

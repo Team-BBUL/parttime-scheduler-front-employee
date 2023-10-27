@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:provider/provider.dart';
+import 'package:sidam_employee/view_model/schedule_view_model.dart';
 
 import '../util/app_color.dart';
 import '../util/sp_helper.dart';
@@ -146,16 +148,7 @@ class SettingScreen extends StatelessWidget{
                         child: TextButton(
                           onPressed: () => _showMyDialog(context),
                           child: const Text('로그아웃', style: TextStyle(fontSize: 16, color: Colors.red)),),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: TextButton(
-                          onPressed: () => Navigator.push(context,
-                              MaterialPageRoute(
-                                  builder: (context) => AccountWithdrawalScreen()
-                              )),
-                          child: const Text('회원 탈퇴', style: TextStyle(fontSize: 16, color: Colors.red)),),
-                      ),
+                      )
                     ],
                   )
               ),
@@ -174,7 +167,7 @@ class SettingScreen extends StatelessWidget{
                           padding: const EdgeInsets.all(8),
                           child: ElevatedButton(
                             onPressed: () async {await helper.init(); helper.clear(); },
-                            child: const Text('shared_preferences 초기화 버튼(개발용)', style: TextStyle(fontSize: 18, color: Colors.red)),),
+                            child: const Text('shared_preferences 초기화 버튼', style: TextStyle(fontSize: 18, color: Colors.red)),),
                         ),
                       ),
                     ],
@@ -187,6 +180,7 @@ class SettingScreen extends StatelessWidget{
 
   Future<void> _showMyDialog(context) async {
     DeleteViewModel delete = DeleteViewModel();
+    //var provider = Provider.of<ScheduleViewModel>(context);
 
     showDialog<String>(
       context: context,
