@@ -68,25 +68,6 @@ class CostViewModel extends ChangeNotifier{
     notifyListeners();
   }
 
-  // loadDateList() async{
-  //   dateList = await _scheduleLocalRepository.getDateList();
-  //   if(dateList!.isNotEmpty) {
-  //     dateIndex = dateList!.length - 1;
-  //   }
-  //   log("loadDateList $dateList");
-  //   notifyListeners();
-  // }
-
-  loadSchedule() async{
-    log("----------------------------------------loadSchedule-----------------------");
-
-    // if(dateIndex == dateList!.length){
-    //   await fetchRemoteSchedule();
-    // }else{
-    //   await fetchLocalSchedule(dateList![dateIndex!]);
-    // }
-  }
-
   getCost() async {
     log("getCost processing");
     await calculateCost();
@@ -98,7 +79,7 @@ class CostViewModel extends ChangeNotifier{
 
   getMonthIncentive() async{
     try {
-      monthIncentives = await _incentiveRepository.fetchOnesMonthIncentive();
+      monthIncentives = await _incentiveRepository.fetchOnesMonthIncentive(_selectedMonth);
       log("getMonthIncentive success");
     }catch(e){
       monthIncentives = [];
@@ -130,16 +111,20 @@ class CostViewModel extends ChangeNotifier{
     log("calculateCost processing");
     totalPay = 0;
     employeesCost = [];
-
-
+    int bonusDayPay;
+    int holidayPay;
     int monthIncentivePay;
     int workTime;
+    bool isAdditionalPayOccurred;
     // log("${monthSchedule!.toJson()   }");
 
     for (Date date in monthSchedule!.date!) {
       log("monthSchedule processing");
+      holidayPay = 0;
+      bonusDayPay = 0;
       monthIncentivePay = 0;
       workTime = 0;
+      isAdditionalPayOccurred = false;
       for (Schedule schedule in date.schedule!) {
         log("Schedule processing");
 
@@ -147,25 +132,29 @@ class CostViewModel extends ChangeNotifier{
 
         for (Workers worker in schedule.workers!) {
 
-          if(monthIncentives!.isNotEmpty){
+          if(monthIncentives!.isNotEmpty) {
             monthIncentivePay = calculateMonthIncentivePay(worker);
           }
 
-          if(worker.id == ownerId){
+          if(worker.id == ownerId) {
             DateTime realDate = convertStringToDate(date);
-            employeesCost!.add(EmployeeCost(realDate, workTime, 0, worker.cost!, 0, 0));
+            if(bonusDayPay != 0 && holidayPay != 0 && monthIncentivePay != 0)
+              isAdditionalPayOccurred = true;
+            employeesCost!.add(EmployeeCost(realDate, workTime, 0, worker.cost!, 0, 0, isAdditionalPayOccurred));
           }
         }
       }
     }
     notifyListeners();
   }
+
   int calculateMonthIncentivePay(Workers worker) {
     int monthIncentivePay = 0;
     for (MonthIncentive monthIncentive in monthIncentives!) {
       if(monthIncentive.id == worker.id){
         for (Incentive item in monthIncentive.incentives!) {
           monthIncentivePay += item.cost!;
+          log('monthincentive $monthIncentivePay');
         }
       }
     }
@@ -185,7 +174,6 @@ class CostViewModel extends ChangeNotifier{
             employeeCost.holidayPay * (employeeCost.hourlyPay * 1.5).round() +
             employeeCost.bonusDayPay * employeeCost.hourlyPay * 2 +
             employeeCost.incentive;
-        log('totalcost${totalPay.toString()}');
       }
     }
   }
@@ -204,7 +192,7 @@ class CostViewModel extends ChangeNotifier{
 
   sortEmployeeCostToDate() {
     if(employeesCost != null) {
-      employeesCost!.sort((a, b) => a.date!.compareTo(b.date!));
+      employeesCost!.sort((a, b) => a.date.compareTo(b.date));
     }
   }
 
@@ -224,7 +212,7 @@ class CostViewModel extends ChangeNotifier{
     notifyListeners();
   }
 
-  void serPickerYear(param0) {
+  void setPickerYear(param0) {
     _pickerYear = param0;
     _selectedMonth = DateTime(_pickerYear, _selectedMonth.month, 1);
     loadData();
@@ -237,6 +225,5 @@ class CostViewModel extends ChangeNotifier{
     isExpanded = !isExpanded;
     notifyListeners();
   }
-
 
 }

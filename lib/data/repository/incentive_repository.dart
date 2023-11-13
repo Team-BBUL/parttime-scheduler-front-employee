@@ -10,7 +10,7 @@ import '../../util/sp_helper.dart';
 
 abstract class IncentiveRepository{
   Future fetchMonthIncentives(DateTime date);
-  Future fetchOnesMonthIncentive();
+  Future fetchOnesMonthIncentive(DateTime date);
   Future fetchIncentives(int employeeId);
   Future fetchIncentive(int employeeId,int incentiveId);
   Future postIncentive(Incentive incentive, int employeeId);
@@ -73,18 +73,15 @@ class IncentiveRepositoryImpl extends IncentiveRepository{
   }
 
   @override
-  Future fetchOnesMonthIncentive() async {
+  Future fetchOnesMonthIncentive(DateTime date) async {
     SPHelper helper = SPHelper();
     DateTime now = DateTime.now();
     String month;
     month = now.month <10 ? '0${now.month}' : '${now.month}';
-    final String apiUrl = '$incentiveApi/${helper.getStoreId()}/employees/${helper.getRoleId()}/incentives?month=${now.year}-$month';
-
-    log("fetchOnesMonthIncentive $apiUrl");
+    final String apiUrl = '$incentiveApi/${helper.getStoreId()}/employees/${helper.getRoleId()}/incentives?month=${DateFormat('yyyy-MM').format(date)}';
 
     var headers = {'Authorization': 'Bearer ${helper.getJWT()}',
       'Content-Type': 'application/json'};
-    log("fetchOnesMonthIncentive jwt ${helper.getJWT()}");
     log("fetchOnesMonthIncentive url $apiUrl");
     final response = await http.get(
       Uri.parse(apiUrl),
