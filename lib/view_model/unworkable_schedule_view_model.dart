@@ -12,14 +12,15 @@ import '../model/unscheduled_date.dart';
 class UnworkableScheduleViewModel extends ChangeNotifier {
 
   late final SPHelper _helper;
+  GlobalKey gridKey = new GlobalKey();
   late final ImpossibleScheduleRepository _impossibleScheduleRepository;
   UnscheduledDate? unscheduledDate = UnscheduledDate();
   UnWorkableSchedule? unWorkableSchedule = UnWorkableSchedule();
 
   List<List<Cell>> grid = [];
-  List<TrackSize> columnSizes = [];
+  List<TrackSize> _columnSizes = [];
 
-  int selectedColumnIndex = -1;
+  late int selectedColumnIndex;
   int opening = 10;
   int closed = 23;
   int openingHours = 0;
@@ -35,17 +36,20 @@ class UnworkableScheduleViewModel extends ChangeNotifier {
 
   bool dragState = false; // drag가 선택인건지 취소인건지 저장
 
+  get columnSizes => _columnSizes;
   UnworkableScheduleViewModel(this._impossibleScheduleRepository){
 
     _helper = SPHelper();
     loadData();
   }
 
+
   void loadData() async {
     if (!isLoading){
       isLoading = true;
       await _helper.init();
 
+      selectedColumnIndex = -1;
       unscheduledDate = UnscheduledDate.getRecentWeekOnUnscheduled(
           scheduleStartDay, daysBeforeLimited);
       openingHours = closed - opening;
@@ -56,7 +60,7 @@ class UnworkableScheduleViewModel extends ChangeNotifier {
         });
       });
 
-      columnSizes = List<TrackSize>.filled(7, 1.fr);
+      _columnSizes = List<TrackSize>.filled(7, 1.fr);
 
       unWorkableSchedule = await _impossibleScheduleRepository.loadJson();
       if (unWorkableSchedule == null || unWorkableSchedule!.unWorkable == null) {
@@ -91,7 +95,7 @@ class UnworkableScheduleViewModel extends ChangeNotifier {
     }
   }
 
-  void toggleCell(Cell cell) {
+  void toggleCell(Cell cell) async {
     if(cell.isSelectedColumn) {
       cell.isSelected = !cell.isSelected;
       dragType = cell.isSelected;
@@ -101,7 +105,7 @@ class UnworkableScheduleViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleGrid(int row, int col) {
+  void toggleGrid(int row, int col) async {
     if(grid[row][col].isSelectedColumn) {
       grid[row][col].isSelected = !grid[row][col].isSelected;
       dragType = grid[row][col].isSelected;
@@ -149,7 +153,7 @@ class UnworkableScheduleViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void dragCells(Cell startCell, Cell selected) {
+  void dragCells(Cell startCell, Cell selected) async {
     if(selected.isSelectedColumn) {
       selected.isSelected = dragState;
       dragType = selected.isSelected;
@@ -159,47 +163,32 @@ class UnworkableScheduleViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-    // 1. 기존에 선택된 열이 없고, 새로운 열을 선택했을 때
-    //     => 새로운 열의 크기를 늘린다.
-    // 2. 기존에 선택된 열이 있고, 새로운 열을 선택했을 때
-    //     => 기존에 선택된 열을 새로운 열로 바꾼다.
-    // 3. 기존에 선택된 열이 있고, 기존에 선택된 열을 다시 선택했을 때
-    //     => 기존에 선택된 열을 취소한다.
 
-  updateSelectedColumn(DateTime date){
-
-    if(selectedColumnIndex == -1){
+  updateSelectedColumn(DateTime date) async {
+    if(selectedColumnIndex == -1 || selectedColumnIndex != unscheduledDate!.dates.indexOf(date)) {
+      await clearCell();
       selectedColumnIndex = unscheduledDate!.dates.indexOf(date);
-      expandSelectedColumnSize();
-    }else if(selectedColumnIndex != unscheduledDate!.dates.indexOf(date)) {
-      clearCell();
-      selectedColumnIndex = unscheduledDate!.dates.indexOf(date);
-      expandSelectedColumnSize();
+      await expandSelectedColumnSize();
     }else if(selectedColumnIndex == unscheduledDate!.dates.indexOf(date)){
-      clearCell();
+      await clearCell();
       selectedColumnIndex = -1;
     }
     notifyListeners();
   }
 
-  expandSelectedColumnSize(){
+  Future<void> expandSelectedColumnSize() async {
     for (int j = 0; j < openingHours; j++) {
       getCell(selectedColumnIndex, j).isSelectedColumn = true;
     }
-    for (int i = 0; i < 7; i++) {
-      if (i == selectedColumnIndex) {
-        columnSizes[i] = 4.0.fr;
-      }
-    }
+    _columnSizes[selectedColumnIndex] = 4.0.fr;
   }
 
-  clearCell(){
+  Future<void> clearCell() async {
     for (var cell in grid.expand((element) => element)) {
       cell.isSelectedColumn = false;
     }
-    columnSizes = columnSizes.map((e) => 1.0.fr).toList();
+    _columnSizes = _columnSizes.map((e) => 1.0.fr).toList();
     selectedColumnIndex = -1;
-
   }
 
   convertGridToTime(){
