@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
@@ -31,7 +32,13 @@ import 'data/repository/announcement_repository.dart';
 import 'data/repository/incentive_repository.dart';
 import 'data/repository/schedule_repository.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown
+  ]);
+
   runApp(
     MultiProvider(
         providers: [
