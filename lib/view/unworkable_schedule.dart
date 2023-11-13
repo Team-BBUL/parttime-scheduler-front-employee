@@ -44,8 +44,8 @@ class _UnworkableScheduleState extends State<UnworkableScheduleScreen> {
                                     content: Text('서버에 저장하는 것에 실패했습니다. 잠시 후 다시 시도해주세요.'),
                                     actions: [
                                       TextButton(onPressed: () {
-                                          Navigator.of(context).pop();
-                                        }, child: const Text('확인'))
+                                        Navigator.of(context).pop();
+                                      }, child: const Text('확인'))
                                     ],
                                   );
                                 });
@@ -117,7 +117,7 @@ class _UnworkableScheduleState extends State<UnworkableScheduleScreen> {
                                         RenderBox box = context.findRenderObject() as RenderBox;
                                         var localPosition = box.globalToLocal(details.globalPosition);
                                         var cellSize = 45; // 셀 크기 계산
-                                        
+
                                         log("${localPosition.dx} 움직임");
 
                                         int selectedColumn = (localPosition.dx / cellSize).floor();
@@ -140,7 +140,7 @@ class _UnworkableScheduleState extends State<UnworkableScheduleScreen> {
                                         color: cell.isSelected ? AppColor().redColor : AppColor().lightGreyColor,
                                       ),
                                       child: Center(
-                                          child: cell.isSelectedColumn 
+                                          child: cell.isSelectedColumn
                                               ? Text('${col + viewModel.opening}:00')
                                               : col == 0 || col == 6 || col == 12
                                               ? Text('${col + viewModel.opening}h')
@@ -165,7 +165,7 @@ class _UnworkableScheduleState extends State<UnworkableScheduleScreen> {
   }
   Widget unscheduledDate(BuildContext context, UnworkableScheduleViewModel viewModel, dates) {
     int dateIndex = viewModel.unscheduledDate!.dates.indexOf(dates);
-    return Expanded(
+    return  Expanded(
         flex: dateIndex == viewModel.selectedColumnIndex ? 4 : 1,
         child: GestureDetector(
           onTap: () {
